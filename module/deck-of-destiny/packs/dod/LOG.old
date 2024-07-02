@@ -1,0 +1,5 @@
+2024/07/02-19:41:24.992896 7f7567439b38 Delete type=3 #1
+2024/07/02-20:09:05.528228 7f7066497b38 Level-0 table #5: started
+2024/07/02-20:09:05.561413 7f7066497b38 Level-0 table #5: 75457 bytes OK
+2024/07/02-20:09:05.567015 7f7066497b38 Delete type=0 #3
+2024/07/02-20:09:05.570203 7f7066497b38 Manual compaction at level-0 from '!cards!IE8F5APtlhuvtB7C' @ 72057594037927935 : 1 .. '!cards.cards!aKxzLu0T17jAtUZ5.zNnMCbkunkaQnltq' @ 0 : 0; will stop at (end)
