@@ -1,7 +1,7 @@
 {
   "id": "deck-of-destiny",
   "title": "Deck of Destiny",
-  "version": "0.0.1",
+  "version": "#{VERSION}#",
   "compatibility": {
     "minimum": "12",
     "verified": "12"
