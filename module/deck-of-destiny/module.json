@@ -44,5 +44,8 @@
         "ASSISTANT": "OWNER"
       }
     }
-  ]
+  ],
+  "url": "#{URL}#",
+  "manifest": "#{MANIFEST}#",
+  "download": "#{DOWNLOAD}#"
 }
