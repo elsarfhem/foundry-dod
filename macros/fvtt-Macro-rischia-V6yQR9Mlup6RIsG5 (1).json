@@ -1,0 +1,29 @@
+{
+  "name": "Rischia",
+  "type": "script",
+  "author": "r8RTNiMjzdQbTh3C",
+  "img": "icons/svg/card-joker.svg",
+  "scope": "global",
+  "command": "const deck = game.cards.getName(\"DoD - lista carte\")\nconst pile = game.cards.getName(\"Mazzo\")\nconst hand = game.cards.getName(\"Mano\")\n\nlet numFailure = hand.cards.filter(card => card.suit === \"failure\").length\nlet numSuccess = hand.cards.filter(card => card.suit === \"success\").length\n\nlet msg\n\nif (pile.cards.size === 0) {\n    msg = \"Errore: non puoi rischiare se non ci sono carte nel mazzo\"\n    ui.notifications.error(msg)\n    await ChatMessage.create({\n        user: game.user._id,\n        content: msg\n    })\n    return\n}\n\nif (numSuccess !== numFailure) {\n    msg = \"Attenzione: il numero di successi e di fallimenti nella mano non sono uguali. Successi: \" + numSuccess +\n        \" - Fallimenti: \" + numFailure\n    ui.notifications.warn(msg)\n    ChatMessage.create({\n        user: game.user._id,\n        content: msg\n    })\n}\n\n(async () => {\n    let drawCard;\n    do {\n        let drawCards = await hand.draw(pile, 1, {\n            how: CONST.CARD_DRAW_MODES.RANDOM,\n            chatNotification: false\n        })\n        if(drawCards.length > 0){\n            drawCard = drawCards[0]\n        }\n    } while (drawCard && drawCard.suit !== \"success\" && drawCard.suit !== \"failure\")\n    console.log(\"you draw \" + drawCard)\n    let msg = \"Hai pescato una Carta \" + drawCard.name + \". \" + ((drawCard.suit === \"success\") ?\n        \"La prova ha avuto successo!\" : \"La prova é fallita!\")\n    await ChatMessage.create({\n        user: game.user._id,\n        content: msg\n    })\n})();",
+  "folder": null,
+  "flags": {
+    "advanced-macros": {
+      "runAsGM": false,
+      "runForSpecificUser": ""
+    },
+    "exportSource": {
+      "world": "deck-of-destiny",
+      "system": "wfrp4e",
+      "coreVersion": "12.328",
+      "systemVersion": "7.2.4"
+    }
+  },
+  "_stats": {
+    "systemId": "wfrp4e",
+    "systemVersion": "7.0.3",
+    "coreVersion": "12.328",
+    "createdTime": 1673619457730,
+    "modifiedTime": 1706918626570,
+    "lastModifiedBy": "r8RTNiMjzdQbTh3C"
+  }
+}
