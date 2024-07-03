@@ -1,6 +1,6 @@
 # Deck of Destiny
 ![GitHub Release](https://img.shields.io/github/v/release/elsarfhem/foundry-dod)
-![Static Badge](https://img.shields.io/badge/license-Commercial-cc?style=flat&color=blue)
+![Static Badge](https://img.shields.io/badge/license-Commercial-cc?style=flat)
 
  Deck of Destiny is an RPG game that is played with a deck of cards.
 
