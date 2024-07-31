@@ -42,6 +42,15 @@
       }
     }
   ],
+  "relationships": {
+    "requires": [
+      {
+        "id": "requestor",
+        "type": "module",
+        "compatibility": {}
+      }
+    ]
+  },
   "grid": {
     "distance": 5,
     "units": "ft"
