@@ -1,0 +1,85 @@
+{
+  "id": "foundry-dod",
+  "title": "Deck of Destiny",
+  "description": "The Deck of Destiny system for FoundryVTT!",
+  "authors": [
+    {
+      "name": "elsarfhem",
+      "discord": "elsarfhem"
+    },
+    {
+      "name": "W1zZo",
+      "discord": "w1zzo"
+    }
+  ],
+  "url": "https://github.com/elsarfhem/foundry-dod/",
+  "license": "LICENSE",
+  "readme": "README.md",
+  "bugs": "https://github.com/elsarfhem/foundry-dod/issues",
+  "changelog": "CHANGELOG.md",
+  "media": [
+    {
+      "type": "setup",
+      "url": "systems/foundry-dod/assets/anvil-impact.png",
+      "thumbnail": "systems/foundry-dod/assets/anvil-impact.png"
+    }
+  ],
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": 12,
+    "verified": 12
+  },
+  "esmodules": ["module/foundry-dod.mjs"],
+  "styles": ["styles/foundry-dod.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "packs": [
+    {
+      "name": "dod",
+      "label": "dod-cards",
+      "path": "packs/dod",
+      "type": "Cards",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "dod-macros",
+      "label": "dod-macros",
+      "path": "packs/dod-macros",
+      "type": "Macro",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    }
+  ],
+  "packFolders": [],
+  "documentTypes": {
+    "Actor": {
+      "character": {},
+      "npc": {}
+    },
+    "Item": {
+      "item": {},
+      "feature": {},
+      "spell": {}
+    }
+  },
+  "socket": false,
+  "manifest": "https://raw.githubusercontent.com/elsarfhem/foundry-dod/main/system.json",
+  "download": "https://github.com/elsarfhem/foundry-dod/releases/download/v0.1.0/dod-release-0.1.0.zip",
+  "background": "systems/foundry-dod/assets/anvil-impact.png",
+  "grid": {
+    "distance": 5,
+    "units": "ft"
+  },
+  "primaryTokenAttribute": "health",
+  "secondaryTokenAttribute": "power"
+}
