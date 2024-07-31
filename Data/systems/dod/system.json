@@ -3,6 +3,7 @@
   "title": "Deck of Destiny",
   "description": "A system for managing your Deck of Destiny game.",
   "version": "#{VERSION}#",
+  "license": "LICENSE.txt",
   "compatibility": {
     "minimum": 12,
     "verified": 12
@@ -12,6 +13,13 @@
     "email": "a.matarazzo@gmail.com",
     "discord": "elsarfhem"
   }],
+  "esmodules": ["module/simple.js"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }],
   "packs": [
     {
       "name": "dod",
@@ -34,6 +42,12 @@
       }
     }
   ],
+  "grid": {
+    "distance": 5,
+    "units": "ft"
+  },
+  "primaryTokenAttribute": "health",
+  "secondaryTokenAttribute": "power",
   "url": "#{URL}#",
   "manifest": "#{MANIFEST}#",
   "download": "#{DOWNLOAD}#"
