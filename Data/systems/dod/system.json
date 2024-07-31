@@ -47,6 +47,7 @@
       {
         "id": "requestor",
         "type": "module",
+        "manifest": "https://github.com/krbz999/requestor/releases/download/v12.0.0/module.json",
         "compatibility": {}
       }
     ]
