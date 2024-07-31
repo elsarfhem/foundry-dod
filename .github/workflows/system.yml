@@ -41,13 +41,13 @@ env:
   # FoundryVTT uses this URL to check whether the current module version that
   # is installed is the latest version. This URL should NOT change,
   # otherwise FoundryVTT won't be able to perform this check.
-  latest_manifest_url: "https://github.com/${{github.repository}}/releases/latest/download/module.json"
+  latest_manifest_url: "https://github.com/${{github.repository}}/releases/latest/download/system.json"
 
   # The URL to the module archive associated with the module release being
   # processed by this workflow.
-  release_module_url: "https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip"
+  release_module_url: "https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/system.zip"
 
-  path: "./module/deck-of-destiny"
+  path: "./Data/System/dod"
 
 
 on:
@@ -97,7 +97,7 @@ jobs:
         id: sub_manifest_link_version
         uses: cschleiden/replace-tokens@v1
         with:
-          files: '${{ env.path }}/module.json'
+          files: '${{ env.path }}/system.json'
         env:
           VERSION: ${{steps.get_version.outputs.version-without-v}}
           URL: ${{ env.project_url }}
@@ -113,7 +113,7 @@ jobs:
         uses: montudor/action-zip@v1
 
       - name: Zip
-        run: zip -qq -r module.zip module.json packs/
+        run: zip -qq -r system.zip system.json packs/
         working-directory: ${{ env.path }}
 
 #      - name: Create Module Archive
@@ -149,6 +149,6 @@ jobs:
           draft: ${{ github.event.release.unpublished }}
           prerelease: ${{ github.event.release.prerelease }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: '${{ env.path }}/module.json, ${{ env.path }}/module.zip'
+          artifacts: '${{ env.path }}/system.json, ${{ env.path }}/system.zip'
           tag: ${{ github.event.release.tag_name }}
           body: ${{ github.event.release.body }}

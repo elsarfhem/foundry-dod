@@ -1,30 +1,17 @@
 {
-  "id": "deck-of-destiny",
+  "id": "dod",
   "title": "Deck of Destiny",
+  "description": "A system for managing your Deck of Destiny game.",
   "version": "#{VERSION}#",
-  "library": "false",
-  "manifestPlusVersion": "1.2.0",
   "compatibility": {
-    "minimum": "12",
-    "verified": "12"
+    "minimum": 12,
+    "verified": 12
   },
-  "relationships": {
-    "requires": [
-      {
-        "id": "requestor",
-        "type": "module",
-        "compatibility": {}
-      }
-    ]
-  },
-  "authors": [
-    {
-      "name": "Andrea Matarazzo",
-      "email": "a.matarazzo@gmail.com",
-      "discord": "elsarfhem",
-      "flags": {}
-    }
-  ],
+  "authors": [{
+    "name": "Andrea Matarazzo",
+    "email": "a.matarazzo@gmail.com",
+    "discord": "elsarfhem"
+  }],
   "packs": [
     {
       "name": "dod",
