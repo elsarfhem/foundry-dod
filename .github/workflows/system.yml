@@ -113,7 +113,7 @@ jobs:
         uses: montudor/action-zip@v1
 
       - name: Zip
-        run: zip -qq -r system.zip system.json packs/
+        run: zip -qq -r system.zip system.json packs/ module/ lang/ res/ LICENSE.txt
         working-directory: ${{ env.path }}
 
 #      - name: Create Module Archive
