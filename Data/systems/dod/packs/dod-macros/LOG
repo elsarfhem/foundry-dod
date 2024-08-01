@@ -1,14 +1,3 @@
-2024/08/01-11:33:44.797610 1704c7000 Recovering log #38
-2024/08/01-11:33:44.801969 1704c7000 Delete type=0 #38
-2024/08/01-11:33:44.802172 1704c7000 Delete type=3 #37
-2024/08/01-11:33:44.807325 170553000 Level-0 table #42: started
-2024/08/01-11:33:44.814541 170553000 Level-0 table #42: 15483 bytes OK
-2024/08/01-11:33:44.815303 170553000 Delete type=0 #40
-2024/08/01-11:33:44.815658 170553000 Manual compaction at level-0 from '!macros!E4DWnKqJZIxME2Z9' @ 72057594037927935 : 1 .. '!macros!oeL56MLuh36pRwEA' @ 0 : 0; will stop at '!macros!oeL56MLuh36pRwEA' @ 28 : 1
-2024/08/01-11:33:44.815676 170553000 Compacting 1@0 + 1@1 files
-2024/08/01-11:33:44.819272 170553000 Generated table #43@0: 7 keys, 15483 bytes
-2024/08/01-11:33:44.819296 170553000 Compacted 1@0 + 1@1 files => 15483 bytes
-2024/08/01-11:33:44.819696 170553000 compacted to: files[ 0 1 0 0 0 0 0 ]
-2024/08/01-11:33:44.820020 170553000 Delete type=2 #36
-2024/08/01-11:33:44.820459 170553000 Delete type=2 #42
-2024/08/01-11:33:44.821089 170553000 Manual compaction at level-0 from '!macros!oeL56MLuh36pRwEA' @ 28 : 1 .. '!macros!oeL56MLuh36pRwEA' @ 0 : 0; will stop at (end)
+2024/08/01-11:54:06.207081 172cff000 Recovering log #45
+2024/08/01-11:54:06.211785 172cff000 Delete type=0 #45
+2024/08/01-11:54:06.212228 172cff000 Delete type=3 #44

@@ -1,8 +1,8 @@
 {
   "scripts": {
     "build": "npm run build:db",
-    "build:packs:src": "fvtt package unpack --inputDirectory Data/systems/dod/packs --outputDirectory Data/systems/dod/packs_src/dod -n dod && fvtt  package unpack --inputDirectory Data/systems/dod/packs --outputDirectory Data/systems/dod/packs_src/dod-macros -n dod-macros",
-    "build:packs:db": "fvtt package pack --inputDirectory Data/systems/dod/packs_src/dod --outputDirectory Data/systems/dod/packs -n dod && fvtt package pack --inputDirectory Data/systems/dod/packs_src/dod-macros --outputDirectory Data/systems/dod/packs -n dod-macros"
+    "build:packs:src": "fvtt workon dod --type System $$ fvtt package unpack --inputDirectory Data/systems/dod/packs --outputDirectory Data/systems/dod/packs_src/dod -n dod && fvtt  package unpack --inputDirectory Data/systems/dod/packs --outputDirectory Data/systems/dod/packs_src/dod-macros -n dod-macros",
+    "build:packs:db": "fvtt workon dod --type System && fvtt package pack --inputDirectory Data/systems/dod/packs_src/dod --outputDirectory Data/systems/dod/packs -n dod && fvtt package pack --inputDirectory Data/systems/dod/packs_src/dod-macros --outputDirectory Data/systems/dod/packs -n dod-macros"
   },
   "devDependencies": {
     "@foundryvtt/foundryvtt-cli": "^1.0.3"
