@@ -16,12 +16,12 @@
   },
   "_stats": {
     "duplicateSource": null,
-    "coreVersion": "12.328",
-    "systemId": "wfrp4e",
-    "systemVersion": "7.2.4",
+    "coreVersion": "12.330",
+    "systemId": "dod",
+    "systemVersion": "0.1.0",
     "createdTime": 1719951077273,
     "modifiedTime": 1719951078250,
-    "lastModifiedBy": "dnd5ebuilder0000"
+    "lastModifiedBy": "w1zzo"
   },
   "_id": "oeL56MLuh36pRwEA",
   "sort": 300000,

@@ -15,12 +15,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -36,9 +36,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -56,12 +56,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -77,9 +77,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -97,12 +97,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -118,9 +118,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -138,12 +138,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -159,9 +159,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -179,12 +179,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -200,9 +200,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -220,12 +220,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -241,9 +241,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -261,12 +261,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -282,9 +282,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -302,12 +302,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -323,9 +323,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -343,12 +343,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -364,9 +364,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -384,12 +384,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -405,9 +405,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -425,12 +425,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -446,9 +446,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -466,12 +466,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -487,9 +487,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -507,12 +507,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -528,9 +528,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -548,12 +548,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -569,9 +569,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -589,12 +589,12 @@
       "back": {
         "name": "",
         "text": "",
-        "img": "dragupload/uploaded/tiles/images%20(3).jpeg"
+        "img": "systems/dod/assets/cards/back.png"
       },
       "faces": [
         {
           "name": "",
-          "img": "dragupload/uploaded/tiles/tumblr_91f7b0d3cd0d3e6850f81dfb19cffde6_b5546ea2_1280.jpg",
+          "img": "systems/dod/assets/cards/fortune.png",
           "text": ""
         }
       ],
@@ -610,9 +610,9 @@
       "_stats": {
         "compendiumSource": null,
         "duplicateSource": null,
-        "coreVersion": "12.328",
-        "systemId": "wfrp4e",
-        "systemVersion": "7.2.4",
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
         "createdTime": null,
         "modifiedTime": null,
         "lastModifiedBy": null
@@ -632,12 +632,12 @@
   "flags": {},
   "_stats": {
     "duplicateSource": null,
-    "coreVersion": "12.328",
-    "systemId": "wfrp4e",
-    "systemVersion": "7.2.4",
+    "coreVersion": "12.330",
+    "systemId": "dod",
+    "systemVersion": "0.1.0",
     "createdTime": 1719949333706,
     "modifiedTime": 1719949333793,
-    "lastModifiedBy": "dnd5ebuilder0000"
+    "lastModifiedBy": "w1zzo"
   },
   "_id": "ZvcmM279wVb4Ybr2",
   "sort": 200000,
