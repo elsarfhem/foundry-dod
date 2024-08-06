@@ -4,7 +4,8 @@
   "description": "The Deck of Destiny system for FoundryVTT!",
   "authors": [
     {
-      "name": "elsarfhem",
+      "name": "Andrea Matarazzo",
+      "email": "a.matarazzo@gmail.com",
       "discord": "elsarfhem"
     },
     {
@@ -29,20 +30,20 @@
     "minimum": 12,
     "verified": 12
   },
-  "esmodules": ["module/foundry-dod.mjs"],
+  "esmodules": ["src/module/foundry-dod.mjs"],
   "styles": ["styles/foundry-dod.css"],
   "languages": [
     {
       "lang": "en",
       "name": "English",
-      "path": "lang/en.json"
+      "path": "src/lang/en.json"
     }
   ],
   "packs": [
     {
-      "name": "dod",
-      "label": "dod-cards",
-      "path": "packs/dod",
+      "name": "cards",
+      "label": "Cards",
+      "path": "packs/cards",
       "type": "Cards",
       "ownership": {
         "PLAYER": "OBSERVER",
@@ -50,9 +51,9 @@
       }
     },
     {
-      "name": "dod-macros",
-      "label": "dod-macros",
-      "path": "packs/dod-macros",
+      "name": "macros",
+      "label": "Macros",
+      "path": "packs/macros",
       "type": "Macro",
       "ownership": {
         "PLAYER": "OBSERVER",
@@ -60,7 +61,28 @@
       }
     }
   ],
-  "packFolders": [],
+  "packFolders": [
+    {
+      "name": "Deck of Destiny",
+      "sorting": "m",
+      "packs": [
+        "cards",
+        "macros"
+      ]
+    }
+  ],
+  "relationships": {
+    "requires": [
+      {
+        "id": "requestor",
+        "type": "module",
+        "manifest": "https://github.com/krbz999/requestor/releases/download/v12.0.0/module.json",
+        "compatibility": {
+          "verified": "12.0.0"
+        }
+      }
+    ]
+  },
   "documentTypes": {
     "Actor": {
       "character": {},
