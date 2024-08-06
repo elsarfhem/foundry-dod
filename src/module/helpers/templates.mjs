@@ -6,11 +6,11 @@
 export const preloadHandlebarsTemplates = async function () {
   return loadTemplates([
     // Actor partials.
-    'systems/foundry-dod/src/templates/actor/parts/actor-features.hbs',
-    'systems/foundry-dod/src/templates/actor/parts/actor-items.hbs',
-    'systems/foundry-dod/src/templates/actor/parts/actor-spells.hbs',
-    'systems/foundry-dod/src/templates/actor/parts/actor-effects.hbs',
+    'systems/dod/src/templates/actor/parts/actor-features.hbs',
+    'systems/dod/src/templates/actor/parts/actor-items.hbs',
+    'systems/dod/src/templates/actor/parts/actor-spells.hbs',
+    'systems/dod/src/templates/actor/parts/actor-effects.hbs',
     // Item partials
-    'systems/foundry-dod/src/templates/item/parts/item-effects.hbs',
+    'systems/dod/src/templates/item/parts/item-effects.hbs',
   ]);
 };

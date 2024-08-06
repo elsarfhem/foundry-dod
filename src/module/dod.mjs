@@ -17,7 +17,7 @@ import * as models from './data/_module.mjs';
 Hooks.once('init', function () {
   // Add utility classes to the global game object so that they're more easily
   // accessible in global contexts.
-  game.foundrydod = {
+  game.dod = {
     DeckOfDestinyActor,
     DeckOfDestinyItem,
     rollItemMacro,
@@ -59,12 +59,12 @@ Hooks.once('init', function () {
 
   // Register sheet application classes
   Actors.unregisterSheet('core', ActorSheet);
-  Actors.registerSheet('foundry-dod', DeckOfDestinyActorSheet, {
+  Actors.registerSheet('dod', DeckOfDestinyActorSheet, {
     makeDefault: true,
     label: 'DECK_OF_DESTINY.SheetLabels.Actor',
   });
   Items.unregisterSheet('core', ItemSheet);
-  Items.registerSheet('foundry-dod', DeckOfDestinyItemSheet, {
+  Items.registerSheet('dod', DeckOfDestinyItemSheet, {
     makeDefault: true,
     label: 'DECK_OF_DESTINY.SheetLabels.Item',
   });
@@ -114,7 +114,7 @@ async function createItemMacro(data, slot) {
   const item = await Item.fromDropData(data);
 
   // Create the macro command using the uuid.
-  const command = `game.foundrydod.rollItemMacro("${data.uuid}");`;
+  const command = `game.dod.rollItemMacro("${data.uuid}");`;
   let macro = game.macros.find(
     (m) => m.name === item.name && m.command === command
   );
@@ -124,7 +124,7 @@ async function createItemMacro(data, slot) {
       type: 'script',
       img: item.img,
       command: command,
-      flags: { 'foundry-dod.itemMacro': true },
+      flags: { 'dod.itemMacro': true },
     });
   }
   game.user.assignHotbarMacro(macro, slot);

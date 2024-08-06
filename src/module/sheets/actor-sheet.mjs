@@ -11,7 +11,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['foundry-dod', 'sheet', 'actor'],
+      classes: ['dod', 'sheet', 'actor'],
       width: 600,
       height: 600,
       tabs: [
@@ -26,7 +26,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
 
   /** @override */
   get template() {
-    return `systems/foundry-dod/src/templates/actor/actor-${this.actor.type}-sheet.hbs`;
+    return `systems/dod/src/templates/actor/actor-${this.actor.type}-sheet.hbs`;
   }
 
   /* -------------------------------------------- */

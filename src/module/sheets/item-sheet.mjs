@@ -11,7 +11,7 @@ export class DeckOfDestinyItemSheet extends ItemSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['foundry-dod', 'sheet', 'item'],
+      classes: ['dod', 'sheet', 'item'],
       width: 520,
       height: 480,
       tabs: [
@@ -26,7 +26,7 @@ export class DeckOfDestinyItemSheet extends ItemSheet {
 
   /** @override */
   get template() {
-    const path = 'systems/foundry-dod/src/templates/item';
+    const path = 'systems/dod/src/templates/item';
     // Return a single sheet for all item types.
     // return `${path}/item-sheet.hbs`;
 

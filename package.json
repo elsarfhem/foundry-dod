@@ -1,10 +1,10 @@
 {
   "scripts": {
     "build": "npm run build:scss && npm run build:packs:db",
-    "build:scss": "sass src/scss/foundry-dod.scss styles/foundry-dod.css --style=expanded --no-source-map",
-    "build:packs:src": "fvtt package workon foundry-dod --type System $$ fvtt package unpack --inputDirectory packs --outputDirectory src/packs/cards -n cards && fvtt package unpack --inputDirectory packs --outputDirectory src/packs/macros -n macros",
-    "build:packs:db": "fvtt package workon foundry-dod --type System && fvtt package pack --inputDirectory src/packs/cards --outputDirectory packs -n cards -t Cards && fvtt package pack --inputDirectory src/packs/macros --outputDirectory packs -n macros -t Macro",
-    "watch": "sass src/scss/foundry-dod.scss styles/foundry-dod.css --style=expanded --source-map --watch"
+    "build:scss": "sass src/scss/dod.scss styles/dod.css --style=expanded --no-source-map",
+    "build:packs:src": "fvtt package workon dod --type System $$ fvtt package unpack --inputDirectory packs --outputDirectory src/packs/cards -n cards && fvtt package unpack --inputDirectory packs --outputDirectory src/packs/macros -n macros",
+    "build:packs:db": "fvtt package workon dod --type System && fvtt package pack --inputDirectory src/packs/cards --outputDirectory packs -n cards -t Cards && fvtt package pack --inputDirectory src/packs/macros --outputDirectory packs -n macros -t Macro",
+    "watch": "sass src/scss/dod.scss styles/dod.css --style=expanded --source-map --watch"
   },
   "devDependencies": {
     "sass": "^1.53.0",

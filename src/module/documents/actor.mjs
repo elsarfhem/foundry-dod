@@ -27,7 +27,7 @@ export class DeckOfDestinyActor extends Actor {
    */
   prepareDerivedData() {
     const actorData = this;
-    const flags = actorData.flags.foundrydod || {};
+    const flags = actorData.flags.dod || {};
   }
 
   /**

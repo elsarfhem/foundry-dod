@@ -1,5 +1,5 @@
 {
-  "id": "foundry-dod",
+  "id": "dod",
   "title": "Deck of Destiny",
   "description": "The Deck of Destiny system for FoundryVTT!",
   "authors": [
@@ -21,8 +21,8 @@
   "media": [
     {
       "type": "setup",
-      "url": "systems/foundry-dod/assets/anvil-impact.png",
-      "thumbnail": "systems/foundry-dod/assets/anvil-impact.png"
+      "url": "systems/dod/assets/anvil-impact.png",
+      "thumbnail": "systems/dod/assets/anvil-impact.png"
     }
   ],
   "version": "0.1.0",
@@ -30,8 +30,8 @@
     "minimum": 12,
     "verified": 12
   },
-  "esmodules": ["src/module/foundry-dod.mjs"],
-  "styles": ["styles/foundry-dod.css"],
+  "esmodules": ["src/module/dod.mjs"],
+  "styles": ["styles/dod.css"],
   "languages": [
     {
       "lang": "en",
@@ -97,7 +97,7 @@
   "socket": false,
   "manifest": "https://raw.githubusercontent.com/elsarfhem/foundry-dod/main/system.json",
   "download": "https://github.com/elsarfhem/foundry-dod/releases/download/v0.1.0/dod-release-0.1.0.zip",
-  "background": "systems/foundry-dod/assets/anvil-impact.png",
+  "background": "systems/dod/assets/anvil-impact.png",
   "grid": {
     "distance": 5,
     "units": "ft"
