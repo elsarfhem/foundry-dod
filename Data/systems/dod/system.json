@@ -1,0 +1,64 @@
+{
+  "id": "dod",
+  "title": "Deck of Destiny",
+  "description": "A system for managing your Deck of Destiny game.",
+  "version": "#{VERSION}#",
+  "license": "LICENSE.txt",
+  "compatibility": {
+    "minimum": 12,
+    "verified": 12
+  },
+  "authors": [{
+    "name": "Andrea Matarazzo",
+    "email": "a.matarazzo@gmail.com",
+    "discord": "elsarfhem"
+  }],
+  "esmodules": ["module/simple.js"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }],
+  "packs": [
+    {
+      "name": "dod",
+      "label": "dod-cards",
+      "path": "packs/dod",
+      "type": "Cards",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "dod-macros",
+      "label": "dod-macros",
+      "path": "packs/dod-macros",
+      "type": "Macro",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    }
+  ],
+  "relationships": {
+    "requires": [
+      {
+        "id": "requestor",
+        "type": "module",
+        "manifest": "https://github.com/krbz999/requestor/releases/download/v12.0.0/module.json",
+        "compatibility": {}
+      }
+    ]
+  },
+  "grid": {
+    "distance": 5,
+    "units": "ft"
+  },
+  "primaryTokenAttribute": "health",
+  "secondaryTokenAttribute": "power",
+  "url": "#{URL}#",
+  "manifest": "#{MANIFEST}#",
+  "download": "#{DOWNLOAD}#"
+}
