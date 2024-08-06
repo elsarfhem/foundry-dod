@@ -4,230 +4,26 @@
   "description": "",
   "img": "icons/svg/card-hand.svg",
   "system": {},
-  "cards": [
-    {
-      "name": "Fortuna",
-      "type": "base",
-      "description": "",
-      "system": {},
-      "suit": "fortune",
-      "value": 1,
-      "back": {
-        "name": "",
-        "text": "",
-        "img": "systems/dod/assets/cards/back.png"
-      },
-      "faces": [
-        {
-          "name": "",
-          "img": "systems/dod/assets/cards/fortune.png",
-          "text": ""
-        }
-      ],
-      "face": 0,
-      "drawn": false,
-      "origin": "rgCOeE2FJoOswpqC",
-      "width": null,
-      "height": null,
-      "rotation": 0,
-      "sort": -100000,
-      "flags": {},
-      "_id": "8ATnwwLnPPEnb3ha",
-      "_stats": {
-        "compendiumSource": "Cards.rgCOeE2FJoOswpqC.Card.S8KFx4KQMIm9Fg7I",
-        "duplicateSource": null,
-        "coreVersion": "12.330",
-        "systemId": "dod",
-        "systemVersion": "0.1.0",
-        "createdTime": null,
-        "modifiedTime": null,
-        "lastModifiedBy": null
-      },
-      "_key": "!cards.cards!IE8F5APtlhuvtB7C.8ATnwwLnPPEnb3ha",
-      "cards": []
-    },
-    {
-      "name": "Fortuna",
-      "type": "base",
-      "description": "",
-      "system": {},
-      "suit": "fortune",
-      "value": 8,
-      "back": {
-        "name": "",
-        "text": "",
-        "img": "systems/dod/assets/cards/back.png"
-      },
-      "faces": [
-        {
-          "name": "",
-          "img": "systems/dod/assets/cards/fortune.png",
-          "text": ""
-        }
-      ],
-      "face": 0,
-      "drawn": false,
-      "origin": "rgCOeE2FJoOswpqC",
-      "width": null,
-      "height": null,
-      "rotation": 0,
-      "sort": 0,
-      "flags": {},
-      "_id": "usRqTbvGYh7tEU4x",
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.330",
-        "systemId": "dod",
-        "systemVersion": "0.1.0",
-        "createdTime": null,
-        "modifiedTime": null,
-        "lastModifiedBy": null
-      },
-      "_key": "!cards.cards!IE8F5APtlhuvtB7C.usRqTbvGYh7tEU4x",
-      "cards": []
-    },
-    {
-      "name": "Fortuna",
-      "type": "base",
-      "description": "",
-      "system": {},
-      "suit": "fortune",
-      "value": 16,
-      "back": {
-        "name": "",
-        "text": "",
-        "img": "systems/dod/assets/cards/back.png"
-      },
-      "faces": [
-        {
-          "name": "",
-          "img": "systems/dod/assets/cards/fortune.png",
-          "text": ""
-        }
-      ],
-      "face": 0,
-      "drawn": false,
-      "origin": "rgCOeE2FJoOswpqC",
-      "width": null,
-      "height": null,
-      "rotation": 0,
-      "sort": 0,
-      "flags": {},
-      "_id": "QvXYbHSNakWiYc4M",
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.330",
-        "systemId": "dod",
-        "systemVersion": "0.1.0",
-        "createdTime": null,
-        "modifiedTime": null,
-        "lastModifiedBy": null
-      },
-      "_key": "!cards.cards!IE8F5APtlhuvtB7C.QvXYbHSNakWiYc4M",
-      "cards": []
-    },
-    {
-      "name": "Fortuna",
-      "type": "base",
-      "description": "",
-      "system": {},
-      "suit": "fortune",
-      "value": 2,
-      "back": {
-        "name": "",
-        "text": "",
-        "img": "systems/dod/assets/cards/back.png"
-      },
-      "faces": [
-        {
-          "name": "",
-          "img": "systems/dod/assets/cards/fortune.png",
-          "text": ""
-        }
-      ],
-      "face": 0,
-      "drawn": false,
-      "origin": "rgCOeE2FJoOswpqC",
-      "width": null,
-      "height": null,
-      "rotation": 0,
-      "sort": 0,
-      "flags": {},
-      "_id": "irT8ooEUjFW9uRtk",
-      "_stats": {
-        "compendiumSource": "Cards.rgCOeE2FJoOswpqC.Card.QSCOq5BUi59tK7ZX",
-        "duplicateSource": null,
-        "coreVersion": "12.330",
-        "systemId": "dod",
-        "systemVersion": "0.1.0",
-        "createdTime": null,
-        "modifiedTime": null,
-        "lastModifiedBy": null
-      },
-      "_key": "!cards.cards!IE8F5APtlhuvtB7C.irT8ooEUjFW9uRtk",
-      "cards": []
-    },
-    {
-      "name": "Fortuna",
-      "type": "base",
-      "description": "",
-      "system": {},
-      "suit": "fortune",
-      "value": 3,
-      "back": {
-        "name": "",
-        "text": "",
-        "img": "systems/dod/assets/cards/back.png"
-      },
-      "faces": [
-        {
-          "name": "",
-          "img": "systems/dod/assets/cards/fortune.png",
-          "text": ""
-        }
-      ],
-      "face": 0,
-      "drawn": false,
-      "origin": "rgCOeE2FJoOswpqC",
-      "width": null,
-      "height": null,
-      "rotation": 0,
-      "sort": 0,
-      "flags": {},
-      "_id": "Xks6Sk9vNMfKbY3B",
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.330",
-        "systemId": "dod",
-        "systemVersion": "0.1.0",
-        "createdTime": null,
-        "modifiedTime": null,
-        "lastModifiedBy": null
-      },
-      "_key": "!cards.cards!IE8F5APtlhuvtB7C.Xks6Sk9vNMfKbY3B",
-      "cards": []
-    }
-  ],
+  "cards": [],
   "width": null,
   "height": null,
   "rotation": 0,
   "displayCount": false,
   "folder": null,
   "ownership": {
-    "default": 0
+    "default": 2,
+    "r8RTNiMjzdQbTh3C": 3
   },
   "flags": {},
   "_stats": {
+    "compendiumSource": null,
     "duplicateSource": null,
     "coreVersion": "12.330",
     "systemId": "dod",
     "systemVersion": "0.1.0",
     "createdTime": 1719949332310,
     "modifiedTime": 1719949333793,
-    "lastModifiedBy": "w1zzo"
+    "lastModifiedBy": "r8RTNiMjzdQbTh3C"
   },
   "_id": "IE8F5APtlhuvtB7C",
   "sort": 300000,
