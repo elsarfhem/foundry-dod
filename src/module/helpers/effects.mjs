@@ -2,27 +2,25 @@
  * Manage Active Effect instances through an Actor or Item Sheet via effect control buttons.
  * @param {MouseEvent} event      The left-click event on the effect control
  * @param {Actor|Item} owner      The owning document which manages this effect
+ * @return {Promise<ActiveEffect>} The created, updated, or deleted ActiveEffect
  */
 export function onManageActiveEffect(event, owner) {
   event.preventDefault();
   const a = event.currentTarget;
   const li = a.closest('li');
-  const effect = li.dataset.effectId
-    ? owner.effects.get(li.dataset.effectId)
-    : null;
+  const effect = li.dataset.effectId ? owner.effects.get(li.dataset.effectId) : null;
   switch (a.dataset.action) {
     case 'create':
       return owner.createEmbeddedDocuments('ActiveEffect', [
         {
           name: game.i18n.format('DOCUMENT.New', {
-            type: game.i18n.localize('DOCUMENT.ActiveEffect'),
+            type: game.i18n.localize('DOCUMENT.ActiveEffect')
           }),
           icon: 'icons/svg/aura.svg',
           origin: owner.uuid,
-          'duration.rounds':
-            li.dataset.effectType === 'temporary' ? 1 : undefined,
-          disabled: li.dataset.effectType === 'inactive',
-        },
+          'duration.rounds': li.dataset.effectType === 'temporary' ? 1 : undefined,
+          disabled: li.dataset.effectType === 'inactive'
+        }
       ]);
     case 'edit':
       return effect.sheet.render(true);
@@ -44,22 +42,22 @@ export function prepareActiveEffectCategories(effects) {
     temporary: {
       type: 'temporary',
       label: game.i18n.localize('DECK_OF_DESTINY.Effect.Temporary'),
-      effects: [],
+      effects: []
     },
     passive: {
       type: 'passive',
       label: game.i18n.localize('DECK_OF_DESTINY.Effect.Passive'),
-      effects: [],
+      effects: []
     },
     inactive: {
       type: 'inactive',
       label: game.i18n.localize('DECK_OF_DESTINY.Effect.Inactive'),
-      effects: [],
-    },
+      effects: []
+    }
   };
 
   // Iterate over active effects, classifying them into categories
-  for (let e of effects) {
+  for (const e of effects) {
     if (e.disabled) categories.inactive.effects.push(e);
     else if (e.isTemporary) categories.temporary.effects.push(e);
     else categories.passive.effects.push(e);

@@ -1,7 +1,14 @@
-import DeckOfDestinyDataModel from "./base-model.mjs";
+import DeckOfDestinyDataModel from './base-model.mjs';
 
+/**
+ * The DeckOfDestinyActorBase class is an abstract base class for all actor types.
+ * It extends the DeckOfDestinyDataModel class with actor-specific data and behaviors.
+ */
 export default class DeckOfDestinyActorBase extends DeckOfDestinyDataModel {
-
+  /**
+   * Define the schema for the DeckOfDestinyActorBase.
+   * @return {Object} The schema definition.
+   */
   static defineSchema() {
     const fields = foundry.data.fields;
     const requiredInteger = { required: true, nullable: false, integer: true };
@@ -19,5 +26,4 @@ export default class DeckOfDestinyActorBase extends DeckOfDestinyDataModel {
 
     return schema;
   }
-
 }

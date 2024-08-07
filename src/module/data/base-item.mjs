@@ -1,7 +1,13 @@
-import DeckOfDestinyDataModel from "./base-model.mjs";
+import DeckOfDestinyDataModel from './base-model.mjs';
 
+/**
+ * The DeckOfDestinyItemBase class is an abstract base class for all item types.
+ */
 export default class DeckOfDestinyItemBase extends DeckOfDestinyDataModel {
-
+  /**
+   * Define the schema for the DeckOfDestinyItemBase.
+   * @return {Object} The schema definition.
+   */
   static defineSchema() {
     const fields = foundry.data.fields;
     const schema = {};
@@ -10,5 +16,4 @@ export default class DeckOfDestinyItemBase extends DeckOfDestinyDataModel {
 
     return schema;
   }
-
 }

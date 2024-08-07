@@ -11,6 +11,6 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/dod/src/templates/actor/parts/actor-spells.hbs',
     'systems/dod/src/templates/actor/parts/actor-effects.hbs',
     // Item partials
-    'systems/dod/src/templates/item/parts/item-effects.hbs',
+    'systems/dod/src/templates/item/parts/item-effects.hbs'
   ]);
 };

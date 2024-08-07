@@ -47,7 +47,6 @@ If you want to change the source JSON files, modify them under `src/packs` and t
 npm run build:packs:db
 ```
 
-
 ### Database Files
 
 If you want to make changes to packs in Foundry, use the following command to update the source files:
@@ -55,3 +54,13 @@ If you want to make changes to packs in Foundry, use the following command to up
 ```bash
 npm run build:packs:src
 ```
+
+## Linting
+
+To enforce a common code style across the code base we are using both `eslint` and `prettier`.
+All warnings presented by the linters should be resolved before pushing changes.
+
+Available commands:
+
+- `npm run lint` - Run both `eslint` and `prettier` to check and display any issues found.
+- `npm run lint:fix` - Automatically fix any code style issues that can be fixed.

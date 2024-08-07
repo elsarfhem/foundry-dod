@@ -20,7 +20,7 @@ Hooks.once('init', function () {
   game.dod = {
     DeckOfDestinyActor,
     DeckOfDestinyItem,
-    rollItemMacro,
+    rollItemMacro
   };
 
   // Add custom constants for configuration.
@@ -32,7 +32,7 @@ Hooks.once('init', function () {
    */
   CONFIG.Combat.initiative = {
     formula: '1d20 + @abilities.dex.mod',
-    decimals: 2,
+    decimals: 2
   };
 
   // Define custom Document and DataModel classes
@@ -44,13 +44,13 @@ Hooks.once('init', function () {
   CONFIG.Actor.dataModels = {
     character: models.DeckOfDestinyCharacter,
     npc: models.DeckOfDestinyNPC
-  }
+  };
   CONFIG.Item.documentClass = DeckOfDestinyItem;
   CONFIG.Item.dataModels = {
     item: models.DeckOfDestinyItem,
     feature: models.DeckOfDestinyFeature,
     spell: models.DeckOfDestinySpell
-  }
+  };
 
   // Active Effects are never copied to the Actor,
   // but will still apply to the Actor from within the Item
@@ -61,12 +61,12 @@ Hooks.once('init', function () {
   Actors.unregisterSheet('core', ActorSheet);
   Actors.registerSheet('dod', DeckOfDestinyActorSheet, {
     makeDefault: true,
-    label: 'DECK_OF_DESTINY.SheetLabels.Actor',
+    label: 'DECK_OF_DESTINY.SheetLabels.Actor'
   });
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('dod', DeckOfDestinyItemSheet, {
     makeDefault: true,
-    label: 'DECK_OF_DESTINY.SheetLabels.Item',
+    label: 'DECK_OF_DESTINY.SheetLabels.Item'
   });
 
   // Preload Handlebars templates.
@@ -100,31 +100,27 @@ Hooks.once('ready', function () {
  * Get an existing item macro if one exists, otherwise create a new one.
  * @param {Object} data     The dropped data
  * @param {number} slot     The hotbar slot to use
- * @returns {Promise}
+ * @return {Promise}
  */
 async function createItemMacro(data, slot) {
   // First, determine if this is a valid owned item.
   if (data.type !== 'Item') return;
   if (!data.uuid.includes('Actor.') && !data.uuid.includes('Token.')) {
-    return ui.notifications.warn(
-      'You can only create macro buttons for owned Items'
-    );
+    return ui.notifications.warn('You can only create macro buttons for owned Items');
   }
   // If it is, retrieve it based on the uuid.
   const item = await Item.fromDropData(data);
 
   // Create the macro command using the uuid.
   const command = `game.dod.rollItemMacro("${data.uuid}");`;
-  let macro = game.macros.find(
-    (m) => m.name === item.name && m.command === command
-  );
+  let macro = game.macros.find((m) => m.name === item.name && m.command === command);
   if (!macro) {
     macro = await Macro.create({
       name: item.name,
       type: 'script',
       img: item.img,
       command: command,
-      flags: { 'dod.itemMacro': true },
+      flags: { 'dod.itemMacro': true }
     });
   }
   game.user.assignHotbarMacro(macro, slot);
@@ -140,7 +136,7 @@ function rollItemMacro(itemUuid) {
   // Reconstruct the drop data so that we can load the item.
   const dropData = {
     type: 'Item',
-    uuid: itemUuid,
+    uuid: itemUuid
   };
   // Load the item from the uuid.
   Item.fromDropData(dropData).then((item) => {

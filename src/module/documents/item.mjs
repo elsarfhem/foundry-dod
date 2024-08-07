@@ -36,7 +36,7 @@ export class DeckOfDestinyItem extends Item {
    * This additional method will instead use the spread operator to return a simplified
    * version of the data.
    *
-   * @returns {object} Plain object either via deepClone or the spread operator.
+   * @return {object} Plain object either via deepClone or the spread operator.
    */
   toPlainObject() {
     const result = { ...this };
@@ -69,7 +69,7 @@ export class DeckOfDestinyItem extends Item {
         speaker: speaker,
         rollMode: rollMode,
         flavor: label,
-        content: item.system.description ?? '',
+        content: item.system.description ?? ''
       });
     }
     // Otherwise, create a roll and send a chat message from it.
@@ -84,7 +84,7 @@ export class DeckOfDestinyItem extends Item {
       roll.toMessage({
         speaker: speaker,
         rollMode: rollMode,
-        flavor: label,
+        flavor: label
       });
       return roll;
     }

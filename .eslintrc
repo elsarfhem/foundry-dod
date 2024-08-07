@@ -1,0 +1,28 @@
+{
+    "root": true,
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "plugins": [
+        "prettier"
+    ],
+    "extends": [
+        "google",
+        "prettier"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 12,
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-invalid-this": 0,
+        "camelcase": 0,
+        "prettier/prettier": [
+            "error",
+            {
+                "endOfLine": "auto"
+            }
+        ]
+    }
+}

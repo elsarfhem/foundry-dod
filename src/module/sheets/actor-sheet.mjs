@@ -1,6 +1,6 @@
 import {
   onManageActiveEffect,
-  prepareActiveEffectCategories,
+  prepareActiveEffectCategories
 } from '../helpers/effects.mjs';
 
 /**
@@ -18,9 +18,9 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         {
           navSelector: '.sheet-tabs',
           contentSelector: '.sheet-body',
-          initial: 'features',
-        },
-      ],
+          initial: 'features'
+        }
+      ]
     });
   }
 
@@ -72,7 +72,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         // Data to fill in for inline rolls
         rollData: this.actor.getRollData(),
         // Relative UUID resolution
-        relativeTo: this.actor,
+        relativeTo: this.actor
       }
     );
 
@@ -115,11 +115,11 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       6: [],
       7: [],
       8: [],
-      9: [],
+      9: []
     };
 
     // Iterate through items, allocating to containers
-    for (let i of context.items) {
+    for (const i of context.items) {
       i.img = i.img || Item.DEFAULT_ICON;
       // Append to gear.
       if (i.type === 'item') {
@@ -186,7 +186,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
 
     // Drag events for macros.
     if (this.actor.isOwner) {
-      let handler = (ev) => this._onDragStart(ev);
+      const handler = (ev) => this._onDragStart(ev);
       html.find('li.item').each((i, li) => {
         if (li.classList.contains('inventory-header')) return;
         li.setAttribute('draggable', true);
@@ -213,7 +213,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     const itemData = {
       name: name,
       type: type,
-      system: data,
+      system: data
     };
     // Remove the type from the dataset since it's in the itemData.type prop.
     delete itemData.system['type'];
@@ -225,6 +225,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   /**
    * Handle clickable rolls.
    * @param {Event} event   The originating click event
+   * @return {Roll} The rolled result.
    * @private
    */
   _onRoll(event) {
@@ -243,12 +244,12 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
 
     // Handle rolls that supply the formula directly.
     if (dataset.roll) {
-      let label = dataset.label ? `[ability] ${dataset.label}` : '';
-      let roll = new Roll(dataset.roll, this.actor.getRollData());
+      const label = dataset.label ? `[ability] ${dataset.label}` : '';
+      const roll = new Roll(dataset.roll, this.actor.getRollData());
       roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         flavor: label,
-        rollMode: game.settings.get('core', 'rollMode'),
+        rollMode: game.settings.get('core', 'rollMode')
       });
       return roll;
     }

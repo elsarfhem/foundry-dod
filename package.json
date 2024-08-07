@@ -4,10 +4,17 @@
     "build:scss": "sass src/scss/dod.scss styles/dod.css --style=expanded --no-source-map",
     "build:packs:src": "fvtt package workon dod --type System $$ fvtt package unpack --inputDirectory packs --outputDirectory src/packs/cards -n cards && fvtt package unpack --inputDirectory packs --outputDirectory src/packs/macros -n macros",
     "build:packs:db": "fvtt package workon dod --type System && fvtt package pack --inputDirectory src/packs/cards --outputDirectory packs -n cards -t Cards && fvtt package pack --inputDirectory src/packs/macros --outputDirectory packs -n macros -t Macro",
+    "lint": "prettier --check src/scss; eslint --ext .mjs --ignore-path .gitignore ./src/module",
+    "lint:fix": "prettier --write src/scss; eslint --ext .mjs --ignore-path .gitignore ./src/module --fix",
     "watch": "sass src/scss/dod.scss styles/dod.css --style=expanded --source-map --watch"
   },
   "devDependencies": {
-    "sass": "^1.53.0",
-    "@foundryvtt/foundryvtt-cli": "^1.0.3"
+    "@foundryvtt/foundryvtt-cli": "^1.0.3",
+    "eslint": "^8.29.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.1",
+    "sass": "^1.53.0"
   }
 }

@@ -1,6 +1,6 @@
 import {
   onManageActiveEffect,
-  prepareActiveEffectCategories,
+  prepareActiveEffectCategories
 } from '../helpers/effects.mjs';
 
 /**
@@ -18,9 +18,9 @@ export class DeckOfDestinyItemSheet extends ItemSheet {
         {
           navSelector: '.sheet-tabs',
           contentSelector: '.sheet-body',
-          initial: 'description',
-        },
-      ],
+          initial: 'description'
+        }
+      ]
     });
   }
 
@@ -57,7 +57,7 @@ export class DeckOfDestinyItemSheet extends ItemSheet {
         // Data to fill in for inline rolls
         rollData: this.item.getRollData(),
         // Relative UUID resolution
-        relativeTo: this.item,
+        relativeTo: this.item
       }
     );
 
@@ -86,8 +86,6 @@ export class DeckOfDestinyItemSheet extends ItemSheet {
     // Roll handlers, click handlers, etc. would go here.
 
     // Active Effect management
-    html.on('click', '.effect-control', (ev) =>
-      onManageActiveEffect(ev, this.item)
-    );
+    html.on('click', '.effect-control', (ev) => onManageActiveEffect(ev, this.item));
   }
 }

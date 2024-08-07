@@ -10,7 +10,7 @@ DECK_OF_DESTINY.abilities = {
   con: 'DECK_OF_DESTINY.Ability.Con.long',
   int: 'DECK_OF_DESTINY.Ability.Int.long',
   wis: 'DECK_OF_DESTINY.Ability.Wis.long',
-  cha: 'DECK_OF_DESTINY.Ability.Cha.long',
+  cha: 'DECK_OF_DESTINY.Ability.Cha.long'
 };
 
 DECK_OF_DESTINY.abilityAbbreviations = {
@@ -19,5 +19,5 @@ DECK_OF_DESTINY.abilityAbbreviations = {
   con: 'DECK_OF_DESTINY.Ability.Con.abbr',
   int: 'DECK_OF_DESTINY.Ability.Int.abbr',
   wis: 'DECK_OF_DESTINY.Ability.Wis.abbr',
-  cha: 'DECK_OF_DESTINY.Ability.Cha.abbr',
+  cha: 'DECK_OF_DESTINY.Ability.Cha.abbr'
 };
