@@ -5,6 +5,7 @@
 - [Contributing to dod](#contributing-to-dod)
 - [Development Setup](#development-setup)
 - [Packs](#packs)
+- [Linting](#linting)
 
 ## Contributing to dod
 
