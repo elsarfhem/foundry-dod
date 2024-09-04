@@ -3,6 +3,25 @@
  * @extends {Actor}
  */
 export class DeckOfDestinyActor extends Actor {
+  /**
+   * Pre-process a creation operation for a single Document instance.
+   * This method is called before the creation of the document and allows for modifications to the pending Document instance.
+   *
+   * @param {Object} data - The initial data object provided to the document creation request.
+   * @param {Object} options - Additional options which modify the creation request.
+   * @param {Object} user - The User requesting the document creation.
+   * @return {Promise<boolean>} - Return false to exclude this Document from the creation operation.
+   * @override
+   */
+  async _preCreate(data, options, user) {
+    const result = await super._preCreate(data, options, user);
+    this.updateSource({
+      // Automatically set the actor link to the token for characters.
+      'prototypeToken.actorLink': this.type === 'character'
+    });
+    return result;
+  }
+
   /** @override */
   prepareData() {
     // Prepare data for the actor. Calling the super version of this executes
