@@ -31,7 +31,8 @@ Hooks.once('init', function () {
    * @type {String}
    */
   CONFIG.Combat.initiative = {
-    formula: '1d20 + @abilities.dex.mod',
+    // TODO: remember to update this formula to match the system
+    formula: '1d20 + @characteristics.inu.value',
     decimals: 2
   };
 

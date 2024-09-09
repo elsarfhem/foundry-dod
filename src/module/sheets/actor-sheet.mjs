@@ -180,12 +180,14 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       onManageActiveEffect(ev, document);
     });
 
-    // Rollable abilities.
+    // Rollable characteristics.
     html.on('click', '.rollable', this._onRoll.bind(this));
+
+    // Addable characteristics.
+    html.on('click', '.addable', this._onAdd.bind(this));
 
     // Add or subtract cards.
     html.on('contextmenu', '.manage-sheet-card', (event) => {
-      event.preventDefault();
       this._onSubtractSheetCard(event);
     });
     html.on('click', '.manage-sheet-card', this._onAddSheetCard.bind(this));
@@ -283,7 +285,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
 
     // Handle rolls that supply the formula directly.
     if (dataset.roll) {
-      const label = dataset.label ? `[ability] ${dataset.label}` : '';
+      const label = dataset.label ? `[characteristic] ${dataset.label}` : '';
       const roll = new Roll(dataset.roll, this.actor.getRollData());
       roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
@@ -299,6 +301,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
    * @param {Event} event - The originating left click event.
    */
   async _onAddSheetCard(event) {
+    event.preventDefault();
     const data = this.actor.toObject().system;
     const cardType = event.currentTarget.dataset.cardType;
     await this.actor.update({ [`system.cards.${cardType}`]: data.cards[cardType] + 1 });
@@ -309,6 +312,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
    * @param {Event} event - The originating right click event.
    */
   async _onSubtractSheetCard(event) {
+    event.preventDefault();
     const data = this.actor.toObject().system;
     const cardType = event.currentTarget.dataset.cardType;
     await this.actor.update({ [`system.cards.${cardType}`]: data.cards[cardType] - 1 });
@@ -319,6 +323,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
    * @param {Event} event - The originating click event.
    */
   async _onResetSheetCards(event) {
+    event.preventDefault();
     await this._resetActorSheetCards();
   }
 
@@ -327,6 +332,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
    * @param {Event} event - The originating click event.
    */
   async _onAddSheetCardsToPile(event) {
+    event.preventDefault();
     try {
       const data = this.actor.toObject().system.cards;
       if (this._isEmptyCardData(data)) {
@@ -366,6 +372,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
    * @param {Event} event - The originating click event.
    */
   async _onDrawCardsFromPile(event) {
+    event.preventDefault();
     try {
       const deck = game.cards.getName('DoD - lista carte');
       if (!deck) {
@@ -573,6 +580,20 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         destiny: 0,
         fortune: 0
       }
+    });
+  }
+
+  /**
+   * Handle adding Success Cards based on the selected characteristic.
+   * @param {Event} event - The originating left click event.
+   */
+  async _onAdd(event) {
+    event.preventDefault();
+    const data = this.actor.toObject().system;
+    await this.actor.update({
+      'system.cards.success':
+        data.cards['success'] +
+        data.characteristics[event.currentTarget.dataset.label].value
     });
   }
 }

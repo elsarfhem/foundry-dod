@@ -1,12 +1,11 @@
 {
   "DECK_OF_DESTINY": {
-    "Ability": {
-      "Str": { "long": "Strength", "abbr": "str" },
-      "Con": { "long": "Constitution", "abbr": "con" },
-      "Dex": { "long": "Dexterity", "abbr": "dex" },
-      "Int": { "long": "Intelligence", "abbr": "int" },
-      "Wis": { "long": "Wisdom", "abbr": "wis" },
-      "Cha": { "long": "Charisma", "abbr": "cha" }
+    "Characteristic": {
+      "Bdy": { "long": "Body", "abbr": "bdy" },
+      "Mnd": { "long": "Mind", "abbr": "mnd" },
+      "Inu": { "long": "Intuition", "abbr": "inu" },
+      "Spr": { "long": "Spirit", "abbr": "spr" },
+      "Emp": { "long": "Empathy", "abbr": "emp" }
     },
     "SheetLabels": {
       "Actor": "DeckOfDestiny Actor Sheet",

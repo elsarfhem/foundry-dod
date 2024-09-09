@@ -52,14 +52,13 @@
       .manage-sheet-card {
         cursor: pointer;
       }
-    
+
       .card-input {
         width: 25px;
         margin: 5px 0;
         border: 1px solid $c-faint;
         border-radius: 5px;
       }
-
     }
 
     .card-buttons {
@@ -80,7 +79,6 @@
       }
 
       .reset-sheet-cards {
-
         &:hover {
           background-color: $c-light-red;
           box-shadow: none;
@@ -93,7 +91,6 @@
       }
 
       .add-sheet-cards-to-pile {
-
         &:hover {
           background-color: $c-light-green;
           box-shadow: none;
@@ -106,7 +103,6 @@
       }
 
       .draw-cards-from-pile {
-
         &:hover {
           background-color: $c-light-blue;
           box-shadow: none;
@@ -117,9 +113,7 @@
           box-shadow: none;
         }
       }
-
     }
-
   }
 
   h3 {
