@@ -22,7 +22,7 @@ export default class DeckOfDestinyActorBase extends DeckOfDestinyDataModel {
       value: new fields.NumberField({ ...requiredInteger, initial: 5, min: 0 }),
       max: new fields.NumberField({ ...requiredInteger, initial: 5 })
     });
-    schema.biography = new fields.StringField({ required: true, blank: true }); // equivalent to passing ({initial: ""}) for StringFields
+    schema.biography = new fields.StringField({ required: true, blank: true });
 
     return schema;
   }

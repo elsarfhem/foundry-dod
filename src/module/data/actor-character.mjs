@@ -14,6 +14,17 @@ export default class DeckOfDestinyCharacter extends DeckOfDestinyActorBase {
     const requiredInteger = { required: true, nullable: false, integer: true };
     const schema = super.defineSchema();
 
+    schema.player = new fields.StringField({ required: false, blank: true });
+    schema.xp = new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 });
+
+    schema.cards = new fields.SchemaField({
+      success: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 }),
+      failure: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 }),
+      issue: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 }),
+      fortune: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 }),
+      destiny: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 })
+    });
+
     schema.attributes = new fields.SchemaField({
       level: new fields.SchemaField({
         value: new fields.NumberField({ ...requiredInteger, initial: 1 })

@@ -12,7 +12,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['dod', 'sheet', 'actor'],
-      width: 600,
+      width: 850,
       height: 600,
       tabs: [
         {
@@ -183,6 +183,46 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     // Rollable abilities.
     html.on('click', '.rollable', this._onRoll.bind(this));
 
+    // Add or subtract cards.
+    html.on('contextmenu', '.manage-sheet-card', (event) => {
+      event.preventDefault();
+      this._onSubtractSheetCard(event);
+    });
+    html.on('click', '.manage-sheet-card', this._onAddSheetCard.bind(this));
+
+    // Reset cards.
+    html.on('mouseenter', '.reset-sheet-cards', (event) => {
+      if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+        document.activeElement.blur(); // Remove focus from the active input element
+      }
+    });
+    html.on('click', '.reset-sheet-cards', async (event) => {
+      event.target.blur(); // Remove focus from the button.
+      this._onResetSheetCards(event);
+    });
+
+    // Add cards from sheet to pile.
+    html.on('mouseenter', '.add-sheet-cards-to-pile', (event) => {
+      if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+        document.activeElement.blur(); // Remove focus from the active input element
+      }
+    });
+    html.on('click', '.add-sheet-cards-to-pile', async (event) => {
+      event.target.blur(); // Remove focus from the button.
+      this._onAddSheetCardsToPile(event);
+    });
+
+    // Draw cards from the pile.
+    html.on('mouseenter', '.draw-from-pile', (event) => {
+      if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+        document.activeElement.blur(); // Remove focus from the active input element
+      }
+    });
+    html.on('click', '.draw-cards-from-pile', async (event) => {
+      event.target.blur(); // Remove focus from the button.
+      this._onDrawCardsFromPile(event);
+    });
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
@@ -252,5 +292,287 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       });
       return roll;
     }
+  }
+
+  /**
+   * Handle adding a card.
+   * @param {Event} event - The originating left click event.
+   */
+  async _onAddSheetCard(event) {
+    const data = this.actor.toObject().system;
+    const cardType = event.currentTarget.dataset.cardType;
+    await this.actor.update({ [`system.cards.${cardType}`]: data.cards[cardType] + 1 });
+  }
+
+  /**
+   * Handle subtracting a card.
+   * @param {Event} event - The originating right click event.
+   */
+  async _onSubtractSheetCard(event) {
+    const data = this.actor.toObject().system;
+    const cardType = event.currentTarget.dataset.cardType;
+    await this.actor.update({ [`system.cards.${cardType}`]: data.cards[cardType] - 1 });
+  }
+
+  /**
+   * Handle resetting the cards.
+   * @param {Event} event - The originating click event.
+   */
+  async _onResetSheetCards(event) {
+    await this._resetActorSheetCards();
+  }
+
+  /**
+   * Handle adding the cards to the deck.
+   * @param {Event} event - The originating click event.
+   */
+  async _onAddSheetCardsToPile(event) {
+    try {
+      const data = this.actor.toObject().system.cards;
+      if (this._isEmptyCardData(data)) {
+        return ui.notifications.warn('There are no cards to add to pile.');
+      }
+
+      const deck = game.cards.getName('DoD - lista carte');
+      if (!deck) {
+        return ui.notifications.error(
+          'The deck of cards is not available. Please make sure the deck is loaded.'
+        );
+      }
+
+      const pile = game.cards.getName('Mazzo');
+      if (!pile) {
+        return ui.notifications.error(
+          'The pile of cards is not available. Please make sure the pile is loaded.'
+        );
+      }
+
+      const cards = this._getSheetCardsToAdd(deck, data);
+      if (cards.length === 0) {
+        return ui.notifications.warn('No available cards to add to pile.');
+      }
+
+      await this._passSheetCardsToPile(deck, pile, cards);
+      this._notifyAddedCardsToChat(pile, data);
+      await this._resetActorSheetCards();
+    } catch (error) {
+      console.error('Error adding cards to pile:', error);
+      ui.notifications.error('An error occurred while adding cards to pile.');
+    }
+  }
+
+  /**
+   * Handle drawing cards from pile.
+   * @param {Event} event - The originating click event.
+   */
+  async _onDrawCardsFromPile(event) {
+    try {
+      const deck = game.cards.getName('DoD - lista carte');
+      if (!deck) {
+        return ui.notifications.error(
+          'The deck of cards is not available. Please make sure the deck is loaded.'
+        );
+      }
+      const pile = game.cards.getName('Mazzo');
+      if (!pile) {
+        return ui.notifications.error(
+          'The pile of cards is not available. Please make sure the pile is loaded.'
+        );
+      }
+      if (pile.cards.size === 0) {
+        return ui.notifications.warn(
+          'The pile of cards is empty. Please add cards to the pile.'
+        );
+      }
+      const hand = game.cards.getName('Mano');
+      if (!hand) {
+        return ui.notifications.error(
+          'The hand of cards is not available. Please make sure the hand is loaded.'
+        );
+      }
+      await this._drawCardsFromPileDialog(deck, pile, hand);
+    } catch (error) {
+      console.error('Error drawing cards from pile:', error);
+      ui.notifications.error('An error occurred while drawing cards from pile.');
+    }
+  }
+
+  /**
+   * Draw cards from pile Dialog.
+   * @param {Object} deck - The deck of cards.
+   * @param {Object} pile - The pile of cards.
+   * @param {Object} hand - The hand of cards.
+   */
+  async _drawCardsFromPileDialog(deck, pile, hand) {
+    const confirmed = await Dialog.prompt({
+      title: 'Draw Cards',
+      content: `
+        <form>
+          <div class="form-group">
+            <label>Test Players Number:</label>
+            <input id="num-players" name="num-players" value="1" autofocus onFocus="select()" tabindex="1" type="number" min="1"></input>
+          </div>
+        </form>
+      `,
+      label: 'Draw',
+      rejectClose: false
+    });
+
+    if (confirmed) {
+      const players = parseInt(document.querySelector('[name=num-players]').value) || 1;
+      await this._passWhiteCardsToPile(deck, pile);
+      await this._drawCardsFromPile(pile, hand, players);
+      this._notifyDrawnCardsToChat(hand);
+    }
+  }
+
+  /**
+   * Check if the card data is empty.
+   * @param {Object} data - The card data.
+   * @return {boolean} - True if the card data is empty, false otherwise.
+   */
+  _isEmptyCardData(data) {
+    return data.success + data.failure + data.issue + data.destiny + data.fortune === 0;
+  }
+
+  /**
+   * Get the cards to add to the pile.
+   * @param {Object} deck - The deck of cards.
+   * @param {Object} data - The card data.
+   * @return {Array} - The array of cards to add.
+   */
+  _getSheetCardsToAdd(deck, data) {
+    const cards = [];
+    for (const [cardType, num] of Object.entries(data)) {
+      cards.push(
+        ...deck.availableCards.filter((card) => card.suit === cardType).slice(0, num)
+      );
+    }
+    return cards;
+  }
+
+  /**
+   * Pass the cards to the pile.
+   * @param {Object} deck - The deck of cards.
+   * @param {Object} pile - The pile of cards.
+   * @param {Array} cards - The array of cards to pass.
+   */
+  async _passSheetCardsToPile(deck, pile, cards) {
+    await deck.pass(
+      pile,
+      cards.map((card) => card.id),
+      { chatNotification: false }
+    );
+  }
+
+  /**
+   * Pass white cards to the pile.
+   * @param {Object} deck - The deck of cards.
+   * @param {Object} pile - The pile of cards.
+   */
+  async _passWhiteCardsToPile(deck, pile) {
+    const whiteCardsNum = Math.max(0, 20 - pile.cards.size);
+    const whiteCards = deck.availableCards
+      .filter((card) => card.suit === 'white')
+      .slice(0, whiteCardsNum);
+    await deck.pass(
+      pile,
+      whiteCards.map((card) => card.id),
+      { chatNotification: false }
+    );
+  }
+
+  /**
+   * Draw cards from pile.
+   * @param {Object} pile - The pile of cards.
+   * @param {Object} hand - The hand of cards.
+   * @param {number} players - The number of players.
+   */
+  async _drawCardsFromPile(pile, hand, players) {
+    return await hand.draw(pile, pile.cards.size / (4 + players) + 1, {
+      how: CONST.CARD_DRAW_MODES.RANDOM,
+      chatNotification: false
+    });
+  }
+
+  /**
+   * Notify the added cards to chat.
+   * @param {Object} pile - The pile of cards.
+   * @param {Object} data - The card data.
+   */
+  _notifyAddedCardsToChat(pile, data) {
+    ChatMessage.create({
+      user: game.user._id,
+      content: `<p>I added to ${pile.link}: </p>
+      <ul>
+        <li>Success Cards: ${data.success}</li>
+        <li>Failure Cards: ${data.failure}</li>
+        <li>Issue Cards: ${data.issue}</li>
+        <li>Fortune Cards: ${data.fortune}</li>
+        <li>Destiny Cards: ${data.destiny}</li>
+      </ul>`
+    });
+  }
+
+  /**
+   * Notify the drawn cards to chat.
+   * @param {Object} hand - The hand of cards.
+   */
+  _notifyDrawnCardsToChat(hand) {
+    const suitToName = (suit) => {
+      switch (suit) {
+        case 'white':
+          return 'White Cards';
+        case 'success':
+          return 'Success Cards';
+        case 'issue':
+          return 'Issue Cards';
+        case 'destiny':
+          return 'Destiny Cards';
+        case 'failure':
+          return 'Failure Cards';
+        case 'fortune':
+          return 'Fortune Cards';
+      }
+    };
+    const cardsMap = new Map();
+    hand.cards.forEach((card) => {
+      let cardTypeNum = cardsMap.get(card.suit);
+      if (cardTypeNum > 0) {
+        cardsMap.set(card.suit, ++cardTypeNum);
+      } else {
+        cardsMap.set(card.suit, 1);
+      }
+    });
+    const cardsHtml = hand.cards
+      .map(
+        (card) =>
+          `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px;margin-right: 5px;margin-bottom: 5px;"/>`
+      )
+      .join('');
+    const summary = Array.from(cardsMap)
+      .map(([suit, num]) => `<li>${suitToName(suit)}: ${num}</li>`)
+      .join('');
+    ChatMessage.create({
+      user: game.user._id,
+      content: `<p>I drew ${hand.link}: </p>
+      <ul>${summary}</ul>
+      <div class="card-draw flexrow">${cardsHtml}</div>`
+    });
+  }
+
+  /**
+   * Reset the actor's cards.
+   */
+  async _resetActorSheetCards() {
+    await this.actor.update({
+      'system.cards': {
+        success: 0,
+        failure: 0,
+        issue: 0,
+        destiny: 0,
+        fortune: 0
+      }
+    });
   }
 }
