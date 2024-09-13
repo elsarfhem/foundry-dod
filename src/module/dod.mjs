@@ -50,6 +50,7 @@ Hooks.once('init', function () {
   CONFIG.Item.dataModels = {
     item: models.DeckOfDestinyItem,
     ability: models.DeckOfDestinyAbility,
+    condition: models.DeckOfDestinyCondition,
     spell: models.DeckOfDestinySpell
   };
 

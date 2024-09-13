@@ -18,7 +18,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         {
           navSelector: '.sheet-tabs',
           contentSelector: '.sheet-body',
-          initial: 'abilities'
+          initial: 'core'
         }
       ]
     });
@@ -105,6 +105,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     // Initialize containers.
     const gear = [];
     const abilities = [];
+    const conditions = [];
     const spells = {
       1: [],
       2: [],
@@ -128,6 +129,10 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       else if (i.type === 'ability') {
         abilities.push(i);
       }
+      // Append to conditions.
+      else if (i.type === 'condition') {
+        conditions.push(i);
+      }
       // Append to spells.
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
@@ -139,6 +144,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     // Assign and return
     context.gear = gear;
     context.abilities = abilities;
+    context.conditions = conditions;
     context.spells = spells;
   }
 
@@ -227,8 +233,8 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     });
 
     // Ability value setting.
-    html.on('click', '.ability-button', this._onIncreaseAbilityValue.bind(this));
-    html.on('contextmenu', '.ability-button', this._onDecreaseAbilityValue.bind(this));
+    html.on('click', '.item-core-button', this._onIncreaseItemValue.bind(this));
+    html.on('contextmenu', '.item-core-button', this._onDecreaseItemValue.bind(this));
 
     // Drag events for macros.
     if (this.actor.isOwner) {
@@ -613,23 +619,31 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     const element = event.currentTarget;
     const elementData = element.dataset;
     let value = 0;
+    let cardType = '';
     if (elementData.type === 'characteristic') {
       value = actor.characteristics[elementData.label].value;
+      cardType = 'success';
     } else if (elementData.type === 'ability') {
       const itemId = element.closest('.item').dataset.itemId;
       const item = this.actor.items.get(itemId);
       value = item.system.value;
+      cardType = 'success';
+    } else if (elementData.type === 'condition') {
+      const itemId = element.closest('.item').dataset.itemId;
+      const item = this.actor.items.get(itemId);
+      value = item.system.value;
+      cardType = 'failure';
     }
     await this.actor.update({
-      'system.cards.success': actor.cards['success'] + value
+      [`system.cards.${cardType}`]: actor.cards[cardType] + value
     });
   }
 
   /**
-   * Handle increasing the ability value.
+   * Handle increasing the ability/condition value.
    * @param {Event} event - The originating left click event.
    */
-  async _onIncreaseAbilityValue(event) {
+  async _onIncreaseItemValue(event) {
     event.preventDefault();
     const element = event.currentTarget;
     const itemId = element.closest('.item').dataset.itemId;
@@ -639,10 +653,10 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   }
 
   /**
-   * Handle decreasing the ability value.
+   * Handle decreasing the ability/condition value.
    * @param {Event} event - The originating right click event.
    */
-  async _onDecreaseAbilityValue(event) {
+  async _onDecreaseItemValue(event) {
     event.preventDefault();
     const element = event.currentTarget;
     const itemId = element.closest('.item').dataset.itemId;

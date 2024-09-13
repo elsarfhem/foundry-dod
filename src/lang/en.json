@@ -33,6 +33,7 @@
     "Item": {
       "item": "Item",
       "ability": "Ability",
+      "condition": "Condition",
       "spell": "Spell"
     }
   }

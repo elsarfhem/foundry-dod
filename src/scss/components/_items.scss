@@ -59,7 +59,7 @@
   // Control Buttons
   .item-controls {
     display: flex;
-    flex: 0 0 100px;
+    flex: 0 0 110px;
     justify-content: flex-end;
     align-items: center;
     a {
@@ -68,7 +68,7 @@
       margin: 0 6px;
     }
 
-    .ability-button {
+    .item-core-button {
       border-radius: 5px;
       width: 25px;
       border: none;
