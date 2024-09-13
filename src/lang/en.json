@@ -25,7 +25,6 @@
       "Inactive": "Inactive Effects"
     }
   },
-
   "TYPES": {
     "Actor": {
       "character": "Character",
@@ -33,7 +32,7 @@
     },
     "Item": {
       "item": "Item",
-      "feature": "Feature",
+      "ability": "Ability",
       "spell": "Spell"
     }
   }

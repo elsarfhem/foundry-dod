@@ -138,6 +138,18 @@
 .sheet-body .tab,
 .sheet-body .tab .editor {
   height: 100%;
+
+  .abilities {
+    h3 {
+      text-align: center;
+    }
+  }
+
+  .conditions {
+    h3 {
+      text-align: right;
+    }
+  }
 }
 
 .tox {

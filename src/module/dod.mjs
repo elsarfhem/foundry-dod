@@ -49,7 +49,7 @@ Hooks.once('init', function () {
   CONFIG.Item.documentClass = DeckOfDestinyItem;
   CONFIG.Item.dataModels = {
     item: models.DeckOfDestinyItem,
-    feature: models.DeckOfDestinyFeature,
+    ability: models.DeckOfDestinyAbility,
     spell: models.DeckOfDestinySpell
   };
 

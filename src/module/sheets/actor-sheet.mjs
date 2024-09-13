@@ -18,7 +18,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         {
           navSelector: '.sheet-tabs',
           contentSelector: '.sheet-body',
-          initial: 'features'
+          initial: 'abilities'
         }
       ]
     });
@@ -104,7 +104,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   _prepareItems(context) {
     // Initialize containers.
     const gear = [];
-    const features = [];
+    const abilities = [];
     const spells = {
       1: [],
       2: [],
@@ -124,9 +124,9 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       if (i.type === 'item') {
         gear.push(i);
       }
-      // Append to features.
-      else if (i.type === 'feature') {
-        features.push(i);
+      // Append to abilities.
+      else if (i.type === 'ability') {
+        abilities.push(i);
       }
       // Append to spells.
       else if (i.type === 'spell') {
@@ -138,7 +138,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
 
     // Assign and return
     context.gear = gear;
-    context.features = features;
+    context.abilities = abilities;
     context.spells = spells;
   }
 
@@ -180,6 +180,9 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       onManageActiveEffect(ev, document);
     });
 
+    // Add event listener to all input fields to handle keydown events
+    html.find('input').on('keydown', this._onInputKeydown.bind(this));
+
     // Rollable characteristics.
     html.on('click', '.rollable', this._onRoll.bind(this));
 
@@ -187,9 +190,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     html.on('click', '.addable', this._onAdd.bind(this));
 
     // Add or subtract cards.
-    html.on('contextmenu', '.manage-sheet-card', (event) => {
-      this._onSubtractSheetCard(event);
-    });
+    html.on('contextmenu', '.manage-sheet-card', this._onSubtractSheetCard.bind(this));
     html.on('click', '.manage-sheet-card', this._onAddSheetCard.bind(this));
 
     // Reset cards.
@@ -225,14 +226,33 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       this._onDrawCardsFromPile(event);
     });
 
+    // Ability value setting.
+    html.on('click', '.ability-button', this._onIncreaseAbilityValue.bind(this));
+    html.on('contextmenu', '.ability-button', this._onDecreaseAbilityValue.bind(this));
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       html.find('li.item').each((i, li) => {
-        if (li.classList.contains('inventory-header')) return;
+        if (
+          li.classList.contains('inventory-header') ||
+          li.classList.contains('items-header')
+        )
+          return;
         li.setAttribute('draggable', true);
         li.addEventListener('dragstart', handler, false);
       });
+    }
+  }
+
+  /**
+   * Stop enter key press from triggering buttons and trigger focusout event.
+   * @param {Event} event - The originating keydown event.
+   */
+  _onInputKeydown(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.currentTarget.blur(); // Trigger the blur event to simulate focusout
     }
   }
 
@@ -247,7 +267,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     // Get the type of item to create.
     const type = header.dataset.type;
     // Grab any data associated with this control.
-    const data = duplicate(header.dataset);
+    const data = foundry.utils.duplicate(header.dataset);
     // Initialize a default name.
     const name = `New ${type.capitalize()}`;
     // Prepare the item object.
@@ -589,11 +609,45 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
    */
   async _onAdd(event) {
     event.preventDefault();
-    const data = this.actor.toObject().system;
+    const actor = this.actor.toObject().system;
+    const element = event.currentTarget;
+    const elementData = element.dataset;
+    let value = 0;
+    if (elementData.type === 'characteristic') {
+      value = actor.characteristics[elementData.label].value;
+    } else if (elementData.type === 'ability') {
+      const itemId = element.closest('.item').dataset.itemId;
+      const item = this.actor.items.get(itemId);
+      value = item.system.value;
+    }
     await this.actor.update({
-      'system.cards.success':
-        data.cards['success'] +
-        data.characteristics[event.currentTarget.dataset.label].value
+      'system.cards.success': actor.cards['success'] + value
     });
+  }
+
+  /**
+   * Handle increasing the ability value.
+   * @param {Event} event - The originating left click event.
+   */
+  async _onIncreaseAbilityValue(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const itemId = element.closest('.item').dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    const value = item.system.value;
+    await item.update({ 'system.value': value + 1 });
+  }
+
+  /**
+   * Handle decreasing the ability value.
+   * @param {Event} event - The originating right click event.
+   */
+  async _onDecreaseAbilityValue(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const itemId = element.closest('.item').dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    const value = item.system.value;
+    await item.update({ 'system.value': value - 1 });
   }
 }
