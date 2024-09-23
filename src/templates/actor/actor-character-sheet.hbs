@@ -27,31 +27,19 @@
           <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number" />
         </div>
         <div class="resources grid grid-6col">
-          <div class="resource card flex-group-center">
-            <img class="card-img manage-sheet-card" src="systems/dod/assets/cards/success.png" alt="Success Card" data-card-type="success">
-            <label for="system.cards.success" class="resource-label">Success</label>
-            <input class="card-input" name="system.cards.success" type="number" value="{{system.cards.success}}" />
-          </div>
-          <div class="resource card flex-group-center">
-            <img class="card-img manage-sheet-card" src="systems/dod/assets/cards/failure.png" alt="Failure Card" data-card-type="failure">
-            <label for="system.cards.failure" class="resource-label">Failure</label>
-            <input class="card-input" name="system.cards.failure" type="number" value="{{system.cards.failure}}" />
-          </div>
-          <div class="resource card flex-group-center">
-            <img class="card-img manage-sheet-card" src="systems/dod/assets/cards/issue.png" alt="Issue Card" data-card-type="issue">
-            <label for="system.cards.issue" class="resource-label">Issue</label>
-            <input class="card-input" name="system.cards.issue" type="number" value="{{system.cards.issue}}" />
-          </div>
-          <div class="resource card flex-group-center">
-            <img class="card-img manage-sheet-card" src="systems/dod/assets/cards/fortune.png" alt="Fortune Card" data-card-type="fortune">
-            <label for="system.cards.fortune" class="resource-label">Fortune</label>
-            <input class="card-input" name="system.cards.fortune" type="number" value="{{system.cards.fortune}}" />
-          </div>
-          <div class="resource card flex-group-center">
-            <img class="card-img manage-sheet-card" src="systems/dod/assets/cards/destiny.png" alt="Destiny Card" data-card-type="destiny">
-            <label for="system.cards.destiny" class="resource-label">Destiny</label>
-            <input class="card-input" name="system.cards.destiny" type="number" value="{{system.cards.destiny}}" />
-          </div>
+          {{#each system.cards as |card key|}}
+            <div class="resource card flex-group-center">
+              <img class="card-img manage-sheet-card" src="systems/dod/assets/cards/{{key}}.png" alt="{{key}} card"
+                data-card-type="{{key}}">
+              <label for="system.cards.{{key}}.value" class="resource-label">{{localize (lookup @root.config.cards key)}}</label>
+              <div class="card-input-container">
+                <input class="card-input" name="system.cards.{{key}}.value" type="number" value="{{card.value}}" />
+                {{#if (gt card.modifier 0)}}
+                <span class="modifier">+{{card.modifier}}</span>
+                {{/if}}
+              </div>
+            </div>
+          {{/each}}
           <div class="resource card-buttons flex-group-center">
             <button class="card-button draw-cards-from-pile">Draw</button>
             <button class="card-button add-sheet-cards-to-pile">Add to Deck</button>

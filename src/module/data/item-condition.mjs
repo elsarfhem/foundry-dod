@@ -14,10 +14,30 @@ export default class DeckOfDestinyCondition extends DeckOfDestinyItemBase {
     const requiredInteger = { required: true, nullable: false, integer: true };
     const schema = super.defineSchema();
 
+    schema.name = new fields.StringField({
+      required: true,
+      blank: true
+    });
+
     schema.value = new fields.NumberField({
       ...requiredInteger,
       initial: 0,
       min: 0
+    });
+
+    schema.deadly = new fields.BooleanField({
+      required: true,
+      initial: false
+    });
+
+    schema.enabled = new fields.BooleanField({
+      required: true,
+      initial: false
+    });
+
+    schema.label = new fields.StringField({
+      required: true,
+      blank: true
     });
 
     return schema;

@@ -53,11 +53,20 @@
         cursor: pointer;
       }
 
-      .card-input {
-        width: 25px;
-        margin: 5px 0;
-        border: 1px solid $c-faint;
-        border-radius: 5px;
+      .card-input-container {
+        display: flex;
+        align-items: center;
+
+        .card-input {
+          width: 25px;
+          margin: 5px 0;
+          border: 1px solid $c-faint;
+          border-radius: 5px;
+        }
+
+        .modifier {
+          margin-left: 5px;
+        }
       }
     }
 

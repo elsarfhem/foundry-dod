@@ -108,7 +108,45 @@
           align-items: center;
         }
       }
+      .item-label {
+        flex: 0 0 15px;
+        align-self: flex-start;
+      }
+      .item-condition-input {
+        width: 100%;
+      }
+      .item-sub-label {
+        font-size: xx-small;
+        margin-top: 3px;
+        width: 100%;
+      }
     }
+    .item-condition-control {
+      display: flex;
+      flex: 0 0 50px;
+      justify-content: flex-end;
+      align-items: flex-start;
+      align-self: flex-start;
+    }
+  }
+
+  // Item Condition disabling logic
+  .item.condition.disabled {
+    opacity: 0.5; // to make it appear faded
+    pointer-events: none; // to prevent interactions
+  }
+  .item.condition.disabled .item-condition-input {
+    pointer-events: auto; // to allow interactions with the input
+    background-color: #f0f0f0; // to make it appear disabled
+  }
+  .item-condition-deadly {
+    opacity: 1;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 1px;
+  }
+  .item-condition-deadly.faded {
+    opacity: 0.5;
   }
 
   .item-prop {

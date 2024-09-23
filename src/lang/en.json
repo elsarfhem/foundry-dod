@@ -7,6 +7,13 @@
       "Spr": { "long": "Spirit", "abbr": "spr" },
       "Emp": { "long": "Empathy", "abbr": "emp" }
     },
+    "Cards": {
+      "Success": "Success",
+      "Failure": "Failure",
+      "Issue": "Issue",
+      "Fortune": "Fortune",
+      "Destiny": "Destiny"
+    },
     "SheetLabels": {
       "Actor": "DeckOfDestiny Actor Sheet",
       "Item": "DeckOfDestiny Item Sheet"

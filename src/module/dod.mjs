@@ -84,6 +84,16 @@ Handlebars.registerHelper('toLowerCase', function (str) {
   return str.toLowerCase();
 });
 
+// Add 2 values
+Handlebars.registerHelper('add', function (value1, value2) {
+  return value1 + value2;
+});
+
+// Check if a value is greater than another
+Handlebars.registerHelper('gt', function (a, b) {
+  return a > b;
+});
+
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */

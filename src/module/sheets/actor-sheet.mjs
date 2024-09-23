@@ -94,6 +94,35 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   _prepareCharacterData(context) {
     // This is where you can enrich character-specific editor fields
     // or setup anything else that's specific to this type
+
+    // Add default conditions if they don't exist
+    if (context.conditions.length === 0) {
+      // There are 3 fixed conditions that are modified by the player
+      const conditions = [
+        {
+          name: '1',
+          type: 'condition',
+          'system.value': 2,
+          'system.label': '+2 FAILURES'
+        },
+        {
+          name: '2',
+          type: 'condition',
+          'system.value': 2,
+          'system.label': '+2 FAILURES'
+        },
+        {
+          name: '3',
+          type: 'condition',
+          'system.value': 0,
+          'system.label': 'DEAD/UNCONSCIOUS'
+        }
+      ];
+      for (const condition of conditions) {
+        Item.create(condition, { parent: this.actor });
+        context.conditions.push(condition);
+      }
+    }
   }
 
   /**
@@ -236,13 +265,24 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     html.on('click', '.item-core-button', this._onIncreaseItemValue.bind(this));
     html.on('contextmenu', '.item-core-button', this._onDecreaseItemValue.bind(this));
 
+    // Condition name setting.
+    html.on(
+      'focusout',
+      '.item-condition-input',
+      this._onConditionNameChange.bind(this)
+    );
+
+    // Condition deadly setting.
+    html.on('click', '.item-condition-deadly', this._onConditionDeadly.bind(this));
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       html.find('li.item').each((i, li) => {
         if (
           li.classList.contains('inventory-header') ||
-          li.classList.contains('items-header')
+          li.classList.contains('items-header') ||
+          li.classList.contains('condition')
         )
           return;
         li.setAttribute('draggable', true);
@@ -330,7 +370,9 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     event.preventDefault();
     const data = this.actor.toObject().system;
     const cardType = event.currentTarget.dataset.cardType;
-    await this.actor.update({ [`system.cards.${cardType}`]: data.cards[cardType] + 1 });
+    await this.actor.update({
+      [`system.cards.${cardType}.value`]: data.cards[cardType].value + 1
+    });
   }
 
   /**
@@ -341,7 +383,9 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     event.preventDefault();
     const data = this.actor.toObject().system;
     const cardType = event.currentTarget.dataset.cardType;
-    await this.actor.update({ [`system.cards.${cardType}`]: data.cards[cardType] - 1 });
+    await this.actor.update({
+      [`system.cards.${cardType}.value`]: data.cards[cardType].value - 1
+    });
   }
 
   /**
@@ -465,7 +509,11 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
    * @return {boolean} - True if the card data is empty, false otherwise.
    */
   _isEmptyCardData(data) {
-    return data.success + data.failure + data.issue + data.destiny + data.fortune === 0;
+    return (
+      Object.values(data).reduce((sum, card) => {
+        return sum + card.value + card.modifier;
+      }, 0) === 0
+    );
   }
 
   /**
@@ -476,9 +524,11 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
    */
   _getSheetCardsToAdd(deck, data) {
     const cards = [];
-    for (const [cardType, num] of Object.entries(data)) {
+    for (const [cardType, cardObj] of Object.entries(data)) {
       cards.push(
-        ...deck.availableCards.filter((card) => card.suit === cardType).slice(0, num)
+        ...deck.availableCards
+          .filter((card) => card.suit === cardType)
+          .slice(0, cardObj.value + cardObj.modifier)
       );
     }
     return cards;
@@ -538,11 +588,11 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       user: game.user._id,
       content: `<p>I added to ${pile.link}: </p>
       <ul>
-        <li>Success Cards: ${data.success}</li>
-        <li>Failure Cards: ${data.failure}</li>
-        <li>Issue Cards: ${data.issue}</li>
-        <li>Fortune Cards: ${data.fortune}</li>
-        <li>Destiny Cards: ${data.destiny}</li>
+        <li>Success Cards: ${data.success.value + data.success.modifier}</li>
+        <li>Failure Cards: ${data.failure.value + data.failure.modifier}</li>
+        <li>Issue Cards: ${data.issue.value + data.issue.modifier}</li>
+        <li>Fortune Cards: ${data.fortune.value + data.fortune.modifier}</li>
+        <li>Destiny Cards: ${data.destiny.value + data.destiny.modifier}</li>
       </ul>`
     });
   }
@@ -600,11 +650,11 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   async _resetActorSheetCards() {
     await this.actor.update({
       'system.cards': {
-        success: 0,
-        failure: 0,
-        issue: 0,
-        destiny: 0,
-        fortune: 0
+        'success.value': 0,
+        'failure.value': 0,
+        'issue.value': 0,
+        'destiny.value': 0,
+        'fortune.value': 0
       }
     });
   }
@@ -635,7 +685,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       cardType = 'failure';
     }
     await this.actor.update({
-      [`system.cards.${cardType}`]: actor.cards[cardType] + value
+      [`system.cards.${cardType}.value`]: actor.cards[cardType].value + value
     });
   }
 
@@ -663,5 +713,52 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     const item = this.actor.items.get(itemId);
     const value = item.system.value;
     await item.update({ 'system.value': value - 1 });
+  }
+
+  /**
+   * Handle changing the condition name.
+   * @param {Event} event - The originating focusout event.
+   */
+  async _onConditionNameChange(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const itemId = element.closest('.item').dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    const name = element.value;
+    if (name.trim() !== '') {
+      // check if name is empty
+      await item.update({ 'system.name': name, 'system.enabled': true });
+    } else {
+      await item.update({
+        'system.name': '',
+        'system.enabled': false,
+        'system.deadly': false
+      });
+    }
+    // update actor failure cards modifier
+    const items = this.actor.toObject().items;
+    const modifier = items.reduce((sum, item) => {
+      return item.type === 'condition' && item.system.enabled
+        ? sum + item.system.value
+        : sum;
+    }, 0);
+    // NOTE: for now, only conditions update the failure modifier
+    // in the future, other items might affect the modifier (?)
+    // remember to modify this part of the code accordingly
+    await this.actor.update({
+      'system.cards.failure.modifier': modifier
+    });
+  }
+
+  /**
+   * Handle changing the condition deadly.
+   * @param {Event} event - The originating click event.
+   */
+  async _onConditionDeadly(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const itemId = element.closest('.item').dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    await item.update({ 'system.deadly': !item.system.deadly });
   }
 }
