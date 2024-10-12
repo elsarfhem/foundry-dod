@@ -38,7 +38,12 @@ export default class DeckOfDestinyCharacter extends DeckOfDestinyActorBase {
       Object.keys(CONFIG.DECK_OF_DESTINY.characteristics).reduce(
         (obj, characteristic) => {
           obj[characteristic] = new fields.SchemaField({
-            value: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 })
+            value: new fields.NumberField({
+              ...requiredInteger,
+              initial: 0,
+              min: 0,
+              max: 5
+            })
           });
           return obj;
         },

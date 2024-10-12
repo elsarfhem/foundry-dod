@@ -749,7 +749,6 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         'system.selected': isSelected && trauma !== currentSelectedTrauma
       });
       if (isSelected && trauma !== currentSelectedTrauma) {
-        console.log('SELECTED TRAUMA', trauma);
         modifier = traumaModifier;
       }
     }
