@@ -1,0 +1,8 @@
+<div class="trauma-buttons">
+  {{#each traumas as |item id|}}
+    <div class="trauma-button trauma" data-item-id="{{item._id}}">
+      <input type="radio" id="trauma-{{id}}" name="trauma" class="trauma-input" data-modifier="{{item.system.value}}" {{#if item.system.selected}}checked{{/if}} />
+      <label for="trauma-{{id}}">{{item.system.label}}</label>
+    </div>
+  {{/each}}
+</div>

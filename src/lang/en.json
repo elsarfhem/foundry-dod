@@ -41,6 +41,7 @@
       "item": "Item",
       "ability": "Ability",
       "condition": "Condition",
+      "trauma": "Trauma",
       "spell": "Spell"
     }
   }

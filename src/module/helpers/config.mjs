@@ -27,3 +27,42 @@ DECK_OF_DESTINY.cards = {
   fortune: 'DECK_OF_DESTINY.Cards.Fortune',
   destiny: 'DECK_OF_DESTINY.Cards.Destiny'
 };
+
+DECK_OF_DESTINY.fixedItems = [
+  {
+    name: '1',
+    type: 'condition',
+    'system.value': 2,
+    'system.label': '+2 FAILURES'
+  },
+  {
+    name: '2',
+    type: 'condition',
+    'system.value': 2,
+    'system.label': '+2 FAILURES'
+  },
+  {
+    name: '3',
+    type: 'condition',
+    'system.value': 0,
+    'system.label': 'DEAD/UNCONSCIOUS'
+  },
+  {
+    name: 'a',
+    type: 'trauma',
+    'system.value': -2,
+    'system.label': '-2 Successes'
+  },
+  {
+    name: 'b',
+    type: 'trauma',
+    'system.value': -5,
+    'system.label': '-5 Successes'
+  },
+  {
+    name: 'c',
+    type: 'trauma',
+    'system.value': 0,
+    'system.label': 'Dying'
+  }
+];

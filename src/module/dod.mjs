@@ -51,6 +51,7 @@ Hooks.once('init', function () {
     item: models.DeckOfDestinyItem,
     ability: models.DeckOfDestinyAbility,
     condition: models.DeckOfDestinyCondition,
+    trauma: models.DeckOfDestinyTrauma,
     spell: models.DeckOfDestinySpell
   };
 
@@ -92,6 +93,11 @@ Handlebars.registerHelper('add', function (value1, value2) {
 // Check if a value is greater than another
 Handlebars.registerHelper('gt', function (a, b) {
   return a > b;
+});
+
+// Check if a value is different from another
+Handlebars.registerHelper('ne', function (a, b) {
+  return a !== b;
 });
 
 /* -------------------------------------------- */

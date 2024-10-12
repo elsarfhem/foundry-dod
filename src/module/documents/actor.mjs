@@ -22,6 +22,23 @@ export class DeckOfDestinyActor extends Actor {
     return result;
   }
 
+  /**
+   * Post-process a creation operation for a single Document instance.
+   * Post-operation events occur for all connected clients.
+   *
+   * @param {Object} data - The initial data object provided to the document creation request.
+   * @param {Object} options - Additional options which modify the creation request.
+   * @param {string} userId - The id of the User requesting the document update.
+   * @override
+   */
+  async _onCreate(data, options, userId) {
+    super._onCreate(data, options, userId);
+    // Add fixed items to the actor.
+    for (const item of CONFIG.DECK_OF_DESTINY.fixedItems) {
+      await Item.create(item, { parent: this });
+    }
+  }
+
   /** @override */
   prepareData() {
     // Prepare data for the actor. Calling the super version of this executes

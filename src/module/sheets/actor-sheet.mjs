@@ -49,16 +49,8 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     // Adding a pointer to CONFIG.DECK_OF_DESTINY
     context.config = CONFIG.DECK_OF_DESTINY;
 
-    // Prepare character data and items.
-    if (actorData.type == 'character') {
-      this._prepareItems(context);
-      this._prepareCharacterData(context);
-    }
-
-    // Prepare NPC data and items.
-    if (actorData.type == 'npc') {
-      this._prepareItems(context);
-    }
+    // Prepare items to display
+    this._prepareItems(context);
 
     // Enrich biography info for display
     // Enrichment turns text like `[[/r 1d20]]` into buttons
@@ -87,45 +79,6 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   }
 
   /**
-   * Character-specific context modifications
-   *
-   * @param {object} context The context object to mutate
-   */
-  _prepareCharacterData(context) {
-    // This is where you can enrich character-specific editor fields
-    // or setup anything else that's specific to this type
-
-    // Add default conditions if they don't exist
-    if (context.conditions.length === 0) {
-      // There are 3 fixed conditions that are modified by the player
-      const conditions = [
-        {
-          name: '1',
-          type: 'condition',
-          'system.value': 2,
-          'system.label': '+2 FAILURES'
-        },
-        {
-          name: '2',
-          type: 'condition',
-          'system.value': 2,
-          'system.label': '+2 FAILURES'
-        },
-        {
-          name: '3',
-          type: 'condition',
-          'system.value': 0,
-          'system.label': 'DEAD/UNCONSCIOUS'
-        }
-      ];
-      for (const condition of conditions) {
-        Item.create(condition, { parent: this.actor });
-        context.conditions.push(condition);
-      }
-    }
-  }
-
-  /**
    * Organize and classify Items for Actor sheets.
    *
    * @param {object} context The context object to mutate
@@ -135,6 +88,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     const gear = [];
     const abilities = [];
     const conditions = [];
+    const traumas = [];
     const spells = {
       1: [],
       2: [],
@@ -162,6 +116,10 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       else if (i.type === 'condition') {
         conditions.push(i);
       }
+      // Append to traumas.
+      else if (i.type === 'trauma') {
+        traumas.push(i);
+      }
       // Append to spells.
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
@@ -174,6 +132,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     context.gear = gear;
     context.abilities = abilities;
     context.conditions = conditions;
+    context.traumas = traumas;
     context.spells = spells;
   }
 
@@ -274,6 +233,9 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
 
     // Condition deadly setting.
     html.on('click', '.item-condition-deadly', this._onConditionDeadly.bind(this));
+
+    // Handle trauma selection
+    html.on('click', '.trauma-input', this._onTraumaChange.bind(this));
 
     // Drag events for macros.
     if (this.actor.isOwner) {
@@ -511,7 +473,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   _isEmptyCardData(data) {
     return (
       Object.values(data).reduce((sum, card) => {
-        return sum + card.value + card.modifier;
+        return sum + Math.max(0, card.value + card.modifier);
       }, 0) === 0
     );
   }
@@ -528,7 +490,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       cards.push(
         ...deck.availableCards
           .filter((card) => card.suit === cardType)
-          .slice(0, cardObj.value + cardObj.modifier)
+          .slice(0, Math.max(0, cardObj.value + cardObj.modifier))
       );
     }
     return cards;
@@ -588,11 +550,17 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       user: game.user._id,
       content: `<p>I added to ${pile.link}: </p>
       <ul>
-        <li>Success Cards: ${data.success.value + data.success.modifier}</li>
-        <li>Failure Cards: ${data.failure.value + data.failure.modifier}</li>
-        <li>Issue Cards: ${data.issue.value + data.issue.modifier}</li>
-        <li>Fortune Cards: ${data.fortune.value + data.fortune.modifier}</li>
-        <li>Destiny Cards: ${data.destiny.value + data.destiny.modifier}</li>
+        <li>Success Cards: ${Math.max(
+          0,
+          data.success.value + data.success.modifier
+        )}</li>
+        <li>Failure Cards: ${Math.max(
+          0,
+          data.failure.value + data.failure.modifier
+        )}</li>
+        <li>Issue Cards: ${Math.max(data.issue.value + data.issue.modifier)}</li>
+        <li>Fortune Cards: ${Math.max(data.fortune.value + data.fortune.modifier)}</li>
+        <li>Destiny Cards: ${Math.max(data.destiny.value + data.destiny.modifier)}</li>
       </ul>`
     });
   }
@@ -760,5 +728,34 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     const itemId = element.closest('.item').dataset.itemId;
     const item = this.actor.items.get(itemId);
     await item.update({ 'system.deadly': !item.system.deadly });
+  }
+
+  /**
+   * Handle changing the trauma.
+   * @param {Event} event - The originating click event.
+   */
+  async _onTraumaChange(event) {
+    event.preventDefault();
+    const traumaModifier = parseInt(event.currentTarget.dataset.modifier);
+    const traumaIndex = parseInt(event.currentTarget.id.split('-')[1]);
+    const traumas = this.actor.items.filter((item) => item.type === 'trauma');
+    const currentSelectedTrauma = traumas.find((trauma) => trauma.system.selected);
+    let modifier = 0;
+    // Toggle the selected trauma
+    for (const [index, trauma] of traumas.entries()) {
+      const isSelected = index === traumaIndex;
+      // Deselect if the same trauma is clicked again
+      await trauma.update({
+        'system.selected': isSelected && trauma !== currentSelectedTrauma
+      });
+      if (isSelected && trauma !== currentSelectedTrauma) {
+        console.log('SELECTED TRAUMA', trauma);
+        modifier = traumaModifier;
+      }
+    }
+    // Update the success modifier
+    await this.actor.update({
+      'system.cards.success.modifier': modifier
+    });
   }
 }

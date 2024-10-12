@@ -156,7 +156,75 @@
 
   .conditions {
     h3 {
+      text-align: center;
+    }
+  }
+
+  .traumas {
+    h3 {
       text-align: right;
+    }
+
+    .trauma-buttons {
+      display: flex;
+      flex-direction: column;
+
+      .trauma-button {
+        display: flex;
+        align-items: center;
+
+        input {
+          display: none;
+        }
+
+        label {
+          border: 1px solid #888;
+          //color: #666;
+          padding: 5px 10px;
+          cursor: pointer;
+          width: 100%;
+          text-align: right;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          border: 1px solid #ccc;
+          border-bottom-color: #aaa;
+          transition: background-color 0.3s, box-shadow 0.3s;
+          opacity: 0.4;
+        }
+
+        label:hover {
+          box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+          border: 1px solid #999;
+          border-bottom-color: #777;
+          opacity: 1;
+        }
+
+        label:active,
+        input:focus+label {
+          background: rgba(0, 0, 0, 0.05);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          border: 1px solid #666;
+          border-bottom-color: #444;
+          opacity: 1;
+        }
+
+        input:checked+label {
+          background: rgba(0, 0, 0, 0.05);
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+          border: 1px solid #333;
+          border-bottom-color: #111;
+          opacity: 1;
+        }
+
+        &:first-child label {
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
+        }
+
+        &:last-child label {
+          border-bottom-left-radius: 5px;
+          border-bottom-right-radius: 5px;
+        }
+      }
     }
   }
 }

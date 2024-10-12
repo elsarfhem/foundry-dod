@@ -34,8 +34,8 @@
               <label for="system.cards.{{key}}.value" class="resource-label">{{localize (lookup @root.config.cards key)}}</label>
               <div class="card-input-container">
                 <input class="card-input" name="system.cards.{{key}}.value" type="number" value="{{card.value}}" />
-                {{#if (gt card.modifier 0)}}
-                <span class="modifier">+{{card.modifier}}</span>
+                {{#if (ne card.modifier 0)}}
+                  <span class="modifier">{{#if (gt card.modifier 0)}}+{{/if}}{{card.modifier}}</span>
                 {{/if}}
               </div>
             </div>
@@ -93,8 +93,8 @@
 
     {{!-- Owned Abilities Tab --}}
     <div class="tab core" data-group="primary" data-tab="core">
-      <section class="grid grid-3col">
-        <aside class="sidebar">
+      <section class="grid grid-12col">
+        <aside class="sidebar grid-span-3">
 
           {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
           use both the "grid" and "grid-Ncol" class where "N" can be any number
@@ -111,14 +111,18 @@
         </aside>
 
         {{!-- For the main abilities list, span the right two columns --}}
-        <section class="abilities">
+        <section class="abilities grid-span-4">
           <h3>Abilities</h3>
           {{!-- This is a Handlebars partial. They're stored in the `/parts` folder next to this sheet, and defined in module/helpers/templates.mjs --}}
           {{> "systems/dod/src/templates/actor/parts/actor-abilities.hbs"}}
         </section>
-        <section class="conditions">
+        <section class="conditions grid-span-3">
           <h3>Conditions</h3>
           {{> "systems/dod/src/templates/actor/parts/actor-conditions.hbs"}}
+        </section>
+        <section class="traumas grid-span-2">
+          <h3>Traumas</h3>
+          {{> "systems/dod/src/templates/actor/parts/actor-traumas.hbs"}}
         </section>
 
       </section>
