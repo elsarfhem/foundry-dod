@@ -82,8 +82,8 @@
   <nav class="sheet-tabs tabs" data-group="primary">
     {{!-- Default tab is specified in actor-sheet.mjs --}}
     <a class="item" data-tab="core">Core</a>
-    <a class="item" data-tab="description">Description</a>
-    <a class="item" data-tab="items">Items</a>
+    <a class="item" data-tab="items">Inventory</a>
+    <a class="item" data-tab="description">Background</a>
     <a class="item" data-tab="spells">Spells</a>
     <a class="item" data-tab="effects">Effects</a>
   </nav>
@@ -128,15 +128,15 @@
       </section>
     </div>
 
-    {{!-- Biography Tab --}}
+    {{!-- Owned Items Tab --}}
+    <div class="tab items" data-group="primary" data-tab="items">
+      {{> "systems/dod/src/templates/actor/parts/actor-items.hbs"}}
+    </div>
+
+    {{!-- Background Tab --}}
     <div class="tab biography" data-group="primary" data-tab="description">
       {{!-- Editors must receive enriched text data from getData to properly handle rolls --}}
       {{editor enrichedBiography target="system.biography" engine="prosemirror" button=true editable=editable}}
-    </div>
-
-    {{!-- Owned Items Tab --}}
-    <div class="tab items" data-group="primary" data-tab="items">
-       {{> "systems/dod/src/templates/actor/parts/actor-items.hbs"}}
     </div>
 
     {{!-- Owned Spells Tab --}}
