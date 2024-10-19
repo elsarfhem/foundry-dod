@@ -100,6 +100,17 @@ Handlebars.registerHelper('ne', function (a, b) {
   return a !== b;
 });
 
+Handlebars.registerHelper('simplify', function (text, length) {
+  // Remove HTML tags
+  const strippedText = text.replace(/<\/?[^>]+(>|$)/g, '');
+  // Truncate text to the specified length
+  const truncatedText =
+    strippedText.length > length
+      ? strippedText.substring(0, length) + '...'
+      : strippedText;
+  return new Handlebars.SafeString(truncatedText);
+});
+
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */

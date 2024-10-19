@@ -56,6 +56,26 @@
     }
   }
 
+  .item-fixed-name {
+    flex: 0 0 150px;
+    margin: 0;
+    overflow: hidden;
+    text-align: left;
+    align-items: center;
+    display: flex;
+
+    .item-image {
+      flex: 0 0 30px;
+      background-size: 30px;
+      border: none;
+      margin-right: 5px;
+      a {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+
   // Control Buttons
   .item-controls {
     display: flex;
@@ -154,6 +174,23 @@
     border-left: 1px solid #c9c7b8;
     border-right: 1px solid #c9c7b8;
     font-size: 12px;
+  }
+
+  .item-description {
+    flex: 1;
+    border-left: 1px solid #c9c7b8;
+    border-right: 1px solid #c9c7b8;
+    text-align: left;
+    padding: 0 5px;
+    font-size: 10px;
+    text-align: left;
+    align-items: center;
+    display: flex;
+  }
+
+  .item-quantity {
+    flex: 0 0 50px;
+    text-align: center;
   }
 
   // Section Header
