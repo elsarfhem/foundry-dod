@@ -75,6 +75,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     // Initialize containers.
     const gear = [];
     const abilities = [];
+    const talents = [];
     const conditions = [];
     const traumas = [];
 
@@ -89,6 +90,10 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       else if (i.type === 'ability') {
         abilities.push(i);
       }
+      // Append to talents.
+      else if (i.type === 'talent') {
+        talents.push(i);
+      }
       // Append to conditions.
       else if (i.type === 'condition') {
         conditions.push(i);
@@ -102,6 +107,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     // Assign and return
     context.gear = gear;
     context.abilities = abilities;
+    context.talents = talents;
     context.conditions = conditions;
     context.traumas = traumas;
   }
@@ -180,7 +186,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       this._onDrawCardsFromPile(event);
     });
 
-    // Ability value setting.
+    // Ability/Talent value setting.
     html.on('click', '.item-core-button', this._onIncreaseItemValue.bind(this));
     html.on('contextmenu', '.item-core-button', this._onDecreaseItemValue.bind(this));
 
@@ -618,7 +624,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   }
 
   /**
-   * Handle increasing the ability/condition value.
+   * Handle increasing the ability/talent value.
    * @param {Event} event - The originating left click event.
    */
   async _onIncreaseItemValue(event) {
@@ -631,7 +637,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   }
 
   /**
-   * Handle decreasing the ability/condition value.
+   * Handle decreasing the ability/talent value.
    * @param {Event} event - The originating right click event.
    */
   async _onDecreaseItemValue(event) {

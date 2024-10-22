@@ -1,10 +1,10 @@
 import DeckOfDestinyItemBase from './base-item.mjs';
 
 /**
- * The DeckOfDestinyTrauma class extends the DeckOfDestinyItemBase class with
- * trauma-specific data and behaviors.
+ * The DeckOfDestinyTalent class extends the DeckOfDestinyItemBase class with
+ * talent-specific data and behaviors.
  */
-export default class DeckOfDestinyTrauma extends DeckOfDestinyItemBase {
+export default class DeckOfDestinyTalent extends DeckOfDestinyItemBase {
   /**
    * Define the schema for the DeckOfDestinyItem.
    * @return {Object} The schema definition.
@@ -14,20 +14,11 @@ export default class DeckOfDestinyTrauma extends DeckOfDestinyItemBase {
     const requiredInteger = { required: true, nullable: false, integer: true };
     const schema = super.defineSchema();
 
-    schema.label = new fields.StringField({
-      required: true,
-      blank: true
-    });
-
     schema.value = new fields.NumberField({
       ...requiredInteger,
       initial: 0,
-      min: -5
-    });
-
-    schema.selected = new fields.BooleanField({
-      required: true,
-      initial: false
+      min: 0,
+      max: 3
     });
 
     return schema;

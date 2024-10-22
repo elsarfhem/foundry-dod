@@ -1,0 +1,48 @@
+<ol class='items-list'>
+  <li class='item flexrow items-header'>
+    <div class='item-fixed-name'>{{localize 'Name'}}</div>
+    <div class='item-description'>{{localize 'Description'}}</div>
+    <div class='item-controls'>
+      <a
+        class='item-control item-create'
+        title='{{localize "DOCUMENT.Create" type='Talent'}}'
+        data-type='talent'
+      >
+        <i class='fas fa-plus'></i>
+        {{localize 'DOCUMENT.New' type='talent'}}
+      </a>
+    </div>
+  </li>
+  {{#each talents as |item id|}}
+    <li class='item flexrow' data-item-id='{{item._id}}'>
+      <div class='item-fixed-name'>
+        <div class='item-image'>
+            <img
+              src='{{item.img}}'
+              title='{{item.name}}'
+              width='24'
+              height='24'
+            />
+        </div>
+        <label for="item.name" class="flexlarge align-left" data-label="{{item.name}}"
+          data-type="talent">{{item.name}}</label>
+      </div>
+      <div class='item-description'>{{simplify item.system.description 100}}</div>
+      <div class='item-controls'>
+        <button class="item-core-button" data-dtype="Number">{{item.system.value}}</button>
+        <a
+          class='item-control item-edit'
+          title='{{localize "DOCUMENT.Edit" type='Talent'}}'
+        >
+          <i class='fas fa-edit'></i>
+        </a>
+        <a
+          class='item-control item-delete'
+          title='{{localize "DOCUMENT.Delete" type='Talent'}}'
+        >
+          <i class='fas fa-trash'></i>
+        </a>
+      </div>
+    </li>
+  {{/each}}
+</ol>

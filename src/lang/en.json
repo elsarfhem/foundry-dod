@@ -27,6 +27,7 @@
     "Item": {
       "item": "Item",
       "ability": "Ability",
+      "talent": "Talent",
       "condition": "Condition",
       "trauma": "Trauma"
     }

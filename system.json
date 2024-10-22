@@ -91,6 +91,7 @@
     "Item": {
       "item": {},
       "ability": {},
+      "talent": {},
       "condition": {},
       "trauma": {}
     }

@@ -82,6 +82,7 @@
   <nav class="sheet-tabs tabs" data-group="primary">
     {{!-- Default tab is specified in actor-sheet.mjs --}}
     <a class="item" data-tab="core">Core</a>
+    <a class="item" data-tab="talents">Talents</a>
     <a class="item" data-tab="items">Inventory</a>
     <a class="item" data-tab="description">Background</a>
   </nav>
@@ -124,6 +125,11 @@
         </section>
 
       </section>
+    </div>
+
+    {{!-- Owned Talents Tab --}}
+    <div class="tab items" data-group="primary" data-tab="talents">
+      {{> "systems/dod/src/templates/actor/parts/actor-talents.hbs"}}
     </div>
 
     {{!-- Owned Items Tab --}}

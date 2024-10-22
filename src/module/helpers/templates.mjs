@@ -7,6 +7,7 @@ export const preloadHandlebarsTemplates = async function () {
   return loadTemplates([
     // Actor partials.
     'systems/dod/src/templates/actor/parts/actor-abilities.hbs',
+    'systems/dod/src/templates/actor/parts/actor-talents.hbs',
     'systems/dod/src/templates/actor/parts/actor-conditions.hbs',
     'systems/dod/src/templates/actor/parts/actor-traumas.hbs',
     'systems/dod/src/templates/actor/parts/actor-items.hbs'

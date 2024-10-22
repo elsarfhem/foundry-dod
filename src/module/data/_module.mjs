@@ -7,5 +7,6 @@ export { default as DeckOfDestinyNPC } from './actor-npc.mjs';
 export { default as DeckOfDestinyItemBase } from './base-item.mjs';
 export { default as DeckOfDestinyItem } from './item-item.mjs';
 export { default as DeckOfDestinyAbility } from './item-ability.mjs';
+export { default as DeckOfDestinyTalent } from './item-talent.mjs';
 export { default as DeckOfDestinyCondition } from './item-condition.mjs';
 export { default as DeckOfDestinyTrauma } from './item-trauma.mjs';

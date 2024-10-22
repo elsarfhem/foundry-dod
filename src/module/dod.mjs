@@ -50,6 +50,7 @@ Hooks.once('init', function () {
   CONFIG.Item.dataModels = {
     item: models.DeckOfDestinyItem,
     ability: models.DeckOfDestinyAbility,
+    talent: models.DeckOfDestinyTalent,
     condition: models.DeckOfDestinyCondition,
     trauma: models.DeckOfDestinyTrauma
   };
@@ -95,6 +96,7 @@ Handlebars.registerHelper('ne', function (a, b) {
 });
 
 Handlebars.registerHelper('simplify', function (text, length) {
+  if (!text) return ''; // Handle undefined or null text
   // Remove HTML tags
   const strippedText = text.replace(/<\/?[^>]+(>|$)/g, '');
   // Truncate text to the specified length

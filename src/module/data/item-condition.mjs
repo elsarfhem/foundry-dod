@@ -1,8 +1,8 @@
 import DeckOfDestinyItemBase from './base-item.mjs';
 
 /**
- * The DeckOfDestinyAbility class extends the DeckOfDestinyItemBase class with
- * ability-specific data and behaviors.
+ * The DeckOfDestinyCondition class extends the DeckOfDestinyItemBase class with
+ * condition-specific data and behaviors.
  */
 export default class DeckOfDestinyCondition extends DeckOfDestinyItemBase {
   /**
