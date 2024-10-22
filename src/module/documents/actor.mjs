@@ -42,8 +42,8 @@ export class DeckOfDestinyActor extends Actor {
   /** @override */
   prepareData() {
     // Prepare data for the actor. Calling the super version of this executes
-    // the following, in order: data reset (to clear active effects),
-    // prepareBaseData(), prepareEmbeddedDocuments() (including active effects),
+    // the following, in order: data reset,
+    // prepareBaseData(), prepareEmbeddedDocuments(),
     // prepareDerivedData().
     super.prepareData();
   }
@@ -96,9 +96,6 @@ export class DeckOfDestinyActor extends Actor {
 
     // Add items.
     result.items = this.items?.size > 0 ? this.items.contents : [];
-
-    // Add effects.
-    result.effects = this.effects?.size > 0 ? this.effects.contents : [];
 
     return result;
   }

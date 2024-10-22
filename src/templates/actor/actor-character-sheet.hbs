@@ -84,7 +84,6 @@
     <a class="item" data-tab="core">Core</a>
     <a class="item" data-tab="items">Inventory</a>
     <a class="item" data-tab="description">Background</a>
-    <a class="item" data-tab="effects">Effects</a>
   </nav>
 
   {{!-- Sheet Body --}}
@@ -136,11 +135,6 @@
     <div class="tab biography" data-group="primary" data-tab="description">
       {{!-- Editors must receive enriched text data from getData to properly handle rolls --}}
       {{editor enrichedBiography target="system.biography" engine="prosemirror" button=true editable=editable}}
-    </div>
-
-    {{!-- Active Effects Tab --}}
-    <div class="tab effects flexcol" data-group="primary" data-tab="effects">
-      {{> "systems/dod/src/templates/actor/parts/actor-effects.hbs"}}
     </div>
 
   </section>

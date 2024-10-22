@@ -17,13 +17,6 @@
     "SheetLabels": {
       "Actor": "DeckOfDestiny Actor Sheet",
       "Item": "DeckOfDestiny Item Sheet"
-    },
-    "Effect": {
-      "Source": "Source",
-      "Toggle": "Toggle Effect",
-      "Temporary": "Temporary Effects",
-      "Passive": "Passive Effects",
-      "Inactive": "Inactive Effects"
     }
   },
   "TYPES": {

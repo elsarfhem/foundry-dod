@@ -44,9 +44,6 @@ export class DeckOfDestinyItem extends Item {
     // Simplify system data.
     result.system = this.system.toPlainObject();
 
-    // Add effects.
-    result.effects = this.effects?.size > 0 ? this.effects.contents : [];
-
     return result;
   }
 
