@@ -51,8 +51,7 @@ Hooks.once('init', function () {
     item: models.DeckOfDestinyItem,
     ability: models.DeckOfDestinyAbility,
     condition: models.DeckOfDestinyCondition,
-    trauma: models.DeckOfDestinyTrauma,
-    spell: models.DeckOfDestinySpell
+    trauma: models.DeckOfDestinyTrauma
   };
 
   // Active Effects are never copied to the Actor,

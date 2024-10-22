@@ -89,17 +89,6 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     const abilities = [];
     const conditions = [];
     const traumas = [];
-    const spells = {
-      1: [],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: [],
-      7: [],
-      8: [],
-      9: []
-    };
 
     // Iterate through items, allocating to containers
     for (const i of context.items) {
@@ -120,12 +109,6 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       else if (i.type === 'trauma') {
         traumas.push(i);
       }
-      // Append to spells.
-      else if (i.type === 'spell') {
-        if (i.system.spellLevel != undefined) {
-          spells[i.system.spellLevel].push(i);
-        }
-      }
     }
 
     // Assign and return
@@ -133,7 +116,6 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     context.abilities = abilities;
     context.conditions = conditions;
     context.traumas = traumas;
-    context.spells = spells;
   }
 
   /* -------------------------------------------- */

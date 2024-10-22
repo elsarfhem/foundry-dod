@@ -9,4 +9,3 @@ export { default as DeckOfDestinyItem } from './item-item.mjs';
 export { default as DeckOfDestinyAbility } from './item-ability.mjs';
 export { default as DeckOfDestinyCondition } from './item-condition.mjs';
 export { default as DeckOfDestinyTrauma } from './item-trauma.mjs';
-export { default as DeckOfDestinySpell } from './item-spell.mjs';
