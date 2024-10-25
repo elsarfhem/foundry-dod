@@ -30,7 +30,6 @@
   padding: 0;
   overflow-y: auto;
   scrollbar-width: thin;
-  color: $c-tan;
 
   // Child lists
   .item-list {
@@ -58,7 +57,7 @@
 
   .item-fixed-name {
     flex: 0 0 150px;
-    margin: 0;
+    margin: 0 5px;
     overflow: hidden;
     text-align: left;
     align-items: center;
@@ -89,8 +88,12 @@
     }
 
     .item-core-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       border-radius: 5px;
       width: 25px;
+      height: 25px;
       border: none;
       transition: background-color 0.3s ease;
     
@@ -186,6 +189,11 @@
     text-align: left;
     align-items: center;
     display: flex;
+    color: $c-tan;
+  }
+
+  .items-header .item-description {
+    color: $c-dark;
   }
 
   .item-quantity {
