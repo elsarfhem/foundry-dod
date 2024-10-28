@@ -67,8 +67,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        tag: ${{ env.TAG_NAME }}
-        doNotFailIfNotFound: true
+        tag: release-${{ env.TAG_NAME }}
+        doNotFailIfNotFound: false
     - name: Update Release with Files
       id: create_version_release
       uses: ncipollo/release-action@v1
