@@ -20,7 +20,7 @@ jobs:
     - name: Set up environment variables
       id: get_vars
       run: |
-        TAG=${GITHUB_REF/refs\/tags\//}
+        TAG=${GITHUB_REF/refs\/tags\/release-/}
         echo "TAG_NAME=$TAG" >> $GITHUB_ENV
         echo "ZIP_NAME=foundry-dod-$TAG.zip" >> $GITHUB_ENV
         echo "RELEASE_DOWNLOAD_URL=https://github.com/${{github.repository}}/releases/download/$TAG/foundry-dod-$TAG.zip" >> $GITHUB_ENV
@@ -59,7 +59,7 @@ jobs:
     - name: Build All
       run: |
         npm run build
-    - name: Zip Files  
+    - name: Zip Files
       run: zip ${{ env.ZIP_NAME }} -r assets lang macros module packs styles templates LICENSE README.md system.json
     - name: Fetch Release Body
       id: release
