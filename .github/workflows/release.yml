@@ -67,7 +67,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        tag: ${{ env.TAG_NAME }}
+        tag: release-${{ env.TAG_NAME }}
         doNotFailIfNotFound: true
     - name: Update Release with Files
       id: create_version_release
@@ -81,7 +81,7 @@ jobs:
         omitPrereleaseDuringUpdate: true
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: './system.json, ./${{ env.ZIP_NAME }}'
-        tag: ${{ env.TAG_NAME }}
+        tag: relese-${{ env.TAG_NAME }}
         body: |
           ${{ steps.release.outputs.body }}
           
