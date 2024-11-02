@@ -1,11 +1,33 @@
 {
   "DECK_OF_DESTINY": {
-    "Characteristic": {
+    "Characteristics": {
       "Bdy": { "long": "Body", "abbr": "bdy" },
       "Mnd": { "long": "Mind", "abbr": "mnd" },
       "Inu": { "long": "Intuition", "abbr": "inu" },
       "Spr": { "long": "Spirit", "abbr": "spr" },
       "Emp": { "long": "Empathy", "abbr": "emp" }
+    },
+    "Conditions": {
+      "1": {
+        "label": "+2 FAILURES"
+      },
+      "2": {
+        "label": "+2 FAILURES"
+      },
+      "3": {
+        "label": "DEAD/UNCONSCIOUS"
+      }
+    },
+    "Traumas": {
+      "1": {
+        "label": "-2 Successes"
+      },
+      "2": {
+        "label": "-5 Successes"
+      },
+      "3": {
+        "label": "Dying"
+      }
     },
     "Cards": {
       "Success": "Success",
@@ -30,6 +52,41 @@
       "talent": "Talent",
       "condition": "Condition",
       "trauma": "Trauma"
+    }
+  },
+  "SHEET": {
+    "Attributes": {
+      "name": "Name",
+      "player": "Player",
+      "xp": "XP",
+      "health": "Health"
+    },
+    "Sections": {
+      "core": "Core",
+      "characteristics": "Characteristics",
+      "skills": "Abilities",
+      "talents": "Talents",
+      "conditions": "Conditions",
+      "traumas": "Traumas",
+      "inventory": "Inventory",
+      "background": "Background"
+    },
+    "Actions": {
+      "draw": "Draw",
+      "addToDeck": "Add to Deck",
+      "reset": "Reset"
+    },
+    "Labels": {
+      "name": "Name",
+      "description": "Description",
+      "quantity": "Quantity",
+      "attributes": "Attributes",
+      "value": "Value",
+      "weight": "Weight",
+      "add": "Add {type}",
+      "edit": "Edit {type}",
+      "remove": "Remove {type}",
+      "deadly": "Deadly"
     }
   }
 }

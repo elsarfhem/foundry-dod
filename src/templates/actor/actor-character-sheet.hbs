@@ -5,17 +5,17 @@
     <div class="header-fields">
       <div class="resources grid grid-3col">
         <div class="resource flex-group-center">
-          <label for="name" class="resource-label">Name</label>
-          <h3 class="resource flex-group-center"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" />
+          <label for="name" class="resource-label">{{localize 'SHEET.Attributes.name'}}</label>
+          <h3 class="resource flex-group-center"><input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'SHEET.Attributes.name'}}" />
           </h3>
         </div>
         <div class="resource flex-group-center">
-          <label for="system.player" class="resource-label">Player</label>
+          <label for="system.player" class="resource-label">{{localize 'SHEET.Attributes.player'}}</label>
           <h3 class="resource flex-group-center"><input name="system.player" type="text" value="{{system.player}}"
-              placeholder="Player" /></h3>
+              placeholder="{{localize 'SHEET.Attributes.player'}}" /></h3>
         </div>
         <div class="resource flex-group-center">
-          <label for="system.xp" class="resource-label">XP</label>
+          <label for="system.xp" class="resource-label">{{localize 'SHEET.Attributes.xp'}}</label>
           <h3 class="resource flex-group-center"><input name="system.xp" type="text" value="{{system.xp}}" placeholder="0" />
           </h3>
         </div>
@@ -23,7 +23,7 @@
       <div class="header-cards">
         <div class="header-profile">
           <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
-          <label for="system.health.value" class="resource-label">Health</label>
+          <label for="system.health.value" class="resource-label">{{localize 'SHEET.Attributes.health'}}</label>
           <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number" />
         </div>
         <div class="resources grid grid-6col">
@@ -41,50 +41,22 @@
             </div>
           {{/each}}
           <div class="resource card-buttons flex-group-center">
-            <button class="card-button draw-cards-from-pile">Draw</button>
-            <button class="card-button add-sheet-cards-to-pile">Add to Deck</button>
-            <button class="card-button reset-sheet-cards">Reset</button>
+            <button class="card-button draw-cards-from-pile">{{localize 'SHEET.Actions.draw'}}</button>
+            <button class="card-button add-sheet-cards-to-pile">{{localize 'SHEET.Actions.addToDeck'}}</button>
+            <button class="card-button reset-sheet-cards">{{localize 'SHEET.Actions.reset'}}</button>
           </div>
         </div>
       </div>
-      <!--<div class="resources grid grid-3col">
-        <div class="resource flex-group-center">
-          <label for="system.health.value" class="resource-label">Health</label>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number" />
-            <span> / </span>
-            <input type="text" name="system.health.max" value="{{system.health.max}}" data-dtype="Number" />
-          </div>
-        </div>
-  
-        <div class="resource flex-group-center">
-          <label for="system.power.value" class="resource-label">Power</label>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="text" name="system.power.value" value="{{system.power.value}}" data-dtype="Number" />
-            <span> / </span>
-            <input type="text" name="system.power.max" value="{{system.power.max}}" data-dtype="Number" />
-          </div>
-        </div>
-  
-        <div class="resource flex-group-center">
-          <label for="system.attributes.level.value" class="resource-label">Level</label>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="text" name="system.attributes.level.value" value="{{system.attributes.level.value}}"
-              data-dtype="Number" />
-          </div>
-        </div>
-  
-      </div>-->
     </div>
   </header>
 
   {{!-- Sheet Tab Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
     {{!-- Default tab is specified in actor-sheet.mjs --}}
-    <a class="item" data-tab="core">Core</a>
-    <a class="item" data-tab="talents">Talents</a>
-    <a class="item" data-tab="items">Inventory</a>
-    <a class="item" data-tab="description">Background</a>
+    <a class="item" data-tab="core">{{localize 'SHEET.Sections.core'}}</a>
+    <a class="item" data-tab="talents">{{localize 'SHEET.Sections.talents'}}</a>
+    <a class="item" data-tab="items">{{localize 'SHEET.Sections.inventory'}}</a>
+    <a class="item" data-tab="description">{{localize 'SHEET.Sections.background'}}</a>
   </nav>
 
   {{!-- Sheet Body --}}
@@ -99,7 +71,7 @@
           use both the "grid" and "grid-Ncol" class where "N" can be any number
           from 1 to 12 and will create that number of columns.  --}}
           <div class="characteristics flexcol">
-            <h3>Characteristics</h3>
+            <h3>{{localize 'SHEET.Sections.characteristics'}}</h3>
             {{#each system.characteristics as |characteristic key|}}
             <div class="characteristic flexrow flex-group-center">
               <label for="system.characteristics.{{key}}.value" class="resource-label addable flexlarge align-left" data-label="{{key}}" data-type="characteristic">{{localize (lookup @root.config.characteristics key)}}</label>
@@ -111,16 +83,16 @@
 
         {{!-- For the main abilities list, span the right two columns --}}
         <section class="abilities grid-span-4">
-          <h3>Abilities</h3>
+          <h3>{{localize 'SHEET.Sections.skills'}}</h3>
           {{!-- This is a Handlebars partial. They're stored in the `/parts` folder next to this sheet, and defined in module/helpers/templates.mjs --}}
           {{> "systems/dod/src/templates/actor/parts/actor-abilities.hbs"}}
         </section>
         <section class="conditions grid-span-3">
-          <h3>Conditions</h3>
+          <h3>{{localize 'SHEET.Sections.conditions'}}</h3>
           {{> "systems/dod/src/templates/actor/parts/actor-conditions.hbs"}}
         </section>
         <section class="traumas grid-span-2">
-          <h3>Traumas</h3>
+          <h3>{{localize 'SHEET.Sections.traumas'}}</h3>
           {{> "systems/dod/src/templates/actor/parts/actor-traumas.hbs"}}
         </section>
 

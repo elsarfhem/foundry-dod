@@ -1,14 +1,14 @@
 <ol class='items-list'>
   <li class='item flexrow items-header'>
-    <div class='item-name'>{{localize 'Name'}}</div>
+    <div class='item-name'>{{localize 'SHEET.Labels.name'}}</div>
     <div class='item-controls'>
       <a
         class='item-control item-create'
-        title='Create item'
+        title='{{localize 'SHEET.Labels.add' type=(localize 'TYPES.Item.ability')}}'
         data-type='ability'
       >
         <i class='fas fa-plus'></i>
-        {{localize 'DOCUMENT.New' type='ability'}}
+        {{localize 'TYPES.Item.ability'}}
       </a>
     </div>
   </li>
@@ -31,13 +31,13 @@
         <button class="item-core-button" data-dtype="Number">{{item.system.value}}</button>
         <a
           class='item-control item-edit'
-          title='{{localize "DOCUMENT.Edit" type='ability'}}'
+          title='{{localize 'SHEET.Labels.edit' type=(localize 'TYPES.Item.ability')}}'
         >
           <i class='fas fa-edit'></i>
         </a>
         <a
           class='item-control item-delete'
-          title='{{localize "DOCUMENT.Delete" type='ability'}}'
+          title='{{localize 'SHEET.Labels.remove' type=(localize 'TYPES.Item.ability')}}'
         >
           <i class='fas fa-trash'></i>
         </a>

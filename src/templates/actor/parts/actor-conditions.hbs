@@ -5,14 +5,14 @@
         <label for="item.name" class="item-label align-left" data-label="{{item.name}}">{{item.name}}.</label>
         <div class="flexcol">
           <input type="text" class="item-condition-input align-left" value="{{item.system.name}}" data-id="{{item._id}}" data-type="condition" />
-          <div class="item-sub-label">{{item.system.label}}</div>
+          <div class="item-sub-label">{{localize item.system.label}}</div>
         </div>
       </div>
       <div class='item-condition-control'>
-        <i class="fas fa-skull-crossbones item-condition-deadly {{#unless item.system.deadly}}faded{{/unless}}" title="Deadly"></i>
+        <i class="fas fa-skull-crossbones item-condition-deadly {{#unless item.system.deadly}}faded{{/unless}}" title="{{localize 'SHEET.Labels.deadly'}}"></i>
         <a
           class='item-control item-edit'
-          title='{{localize "DOCUMENT.Edit" type='condition'}}'
+          title='{{localize 'SHEET.Labels.edit' type=(localize 'TYPES.Item.condition')}}'
         >
           <i class='fas fa-edit'></i>
         </a>
