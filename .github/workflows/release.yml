@@ -67,6 +67,17 @@ jobs:
 
       - name: Zip Files
         run: zip ${{ env.ZIP_NAME }} -r assets packs src/lang src/module src/templates styles LICENSE README.md system.json
+      
+      - name: Create Release if Not Exists
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          release_name: ${{ env.TAG_NAME }}
+          draft: false
+          prerelease: true
 
       - name: Fetch Release Body
         id: release
