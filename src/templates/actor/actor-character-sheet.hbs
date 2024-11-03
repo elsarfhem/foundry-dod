@@ -35,8 +35,17 @@
       <div class="header-cards">
         <div class="header-profile">
           <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
-          <label for="system.health.value" class="resource-label">{{localize 'SHEET.Attributes.health'}}</label>
-          <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number" />
+          <label for="system.health" class="resource-label">{{localize 'SHEET.Attributes.health.label'}}</label>
+          <div class="health-inputs flex-group-center">
+            <div class="health-input health-current">
+              <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number" />
+              <label for="system.health.value" class="resource-label">{{localize 'SHEET.Attributes.health.current'}}</label>
+            </div>
+            <div class="health-input health-max">
+              <input type="text" name="system.health.max" value="{{system.health.max}}" data-dtype="Number" />
+              <label for="system.health.max" class="resource-label">{{localize 'SHEET.Attributes.health.max'}}</label>
+            </div>
+          </div>
         </div>
         <div class="resources grid grid-6col">
           {{#each system.cards as |card key|}}

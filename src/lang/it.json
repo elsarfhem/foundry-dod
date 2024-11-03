@@ -64,7 +64,11 @@
         "total": "Totali",
         "remaining": "Rimanenti"
       },
-      "health": "Punti Ferita"
+      "health": {
+        "label": "Punti Ferita",
+        "max": "Max",
+        "current": "Attuali"
+      }
     },
     "Sections": {
       "core": "Principale",

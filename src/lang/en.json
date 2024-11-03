@@ -64,7 +64,11 @@
         "total": "Total",
         "remaining": "Remaining"
       },
-      "health": "Health"
+      "health": {
+        "label": "Health",
+        "max": "Max",
+        "current": "Current"
+      }
     },
     "Sections": {
       "core": "Core",
