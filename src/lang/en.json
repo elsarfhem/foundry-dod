@@ -58,7 +58,12 @@
     "Attributes": {
       "name": "Name",
       "player": "Player",
-      "xp": "XP",
+      "xp": {
+        "label": "XP",
+        "spent": "Spent",
+        "total": "Total",
+        "remaining": "Remaining"
+      },
       "health": "Health"
     },
     "Sections": {

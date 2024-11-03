@@ -58,7 +58,12 @@
     "Attributes": {
       "name": "Nome",
       "player": "Giocatore",
-      "xp": "XP",
+      "xp": {
+        "label": "Punti Esperienza",
+        "spent": "Spesi",
+        "total": "Totali",
+        "remaining": "Rimanenti"
+      },
       "health": "Punti Ferita"
     },
     "Sections": {

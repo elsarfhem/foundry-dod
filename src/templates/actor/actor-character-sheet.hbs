@@ -15,9 +15,21 @@
               placeholder="{{localize 'SHEET.Attributes.player'}}" /></h3>
         </div>
         <div class="resource flex-group-center">
-          <label for="system.xp" class="resource-label">{{localize 'SHEET.Attributes.xp'}}</label>
-          <h3 class="resource flex-group-center"><input name="system.xp" type="text" value="{{system.xp}}" placeholder="0" />
-          </h3>
+          <label for="system.xp" class="resource-label">{{localize 'SHEET.Attributes.xp.label'}}</label>
+          <div class="xp-inputs flex-group-center">
+            <div class="xp-input">
+              <input name="system.xp.total" type="text" value="{{system.xp.total}}" placeholder="0" />
+              <label for="system.xp.total">{{localize 'SHEET.Attributes.xp.total'}}</label>
+            </div>
+            <div class="xp-input">
+              <input name="system.xp.spent" type="text" value="{{system.xp.spent}}" placeholder="0" />
+              <label for="system.xp.spent">{{localize 'SHEET.Attributes.xp.spent'}}</label>
+            </div>
+            <div class="xp-input">
+              <input name="system.xp.remaining" type="text" value="{{system.xp.remaining}}" placeholder="0" disabled />
+              <label for="system.xp.remaining">{{localize 'SHEET.Attributes.xp.remaining'}}</label>
+            </div>
+          </div>
         </div>
       </div>
       <div class="header-cards">

@@ -137,6 +137,30 @@
       margin: 0;
     }
   }
+
+  .xp-inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .xp-input {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 25px;
+
+      label {
+        font-size: x-small;
+        margin-top: 3px;
+      }
+
+      input {
+        &:disabled {
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
 }
 
 .sheet-tabs {
@@ -199,7 +223,7 @@
         }
 
         label:active,
-        input:focus+label {
+        input:focus + label {
           background: rgba(0, 0, 0, 0.05);
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
           border: 1px solid #666;
@@ -207,7 +231,7 @@
           opacity: 1;
         }
 
-        input:checked+label {
+        input:checked + label {
           background: rgba(0, 0, 0, 0.05);
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
           border: 1px solid #333;

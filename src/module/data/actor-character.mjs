@@ -15,7 +15,15 @@ export default class DeckOfDestinyCharacter extends DeckOfDestinyActorBase {
     const schema = super.defineSchema();
 
     schema.player = new fields.StringField({ required: true, blank: true });
-    schema.xp = new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 });
+    schema.xp = new fields.SchemaField({
+      total: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 }),
+      spent: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 }),
+      remaining: new fields.NumberField({
+        ...requiredInteger,
+        initial: 0,
+        min: 0
+      })
+    });
 
     schema.cards = new fields.SchemaField(
       Object.keys(CONFIG.DECK_OF_DESTINY.cards).reduce((obj, card) => {
@@ -65,6 +73,7 @@ export default class DeckOfDestinyCharacter extends DeckOfDestinyActorBase {
       this.characteristics[key].label =
         game.i18n.localize(CONFIG.DECK_OF_DESTINY.characteristics[key]) ?? key;
     }
+    this.xp.remaining = this.xp.total - this.xp.spent;
   }
 
   /**
