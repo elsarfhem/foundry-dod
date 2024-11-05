@@ -34,8 +34,25 @@ export class DeckOfDestinyActor extends Actor {
   async _onCreate(data, options, userId) {
     super._onCreate(data, options, userId);
     // Add fixed items to the actor.
-    for (const item of CONFIG.DECK_OF_DESTINY.fixedItems) {
-      await Item.create(item, { parent: this });
+    for (const [key, condition] of Object.entries(CONFIG.DECK_OF_DESTINY.conditions)) {
+      await Item.create(
+        {
+          name: String(key),
+          type: 'condition',
+          'system.value': condition.value
+        },
+        { parent: this }
+      );
+    }
+    for (const [key, trauma] of Object.entries(CONFIG.DECK_OF_DESTINY.traumas)) {
+      await Item.create(
+        {
+          name: String(key),
+          type: 'trauma',
+          'system.value': trauma.value
+        },
+        { parent: this }
+      );
     }
   }
 
@@ -62,9 +79,24 @@ export class DeckOfDestinyActor extends Actor {
    * is queried and has a roll executed directly from it).
    */
   prepareDerivedData() {
-    const actorData = this;
-    // eslint-disable-next-line no-unused-vars
-    const flags = actorData.flags.dod || {};
+    for (const item of this.items) {
+      switch (item.type) {
+        case 'condition':
+          if (item.name in CONFIG.DECK_OF_DESTINY.conditions) {
+            item.system.label =
+              CONFIG.DECK_OF_DESTINY.conditions[parseInt(item.name)].label;
+          }
+          break;
+        case 'trauma':
+          if (item.name in CONFIG.DECK_OF_DESTINY.traumas) {
+            item.system.label =
+              CONFIG.DECK_OF_DESTINY.traumas[parseInt(item.name)].label;
+          }
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   /**

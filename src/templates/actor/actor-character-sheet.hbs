@@ -5,29 +5,29 @@
     <div class="header-fields">
       <div class="resources grid grid-3col">
         <div class="resource flex-group-center">
-          <label for="name" class="resource-label">{{localize 'SHEET.Attributes.name'}}</label>
-          <h3 class="resource flex-group-center"><input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'SHEET.Attributes.name'}}" />
+          <label for="name" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.name'}}</label>
+          <h3 class="resource flex-group-center"><input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'DECK_OF_DESTINY.attributes.name'}}" />
           </h3>
         </div>
         <div class="resource flex-group-center">
-          <label for="system.player" class="resource-label">{{localize 'SHEET.Attributes.player'}}</label>
+          <label for="system.player" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.player'}}</label>
           <h3 class="resource flex-group-center"><input name="system.player" type="text" value="{{system.player}}"
-              placeholder="{{localize 'SHEET.Attributes.player'}}" /></h3>
+              placeholder="{{localize 'DECK_OF_DESTINY.attributes.player'}}" /></h3>
         </div>
         <div class="resource flex-group-center">
-          <label for="system.xp" class="resource-label">{{localize 'SHEET.Attributes.xp.label'}}</label>
+          <label for="system.xp" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.xp.label'}}</label>
           <div class="xp-inputs flex-group-center">
             <div class="xp-input">
               <input name="system.xp.total" type="text" value="{{system.xp.total}}" placeholder="0" />
-              <label for="system.xp.total">{{localize 'SHEET.Attributes.xp.total'}}</label>
+              <label for="system.xp.total">{{localize 'DECK_OF_DESTINY.attributes.xp.total'}}</label>
             </div>
             <div class="xp-input">
               <input name="system.xp.spent" type="text" value="{{system.xp.spent}}" placeholder="0" />
-              <label for="system.xp.spent">{{localize 'SHEET.Attributes.xp.spent'}}</label>
+              <label for="system.xp.spent">{{localize 'DECK_OF_DESTINY.attributes.xp.spent'}}</label>
             </div>
             <div class="xp-input">
               <input name="system.xp.remaining" type="text" value="{{system.xp.remaining}}" placeholder="0" disabled />
-              <label for="system.xp.remaining">{{localize 'SHEET.Attributes.xp.remaining'}}</label>
+              <label for="system.xp.remaining">{{localize 'DECK_OF_DESTINY.attributes.xp.remaining'}}</label>
             </div>
           </div>
         </div>
@@ -35,15 +35,15 @@
       <div class="header-cards">
         <div class="header-profile">
           <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
-          <label for="system.health" class="resource-label">{{localize 'SHEET.Attributes.health.label'}}</label>
+          <label for="system.health" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.health.label'}}</label>
           <div class="health-inputs flex-group-center">
             <div class="health-input health-current">
               <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number" />
-              <label for="system.health.value" class="resource-label">{{localize 'SHEET.Attributes.health.current'}}</label>
+              <label for="system.health.value" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.health.current'}}</label>
             </div>
             <div class="health-input health-max">
               <input type="text" name="system.health.max" value="{{system.health.max}}" data-dtype="Number" />
-              <label for="system.health.max" class="resource-label">{{localize 'SHEET.Attributes.health.max'}}</label>
+              <label for="system.health.max" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.health.max'}}</label>
             </div>
           </div>
         </div>
@@ -62,9 +62,9 @@
             </div>
           {{/each}}
           <div class="resource card-buttons flex-group-center">
-            <button class="card-button draw-cards-from-pile">{{localize 'SHEET.Actions.draw'}}</button>
-            <button class="card-button add-sheet-cards-to-pile">{{localize 'SHEET.Actions.addToDeck'}}</button>
-            <button class="card-button reset-sheet-cards">{{localize 'SHEET.Actions.reset'}}</button>
+            <button class="card-button draw-cards-from-pile">{{localize 'DECK_OF_DESTINY.actions.draw'}}</button>
+            <button class="card-button add-sheet-cards-to-pile">{{localize 'DECK_OF_DESTINY.actions.add_to_deck'}}</button>
+            <button class="card-button reset-sheet-cards">{{localize 'DECK_OF_DESTINY.actions.reset'}}</button>
           </div>
         </div>
       </div>
@@ -74,10 +74,10 @@
   {{!-- Sheet Tab Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
     {{!-- Default tab is specified in actor-sheet.mjs --}}
-    <a class="item" data-tab="core">{{localize 'SHEET.Sections.core'}}</a>
-    <a class="item" data-tab="talents">{{localize 'SHEET.Sections.talents'}}</a>
-    <a class="item" data-tab="items">{{localize 'SHEET.Sections.inventory'}}</a>
-    <a class="item" data-tab="description">{{localize 'SHEET.Sections.background'}}</a>
+    <a class="item" data-tab="core">{{localize 'DECK_OF_DESTINY.sheet.sections.core'}}</a>
+    <a class="item" data-tab="talents">{{localize 'DECK_OF_DESTINY.sheet.sections.talents'}}</a>
+    <a class="item" data-tab="items">{{localize 'DECK_OF_DESTINY.sheet.sections.inventory'}}</a>
+    <a class="item" data-tab="description">{{localize 'DECK_OF_DESTINY.sheet.sections.background'}}</a>
   </nav>
 
   {{!-- Sheet Body --}}
@@ -92,7 +92,7 @@
           use both the "grid" and "grid-Ncol" class where "N" can be any number
           from 1 to 12 and will create that number of columns.  --}}
           <div class="characteristics flexcol">
-            <h3>{{localize 'SHEET.Sections.characteristics'}}</h3>
+            <h3>{{localize 'DECK_OF_DESTINY.sheet.sections.characteristics'}}</h3>
             {{#each system.characteristics as |characteristic key|}}
             <div class="characteristic flexrow flex-group-center">
               <label for="system.characteristics.{{key}}.value" class="resource-label addable flexlarge align-left" data-label="{{key}}" data-type="characteristic">{{localize (lookup @root.config.characteristics key)}}</label>
@@ -104,16 +104,16 @@
 
         {{!-- For the main abilities list, span the right two columns --}}
         <section class="abilities grid-span-4">
-          <h3>{{localize 'SHEET.Sections.skills'}}</h3>
+          <h3>{{localize 'DECK_OF_DESTINY.sheet.sections.skills'}}</h3>
           {{!-- This is a Handlebars partial. They're stored in the `/parts` folder next to this sheet, and defined in module/helpers/templates.mjs --}}
           {{> "systems/dod/src/templates/actor/parts/actor-abilities.hbs"}}
         </section>
         <section class="conditions grid-span-3">
-          <h3>{{localize 'SHEET.Sections.conditions'}}</h3>
+          <h3>{{localize 'DECK_OF_DESTINY.sheet.sections.conditions'}}</h3>
           {{> "systems/dod/src/templates/actor/parts/actor-conditions.hbs"}}
         </section>
         <section class="traumas grid-span-2">
-          <h3>{{localize 'SHEET.Sections.traumas'}}</h3>
+          <h3>{{localize 'DECK_OF_DESTINY.sheet.sections.traumas'}}</h3>
           {{> "systems/dod/src/templates/actor/parts/actor-traumas.hbs"}}
         </section>
 

@@ -59,12 +59,12 @@ Hooks.once('init', function () {
   Actors.unregisterSheet('core', ActorSheet);
   Actors.registerSheet('dod', DeckOfDestinyActorSheet, {
     makeDefault: true,
-    label: 'DECK_OF_DESTINY.SheetLabels.Actor'
+    label: 'DECK_OF_DESTINY.sheet.labels.actor'
   });
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('dod', DeckOfDestinyItemSheet, {
     makeDefault: true,
-    label: 'DECK_OF_DESTINY.SheetLabels.Item'
+    label: 'DECK_OF_DESTINY.sheet.labels.item'
   });
 
   // Preload Handlebars templates.

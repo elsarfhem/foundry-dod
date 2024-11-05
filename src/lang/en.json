@@ -1,13 +1,40 @@
 {
   "DECK_OF_DESTINY": {
-    "Characteristics": {
-      "Bdy": { "long": "Body", "abbr": "bdy" },
-      "Mnd": { "long": "Mind", "abbr": "mnd" },
-      "Inu": { "long": "Intuition", "abbr": "inu" },
-      "Spr": { "long": "Spirit", "abbr": "spr" },
-      "Emp": { "long": "Empathy", "abbr": "emp" }
+    "actions": {
+      "add_to_deck": "Add to Deck",
+      "draw": "Draw",
+      "reset": "Reset"
     },
-    "Conditions": {
+    "attributes": {
+      "health": {
+        "label": "Health",
+        "max": "Max",
+        "current": "Current"
+      },
+      "name": "Name",
+      "player": "Player",
+      "xp": {
+        "label": "XP",
+        "spent": "Spent",
+        "total": "Total",
+        "remaining": "Remaining"
+      }
+    },
+    "cards": {
+      "destiny": "Destiny",
+      "failure": "Failure",
+      "fortune": "Fortune",
+      "issue": "Issue",
+      "success": "Success"
+    },
+    "characteristics": {
+      "body": "Body",
+      "mind": "Mind",
+      "intuition": "Intuition",
+      "spirit": "Spirit",
+      "empathy": "Empathy"
+    },
+    "conditions": {
       "1": {
         "label": "+2 FAILURES"
       },
@@ -18,7 +45,35 @@
         "label": "DEAD/UNCONSCIOUS"
       }
     },
-    "Traumas": {
+    "labels": {
+      "add": "Add {type}",
+      "attributes": "Attributes",
+      "deadly": "Deadly",
+      "description": "Description",
+      "edit": "Edit {type}",
+      "name": "Name",
+      "quantity": "Quantity",
+      "remove": "Remove {type}",
+      "value": "Value",
+      "weight": "Weight"
+    },
+    "sheet": {
+      "labels": {
+        "actor": "DeckOfDestiny Actor Sheet",
+        "item": "DeckOfDestiny Item Sheet"
+      },
+      "sections": {
+        "background": "Background",
+        "characteristics": "Characteristics",
+        "conditions": "Conditions",
+        "core": "Core",
+        "inventory": "Inventory",
+        "skills": "Abilities",
+        "talents": "Talents",
+        "traumas": "Traumas"
+      }
+    },
+    "traumas": {
       "1": {
         "label": "-2 Successes"
       },
@@ -29,73 +84,18 @@
         "label": "Dying"
       }
     },
-    "Cards": {
-      "Success": "Success",
-      "Failure": "Failure",
-      "Issue": "Issue",
-      "Fortune": "Fortune",
-      "Destiny": "Destiny"
-    },
-    "SheetLabels": {
-      "Actor": "DeckOfDestiny Actor Sheet",
-      "Item": "DeckOfDestiny Item Sheet"
-    }
-  },
-  "TYPES": {
-    "Actor": {
-      "character": "Character",
-      "npc": "NPC"
-    },
-    "Item": {
-      "item": "Item",
-      "ability": "Ability",
-      "talent": "Talent",
-      "condition": "Condition",
-      "trauma": "Trauma"
-    }
-  },
-  "SHEET": {
-    "Attributes": {
-      "name": "Name",
-      "player": "Player",
-      "xp": {
-        "label": "XP",
-        "spent": "Spent",
-        "total": "Total",
-        "remaining": "Remaining"
+    "types": {
+      "actor": {
+        "character": "Character",
+        "npc": "NPC"
       },
-      "health": {
-        "label": "Health",
-        "max": "Max",
-        "current": "Current"
+      "item": {
+        "ability": "Ability",
+        "condition": "Condition",
+        "item": "Item",
+        "talent": "Talent",
+        "trauma": "Trauma"
       }
-    },
-    "Sections": {
-      "core": "Core",
-      "characteristics": "Characteristics",
-      "skills": "Abilities",
-      "talents": "Talents",
-      "conditions": "Conditions",
-      "traumas": "Traumas",
-      "inventory": "Inventory",
-      "background": "Background"
-    },
-    "Actions": {
-      "draw": "Draw",
-      "addToDeck": "Add to Deck",
-      "reset": "Reset"
-    },
-    "Labels": {
-      "name": "Name",
-      "description": "Description",
-      "quantity": "Quantity",
-      "attributes": "Attributes",
-      "value": "Value",
-      "weight": "Weight",
-      "add": "Add {type}",
-      "edit": "Edit {type}",
-      "remove": "Remove {type}",
-      "deadly": "Deadly"
     }
   }
 }

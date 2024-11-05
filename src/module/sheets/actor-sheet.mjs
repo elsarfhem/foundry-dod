@@ -243,7 +243,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     // Grab any data associated with this control.
     const data = foundry.utils.duplicate(header.dataset);
     // Initialize a default name.
-    const name = game.i18n.localize(`TYPES.Item.${type}`);
+    const name = game.i18n.localize(`DECK_OF_DESTINY.types.item.${type}`);
     // Prepare the item object.
     const itemData = {
       name: name,

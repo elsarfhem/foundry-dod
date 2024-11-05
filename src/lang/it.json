@@ -1,13 +1,40 @@
 {
   "DECK_OF_DESTINY": {
-    "Characteristics": {
-      "Bdy": { "long": "Corpo", "abbr": "cor" },
-      "Mnd": { "long": "Mente", "abbr": "men" },
-      "Inu": { "long": "Intuito", "abbr": "int" },
-      "Spr": { "long": "Spirito", "abbr": "spi" },
-      "Emp": { "long": "Empatia", "abbr": "emp" }
+    "actions": {
+      "add_to_deck": "Aggiungi al Mazzo",
+      "draw": "Pesca",
+      "reset": "Ripristina"
     },
-    "Conditions": {
+    "attributes": {
+      "health": {
+        "label": "Punti Ferita",
+        "max": "Max",
+        "current": "Attuali"
+      },
+      "name": "Nome",
+      "player": "Giocatore",
+      "xp": {
+        "label": "Punti Esperienza",
+        "spent": "Spesi",
+        "total": "Totali",
+        "remaining": "Rimanenti"
+      }
+    },
+    "cards": {
+      "destiny": "Destino",
+      "failure": "Fallimento",
+      "fortune": "Fortuna",
+      "issue": "Imprevisto",
+      "success": "Successo"
+    },
+    "characteristics": {
+      "body": "Corpo",
+      "empathy": "Empatia",
+      "intuition": "Intuito",
+      "mind": "Mente",
+      "spirit": "Spirito"
+    },
+    "conditions": {
       "1": {
         "label": "+2 FALLIMENTI"
       },
@@ -18,7 +45,35 @@
         "label": "MORTO/INCONSCIO"
       }
     },
-    "Traumas": {
+    "labels": {
+      "add": "Aggiungi {type}",
+      "attributes": "Attributi",
+      "deadly": "Mortale",
+      "description": "Descrizione",
+      "edit": "Modifica {type}",
+      "name": "Nome",
+      "quantity": "Quantità",
+      "remove": "Rimuovi {type}",
+      "value": "Valore",
+      "weight": "Peso"
+    },
+    "sheet": {
+      "labels": {
+        "actor": "Scheda Attore DeckOfDestiny",
+        "item": "Scheda Oggetto DeckOfDestiny"
+      },
+      "sections": {
+        "background": "Background",
+        "characteristics": "Caratteristiche",
+        "conditions": "Condizioni",
+        "core": "Principale",
+        "inventory": "Inventario",
+        "skills": "Abilità",
+        "talents": "Talenti",
+        "traumas": "Critici"
+      }
+    },
+    "traumas": {
       "1": {
         "label": "-2 Successi"
       },
@@ -29,73 +84,18 @@
         "label": "Morente"
       }
     },
-    "Cards": {
-      "Success": "Successo",
-      "Failure": "Fallimento",
-      "Issue": "Imprevisto",
-      "Fortune": "Fortuna",
-      "Destiny": "Destino"
-    },
-    "SheetLabels": {
-      "Actor": "Scheda Attore DeckOfDestiny",
-      "Item": "Scheda Oggetto DeckOfDestiny"
-    }
-  },
-  "TYPES": {
-    "Actor": {
-      "character": "Personaggio",
-      "npc": "PNG"
-    },
-    "Item": {
-      "item": "Oggetto",
-      "ability": "Abilità",
-      "talent": "Talento",
-      "condition": "Condizione",
-      "trauma": "Critico"
-    }
-  },
-  "SHEET": {
-    "Attributes": {
-      "name": "Nome",
-      "player": "Giocatore",
-      "xp": {
-        "label": "Punti Esperienza",
-        "spent": "Spesi",
-        "total": "Totali",
-        "remaining": "Rimanenti"
+    "types": {
+      "actor": {
+        "character": "Personaggio",
+        "npc": "PNG"
       },
-      "health": {
-        "label": "Punti Ferita",
-        "max": "Max",
-        "current": "Attuali"
+      "item": {
+        "ability": "Abilità",
+        "condition": "Condizione",
+        "item": "Oggetto",
+        "talent": "Talento",
+        "trauma": "Critico"
       }
-    },
-    "Sections": {
-      "core": "Principale",
-      "characteristics": "Caratteristiche",
-      "skills": "Abilità",
-      "talents": "Talenti",
-      "conditions": "Condizioni",
-      "traumas": "Critici",
-      "inventory": "Inventario",
-      "background": "Background"
-    },
-    "Actions": {
-      "draw": "Pesca",
-      "addToDeck": "Aggiungi al Mazzo",
-      "reset": "Ripristina"
-    },
-    "Labels": {
-      "name": "Nome",
-      "description": "Descrizione",
-      "quantity": "Quantità",
-      "attributes": "Attributi",
-      "value": "Valore",
-      "weight": "Peso",
-      "add": "Aggiungi {type}",
-      "edit": "Modifica {type}",
-      "remove": "Rimuovi {type}",
-      "deadly": "Mortale"
     }
   }
 }

@@ -5,64 +5,47 @@ export const DECK_OF_DESTINY = {};
  * @type {Object}
  */
 DECK_OF_DESTINY.characteristics = {
-  bdy: 'DECK_OF_DESTINY.Characteristics.Bdy.long',
-  mnd: 'DECK_OF_DESTINY.Characteristics.Mnd.long',
-  inu: 'DECK_OF_DESTINY.Characteristics.Inu.long',
-  spr: 'DECK_OF_DESTINY.Characteristics.Spr.long',
-  emp: 'DECK_OF_DESTINY.Characteristics.Emp.long'
-};
-
-DECK_OF_DESTINY.characteristicAbbreviations = {
-  bdy: 'DECK_OF_DESTINY.Characteristics.Bdy.abbr',
-  mnd: 'DECK_OF_DESTINY.Characteristics.Mnd.abbr',
-  inu: 'DECK_OF_DESTINY.Characteristics.Inu.abbr',
-  spr: 'DECK_OF_DESTINY.Characteristics.Spr.abbr',
-  emp: 'DECK_OF_DESTINY.Characteristics.Emp.abbr'
+  bdy: 'DECK_OF_DESTINY.characteristics.body',
+  mnd: 'DECK_OF_DESTINY.characteristics.mind',
+  inu: 'DECK_OF_DESTINY.characteristics.intuition',
+  spr: 'DECK_OF_DESTINY.characteristics.spirit',
+  emp: 'DECK_OF_DESTINY.characteristics.empathy'
 };
 
 DECK_OF_DESTINY.cards = {
-  success: 'DECK_OF_DESTINY.Cards.Success',
-  failure: 'DECK_OF_DESTINY.Cards.Failure',
-  issue: 'DECK_OF_DESTINY.Cards.Issue',
-  fortune: 'DECK_OF_DESTINY.Cards.Fortune',
-  destiny: 'DECK_OF_DESTINY.Cards.Destiny'
+  success: 'DECK_OF_DESTINY.cards.success',
+  failure: 'DECK_OF_DESTINY.cards.failure',
+  issue: 'DECK_OF_DESTINY.cards.issue',
+  fortune: 'DECK_OF_DESTINY.cards.fortune',
+  destiny: 'DECK_OF_DESTINY.cards.destiny'
 };
 
-DECK_OF_DESTINY.fixedItems = [
-  {
-    name: '1',
-    type: 'condition',
-    'system.value': 2,
-    'system.label': 'DECK_OF_DESTINY.Conditions.1.label'
+DECK_OF_DESTINY.conditions = {
+  1: {
+    value: 2,
+    label: 'DECK_OF_DESTINY.conditions.1.label'
   },
-  {
-    name: '2',
-    type: 'condition',
-    'system.value': 2,
-    'system.label': 'DECK_OF_DESTINY.Conditions.2.label'
+  2: {
+    value: 2,
+    label: 'DECK_OF_DESTINY.conditions.2.label'
   },
-  {
-    name: '3',
-    type: 'condition',
-    'system.value': 0,
-    'system.label': 'DECK_OF_DESTINY.Conditions.3.label'
-  },
-  {
-    name: 'a',
-    type: 'trauma',
-    'system.value': -2,
-    'system.label': 'DECK_OF_DESTINY.Traumas.1.label'
-  },
-  {
-    name: 'b',
-    type: 'trauma',
-    'system.value': -5,
-    'system.label': 'DECK_OF_DESTINY.Traumas.2.label'
-  },
-  {
-    name: 'c',
-    type: 'trauma',
-    'system.value': 0,
-    'system.label': 'DECK_OF_DESTINY.Traumas.3.label'
+  3: {
+    value: 0,
+    label: 'DECK_OF_DESTINY.conditions.3.label'
   }
-];
+};
+
+DECK_OF_DESTINY.traumas = {
+  1: {
+    value: -2,
+    label: 'DECK_OF_DESTINY.traumas.1.label'
+  },
+  2: {
+    value: -5,
+    label: 'DECK_OF_DESTINY.traumas.2.label'
+  },
+  3: {
+    value: 0,
+    label: 'DECK_OF_DESTINY.traumas.3.label'
+  }
+};
