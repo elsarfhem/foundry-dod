@@ -5,7 +5,7 @@ on:
     branches:
       - develop
     tags:
-      - '*'
+      - '*.*.*-rc.*'
 
 jobs:
   pre-release:
