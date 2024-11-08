@@ -2,11 +2,13 @@ name: Release Creation
 
 on:
   push:
+    branches:
+      - develop
     tags:
       - '*'
 
 jobs:
-  build:
+  pre-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -67,7 +69,7 @@ jobs:
 
       - name: Zip Files
         run: zip ${{ env.ZIP_NAME }} -r assets packs src/lang src/module src/templates styles LICENSE README.md system.json
-      
+
       - name: Create Release if Not Exists
         id: create_release
         uses: actions/create-release@v1
