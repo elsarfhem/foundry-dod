@@ -56,6 +56,10 @@ jobs:
           #   exit 1
           # fi
 
+      - name: Modify system.json with updated download url
+        run: |
+          jq --arg url "${{ env.RELEASE_DOWNLOAD_URL }}" '.download = $url' system.json > tmp.json && mv tmp.json system.json
+
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
