@@ -2,13 +2,12 @@ name: Pre-Release Creation
 
 on:
   push:
-    branches:
-      - develop
     tags:
       - '*.*.*-rc.*'
 
 jobs:
   pre-release:
+    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
 
     steps:
