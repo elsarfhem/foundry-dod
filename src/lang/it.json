@@ -6,13 +6,17 @@
       "reset": "Ripristina"
     },
     "attributes": {
+      "absorption": "Assorbimento",
+      "fortune": "Fortuna",
       "health": {
         "label": "Punti Ferita",
         "max": "Max",
         "current": "Attuali"
       },
+      "mitigation": "Riduzione",
       "name": "Nome",
       "player": "Giocatore",
+      "power": "Potere",
       "xp": {
         "label": "Punti Esperienza",
         "spent": "Spesi",

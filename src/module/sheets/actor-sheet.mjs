@@ -186,6 +186,14 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       this._onDrawCardsFromPile(event);
     });
 
+    // Attribute value setting.
+    html.on('click', '.attribute-button', this._onIncreaseAttributeValue.bind(this));
+    html.on(
+      'contextmenu',
+      '.attribute-button',
+      this._onDecreaseAttributeValue.bind(this)
+    );
+
     // Ability/Talent value setting.
     html.on('click', '.item-core-button', this._onIncreaseItemValue.bind(this));
     html.on('contextmenu', '.item-core-button', this._onDecreaseItemValue.bind(this));
@@ -620,6 +628,34 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     }
     await this.actor.update({
       [`system.cards.${cardType}.value`]: actor.cards[cardType].value + value
+    });
+  }
+
+  /**
+   * Handle increasing the attribute value.
+   * @param {Event} event - The originating left click event.
+   */
+  async _onIncreaseAttributeValue(event) {
+    event.preventDefault();
+    const data = this.actor.toObject().system;
+    const attributeType = event.currentTarget.dataset.attributeType;
+    await this.actor.update({
+      [`system.attributes.${attributeType}.value`]:
+        data.attributes[attributeType].value + 1
+    });
+  }
+
+  /**
+   * Handle decreasing the attribute value.
+   * @param {Event} event - The originating right click event.
+   */
+  async _onDecreaseAttributeValue(event) {
+    event.preventDefault();
+    const data = this.actor.toObject().system;
+    const attributeType = event.currentTarget.dataset.attributeType;
+    await this.actor.update({
+      [`system.attributes.${attributeType}.value`]:
+        data.attributes[attributeType].value - 1
     });
   }
 

@@ -203,6 +203,44 @@
       }
     }
   }
+
+  .attribute-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    label {
+      color: #333;
+      margin-bottom: 0.5rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .attribute-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      border: none;
+      transition: background-color 0.3s ease;
+      font-size: x-large;
+
+      &:focus {
+        outline: none;
+      }
+
+      &:hover {
+        box-shadow: none;
+      }
+
+      &:active {
+        box-shadow: none;
+      }
+    }
+  }
 }
 
 .sheet-tabs {

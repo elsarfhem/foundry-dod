@@ -36,8 +36,22 @@ export default class DeckOfDestinyCharacter extends DeckOfDestinyActorBase {
     );
 
     schema.attributes = new fields.SchemaField({
-      level: new fields.SchemaField({
-        value: new fields.NumberField({ ...requiredInteger, initial: 1 })
+      fortune: new fields.SchemaField({
+        value: new fields.NumberField({
+          ...requiredInteger,
+          initial: 0,
+          min: 0,
+          max: 4
+        })
+      }),
+      power: new fields.SchemaField({
+        value: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 })
+      }),
+      mitigation: new fields.SchemaField({
+        value: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 })
+      }),
+      absorption: new fields.SchemaField({
+        value: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 })
       })
     });
 
@@ -91,8 +105,6 @@ export default class DeckOfDestinyCharacter extends DeckOfDestinyActorBase {
         data[k] = foundry.utils.deepClone(v);
       }
     }
-
-    data.lvl = this.attributes.level.value;
 
     return data;
   }

@@ -6,13 +6,17 @@
       "reset": "Reset"
     },
     "attributes": {
+      "absorption": "Absorption",
+      "fortune": "Fortune",
       "health": {
         "label": "Health",
         "max": "Max",
         "current": "Current"
       },
+      "mitigation": "Mitigation",
       "name": "Name",
       "player": "Player",
+      "power": "Power",
       "xp": {
         "label": "XP",
         "spent": "Spent",
