@@ -17,7 +17,7 @@ export default class DeckOfDestinyItem extends DeckOfDestinyItemBase {
     schema.quantity = new fields.NumberField({
       ...requiredInteger,
       initial: 1,
-      min: 1
+      min: 0
     });
 
     schema.weight = new fields.NumberField({
