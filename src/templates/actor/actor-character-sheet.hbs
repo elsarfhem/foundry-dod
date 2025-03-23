@@ -68,13 +68,21 @@
           </div>
         </div>
       </div>
-      <div class="resources grid grid-4col">
-        {{#each system.attributes as |attribute key|}}
-          <div class="resource attribute-group">
-            <label for="system.attributes.{{key}}" class="resource-label">{{localize (concat 'DECK_OF_DESTINY.attributes.' key)}}</label>
-            <button class="attribute-button" data-dtype="Number" data-attribute-type="{{key}}">{{attribute.value}}</button>
-          </div>
-        {{/each}}
+      <hr>
+      <div class="resources grid grid-3col">
+        <div class="resource attribute-group">
+          <label for="system.attributes.fortune" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.fortune'}}</label>
+          <button class="attribute-button" data-dtype="Number" data-attribute-type="fortune">{{system.attributes.fortune.value}}</button>
+        </div>
+        <div class="resource attribute-group">
+          <label for="system.attributes.absorption" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.absorption.label'}}</label>
+          <button class="attribute-button" data-dtype="Number"data-attribute-type="absorption">{{system.attributes.absorption.value}}</button>
+          <span>{{localize (lookup @root.config.absorption system.attributes.absorption.value)}}</span>
+        </div>
+        <div class="resource attribute-group">
+          <label for="system.attributes.mitigation" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.mitigation'}}</label>
+          <button class="attribute-button" data-dtype="Number" data-attribute-type="mitigation">{{system.attributes.mitigation.value}}</button>
+        </div>
       </div>
     </div>
   </header>

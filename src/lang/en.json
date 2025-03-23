@@ -6,7 +6,21 @@
       "reset": "Reset"
     },
     "attributes": {
-      "absorption": "Absorption",
+      "absorption": {
+        "0": {
+          "label": "No Armor"
+        },
+        "1": {
+          "label": "Light Armor"
+        },
+        "2": {
+          "label": "Medium Armor"
+        },
+        "3": {
+          "label": "Heavy Armor"
+        },
+        "label": "Absorption"
+      },
       "fortune": "Fortune",
       "health": {
         "label": "Health",

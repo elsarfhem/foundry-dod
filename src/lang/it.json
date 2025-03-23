@@ -6,7 +6,21 @@
       "reset": "Ripristina"
     },
     "attributes": {
-      "absorption": "Assorbimento",
+      "absorption": {
+        "0": {
+          "label": "Nessuna Armatura"
+        },
+        "1": {
+          "label": "Armatura Leggera"
+        },
+        "2": {
+          "label": "Armatura Media"
+        },
+        "3": {
+          "label": "Armatura Pesante"
+        },
+        "label": "Assorbimento"
+      },
       "fortune": "Fortuna",
       "health": {
         "label": "Punti Ferita",
