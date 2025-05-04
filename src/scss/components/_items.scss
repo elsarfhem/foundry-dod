@@ -227,3 +227,9 @@
   flex: 0 0 200px;
   padding: 0 8px;
 }
+
+.item-controls-spaced {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}

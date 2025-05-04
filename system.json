@@ -30,8 +30,12 @@
     "minimum": 12,
     "verified": 12
   },
-  "esmodules": ["src/module/dod.mjs"],
-  "styles": ["styles/dod.css"],
+  "esmodules": [
+    "src/module/dod.mjs"
+  ],
+  "styles": [
+    "styles/dod.css"
+  ],
   "languages": [
     {
       "lang": "en",
@@ -109,7 +113,8 @@
       "ability": {},
       "talent": {},
       "condition": {},
-      "trauma": {}
+      "trauma": {},
+      "attribute": {}
     }
   },
   "socket": false,

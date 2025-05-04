@@ -72,35 +72,27 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
    * @param {object} context The context object to mutate
    */
   _prepareItems(context) {
-    // Initialize containers.
     const gear = [];
     const abilities = [];
     const talents = [];
     const conditions = [];
     const traumas = [];
+    const attributes = []; // user-defined attributes
 
-    // Iterate through items, allocating to containers
     for (const i of context.items) {
       i.img = i.img || Item.DEFAULT_ICON;
-      // Append to gear.
       if (i.type === 'item') {
         gear.push(i);
-      }
-      // Append to abilities.
-      else if (i.type === 'ability') {
+      } else if (i.type === 'ability') {
         abilities.push(i);
-      }
-      // Append to talents.
-      else if (i.type === 'talent') {
+      } else if (i.type === 'talent') {
         talents.push(i);
-      }
-      // Append to conditions.
-      else if (i.type === 'condition') {
+      } else if (i.type === 'condition') {
         conditions.push(i);
-      }
-      // Append to traumas.
-      else if (i.type === 'trauma') {
+      } else if (i.type === 'trauma') {
         traumas.push(i);
+      } else if (i.type === 'attribute') {
+        attributes.push(i);
       }
     }
 
@@ -110,6 +102,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     context.talents = talents;
     context.conditions = conditions;
     context.traumas = traumas;
+    context.attributes = attributes;
   }
 
   /* -------------------------------------------- */
@@ -187,16 +180,16 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     });
 
     // Attribute value setting.
-    html.on('click', '.attribute-button', this._onIncreaseAttributeValue.bind(this));
+    html.on('click', '.attribute-click', this._onIncreaseAttributeValue.bind(this));
     html.on(
       'contextmenu',
-      '.attribute-button',
+      '.attribute-click',
       this._onDecreaseAttributeValue.bind(this)
     );
 
     // Ability/Talent value setting.
-    html.on('click', '.item-core-button', this._onIncreaseItemValue.bind(this));
-    html.on('contextmenu', '.item-core-button', this._onDecreaseItemValue.bind(this));
+    html.on('click', '.item-click', this._onIncreaseItemValue.bind(this));
+    html.on('contextmenu', '.item-click', this._onDecreaseItemValue.bind(this));
 
     // Condition name setting.
     html.on(

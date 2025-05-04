@@ -88,7 +88,8 @@
         "inventory": "Inventory",
         "skills": "Abilities",
         "talents": "Talents",
-        "traumas": "Traumas"
+        "traumas": "Traumas",
+        "attributes": "Attributes"
       }
     },
     "traumas": {
@@ -112,7 +113,8 @@
         "condition": "Condition",
         "item": "Item",
         "talent": "Talent",
-        "trauma": "Trauma"
+        "trauma": "Trauma",
+        "attribute": "Attribute"
       }
     }
   }

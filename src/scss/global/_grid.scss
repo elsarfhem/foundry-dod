@@ -59,6 +59,12 @@
   grid-template-columns: repeat(12, minmax(0, 1fr));
 }
 
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
 // Grid offset.
 .grid-start-2 {
   grid-column-start: 2;

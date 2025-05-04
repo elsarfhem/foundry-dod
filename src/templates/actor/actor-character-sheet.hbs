@@ -69,20 +69,43 @@
         </div>
       </div>
       <hr>
-      <div class="resources grid grid-3col">
+      <div class="resources grid-auto-fit">
         <div class="resource attribute-group">
-          <label for="system.attributes.fortune" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.fortune'}}</label>
-          <button class="attribute-button" data-dtype="Number" data-attribute-type="fortune">{{system.attributes.fortune.value}}</button>
+          <label for="system.attributes.fortune" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.fortune'}}</label>
+          <button class="attribute-button attribute-click" data-dtype="Number" data-attribute-type="fortune">{{system.attributes.fortune.value}}</button>
         </div>
         <div class="resource attribute-group">
-          <label for="system.attributes.absorption" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.absorption.label'}}</label>
-          <button class="attribute-button" data-dtype="Number"data-attribute-type="absorption">{{system.attributes.absorption.value}}</button>
-          <span>{{localize (lookup @root.config.absorption system.attributes.absorption.value)}}</span>
+          <label for="system.attributes.absorption" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.absorption.label'}}</label>
+          <button class="attribute-button attribute-click" data-dtype="Number"data-attribute-type="absorption">{{system.attributes.absorption.value}}</button>
+          <span class="mt-half">{{localize (lookup @root.config.absorption system.attributes.absorption.value)}}</span>
         </div>
         <div class="resource attribute-group">
-          <label for="system.attributes.mitigation" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.mitigation'}}</label>
-          <button class="attribute-button" data-dtype="Number" data-attribute-type="mitigation">{{system.attributes.mitigation.value}}</button>
+          <label for="system.attributes.mitigation" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.mitigation'}}</label>
+          <button class="attribute-button attribute-click" data-dtype="Number" data-attribute-type="mitigation">{{system.attributes.mitigation.value}}</button>
         </div>
+
+        {{!-- Additional Attributes --}}
+        {{#each attributes as |item id|}}
+          <div class="resource item attribute-group" data-item-id='{{item._id}}'>
+            <div class="item-controls-spaced flexrow mb-half">
+              <label for="item.name" class="resource-label align-left" data-label="{{item.name}}" data-type="attribute">{{item.name}}</label>
+              <a class="item-control item-edit"
+                title="{{localize 'DECK_OF_DESTINY.labels.edit' type=(localize 'DECK_OF_DESTINY.types.item.attribute')}}">
+                <i class="fas fa-edit"></i>
+              </a>
+              <a class="item-control item-delete"
+                title="{{localize 'DECK_OF_DESTINY.labels.remove' type=(localize 'DECK_OF_DESTINY.types.item.attribute')}}">
+                <i class="fas fa-trash"></i>
+              </a>
+            </div>
+            <button class="attribute-button item-click" data-dtype="Number">{{item.system.value}}</button>
+          </div>
+        {{/each}}
+
+        <a class="item-create plus-attribute flex-group-center" title="{{localize 'DECK_OF_DESTINY.labels.add' type=(localize 'DECK_OF_DESTINY.types.item.attribute' )}}" data-type="attribute">
+          <i class="fas fa-plus"></i>
+          {{localize 'DECK_OF_DESTINY.types.item.attribute'}}
+        </a>
       </div>
     </div>
   </header>

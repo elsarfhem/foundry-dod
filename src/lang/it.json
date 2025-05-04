@@ -88,7 +88,8 @@
         "inventory": "Inventario",
         "skills": "Abilità",
         "talents": "Talenti",
-        "traumas": "Critici"
+        "traumas": "Critici",
+        "attributes": "Attributi"
       }
     },
     "traumas": {
@@ -112,7 +113,8 @@
         "condition": "Condizione",
         "item": "Oggetto",
         "talent": "Talento",
-        "trauma": "Critico"
+        "trauma": "Critico",
+        "attribute": "Attributo"
       }
     }
   }
