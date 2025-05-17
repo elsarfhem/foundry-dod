@@ -15,8 +15,8 @@ export default class DeckOfDestinyActorBase extends DeckOfDestinyDataModel {
     const schema = {};
 
     schema.health = new fields.SchemaField({
-      value: new fields.NumberField({ ...requiredInteger, initial: 1, min: 0 }),
-      max: new fields.NumberField({ ...requiredInteger, initial: 5 })
+      value: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 }),
+      max: new fields.NumberField({ ...requiredInteger, initial: 0 })
     });
     schema.power = new fields.SchemaField({
       value: new fields.NumberField({ ...requiredInteger, initial: 5, min: 0 }),
