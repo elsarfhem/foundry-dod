@@ -18,15 +18,15 @@
           <label for="system.xp" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.xp.label'}}</label>
           <div class="xp-inputs flex-group-center">
             <div class="xp-input">
-              <input name="system.xp.total" type="text" value="{{system.xp.total}}" placeholder="0" />
+              <input name="system.xp.total" type="number" value="{{system.xp.total}}" placeholder="0" data-dtype="Number" min="0" />
               <label for="system.xp.total">{{localize 'DECK_OF_DESTINY.attributes.xp.total'}}</label>
             </div>
             <div class="xp-input">
-              <input name="system.xp.spent" type="text" value="{{system.xp.spent}}" placeholder="0" />
+              <input name="system.xp.spent" type="number" value="{{system.xp.spent}}" placeholder="0" data-dtype="Number" min="0" />
               <label for="system.xp.spent">{{localize 'DECK_OF_DESTINY.attributes.xp.spent'}}</label>
             </div>
             <div class="xp-input">
-              <input name="system.xp.remaining" type="text" value="{{system.xp.remaining}}" placeholder="0" disabled />
+              <input name="system.xp.remaining" type="number" value="{{system.xp.remaining}}" placeholder="0" disabled data-dtype="Number" min="0" />
               <label for="system.xp.remaining">{{localize 'DECK_OF_DESTINY.attributes.xp.remaining'}}</label>
             </div>
           </div>
@@ -38,11 +38,11 @@
           <label for="system.health" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.health.label'}}</label>
           <div class="health-inputs flex-group-center">
             <div class="health-input health-current">
-              <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number" />
+              <input type="number" name="system.health.value" value="{{system.health.value}}" data-dtype="Number" data-dtype="Number" min="0" />
               <label for="system.health.value" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.health.current'}}</label>
             </div>
             <div class="health-input health-max">
-              <input type="text" name="system.health.max" value="{{system.health.max}}" data-dtype="Number" />
+              <input type="number" name="system.health.max" value="{{system.characteristics.body}}" data-dtype="Number" disabled />
               <label for="system.health.max" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.health.max'}}</label>
             </div>
           </div>
@@ -54,7 +54,7 @@
                 data-card-type="{{key}}">
               <label for="system.cards.{{key}}.value" class="resource-label">{{localize (lookup @root.config.cards key)}}</label>
               <div class="card-input-container">
-                <input class="card-input" name="system.cards.{{key}}.value" type="number" value="{{card.value}}" />
+                <input class="card-input" name="system.cards.{{key}}.value" type="number" value="{{card.value}}" min="0" />
                 {{#if (ne card.modifier 0)}}
                   <span class="modifier">{{#if (gt card.modifier 0)}}+{{/if}}{{card.modifier}}</span>
                 {{/if}}
@@ -135,7 +135,7 @@
             {{#each system.characteristics as |characteristic key|}}
             <div class="characteristic flexrow flex-group-center">
               <label for="system.characteristics.{{key}}.value" class="resource-label addable flexlarge align-left" data-label="{{key}}" data-type="characteristic">{{localize (lookup @root.config.characteristics key)}}</label>
-              <input type="text" name="system.characteristics.{{key}}.value" value="{{characteristic.value}}" data-dtype="Number"/>
+              <input type="number" name="system.characteristics.{{key}}.value" value="{{characteristic.value}}" data-dtype="Number" min="0" />
             </div>
             {{/each}}
           </div>
