@@ -8,18 +8,18 @@
     "attributes": {
       "absorption": {
         "0": {
-          "label": "No Armor"
+          "label": "Base"
         },
         "1": {
-          "label": "Light Armor"
+          "label": "Light"
         },
         "2": {
-          "label": "Medium Armor"
+          "label": "Medium"
         },
         "3": {
-          "label": "Heavy Armor"
+          "label": "High"
         },
-        "label": "Mitigation"
+        "label": "Absorption"
       },
       "fortune": "Fortune",
       "health": {
@@ -27,7 +27,7 @@
         "max": "Max",
         "current": "Current"
       },
-      "mitigation": "Absorption",
+      "mitigation": "Mitigation",
       "name": "Name",
       "player": "Player",
       "power": "Power",
