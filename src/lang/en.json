@@ -19,7 +19,7 @@
         "3": {
           "label": "Heavy Armor"
         },
-        "label": "Absorption"
+        "label": "Mitigation"
       },
       "fortune": "Fortune",
       "health": {
@@ -27,7 +27,7 @@
         "max": "Max",
         "current": "Current"
       },
-      "mitigation": "Mitigation",
+      "mitigation": "Absorption",
       "name": "Name",
       "player": "Player",
       "power": "Power",

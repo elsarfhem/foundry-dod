@@ -19,7 +19,7 @@
         "3": {
           "label": "Armatura Pesante"
         },
-        "label": "Assorbimento"
+        "label": "Riduzione"
       },
       "fortune": "Fortuna",
       "health": {
@@ -27,7 +27,7 @@
         "max": "Max",
         "current": "Attuali"
       },
-      "mitigation": "Riduzione",
+      "mitigation": "Assorbimento",
       "name": "Nome",
       "player": "Giocatore",
       "power": "Potere",
