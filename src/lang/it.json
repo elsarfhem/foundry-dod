@@ -8,16 +8,16 @@
     "attributes": {
       "absorption": {
         "0": {
-          "label": "Nessuna Armatura"
+          "label": "Base"
         },
         "1": {
-          "label": "Armatura Leggera"
+          "label": "Leggero"
         },
         "2": {
-          "label": "Armatura Media"
+          "label": "Medio"
         },
         "3": {
-          "label": "Armatura Pesante"
+          "label": "Alto"
         },
         "label": "Assorbimento"
       },
