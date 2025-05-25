@@ -15,6 +15,7 @@
 
 /* Styles limited to dod sheets */
 .dod {
+  @import 'components/characteristics';
   @import 'components/forms';
   @import 'components/resource';
   @import 'components/items';

@@ -1,4 +1,12 @@
 // Flexbox.
+.flex {
+  display: flex;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
 .flex-group-center,
 .flex-group-left,
 .flex-group-right {

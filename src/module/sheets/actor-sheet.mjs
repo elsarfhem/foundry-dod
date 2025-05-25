@@ -179,6 +179,13 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       this._onDrawCardsFromPile(event);
     });
 
+    // Characteristic value setting.
+    html.on(
+      'click',
+      '.characteristic-click',
+      this._onCharacteristicValueSetting.bind(this)
+    );
+
     // Attribute value setting.
     html.on('click', '.attribute-click', this._onIncreaseAttributeValue.bind(this));
     html.on(
@@ -621,6 +628,23 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     }
     await this.actor.update({
       [`system.cards.${cardType}.value`]: actor.cards[cardType].value + value
+    });
+  }
+
+  /**
+   * Handle clicks on characteristic circles.
+   * @param {Event} event - The originating click event.
+   */
+  async _onCharacteristicValueSetting(event) {
+    event.preventDefault();
+    const target = event.currentTarget;
+    const characteristicKey = target.closest('.characteristic-circles').dataset
+      .characteristicKey;
+    const newValue = parseInt(target.dataset.value);
+
+    // Update the characteristic value
+    await this.actor.update({
+      [`system.characteristics.${characteristicKey}.value`]: newValue
     });
   }
 

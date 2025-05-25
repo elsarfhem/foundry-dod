@@ -122,24 +122,15 @@
   {{!-- Sheet Body --}}
   <section class="sheet-body">
 
-    {{!-- Owned Abilities Tab --}}
+    {{!-- Core Tab --}}
     <div class="tab core" data-group="primary" data-tab="core">
       <section class="grid grid-12col">
         <aside class="sidebar grid-span-3">
-
-          {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
-          use both the "grid" and "grid-Ncol" class where "N" can be any number
-          from 1 to 12 and will create that number of columns.  --}}
-          <div class="characteristics flexcol">
-            <h3>{{localize 'DECK_OF_DESTINY.sheet.sections.characteristics'}}</h3>
-            {{> "systems/dod/src/templates/actor/parts/actor-characteristics.hbs"}}
-          </div>
+          <h3>{{localize 'DECK_OF_DESTINY.sheet.sections.characteristics'}}</h3>
+          {{> "systems/dod/src/templates/actor/parts/actor-characteristics.hbs"}}
         </aside>
-
-        {{!-- For the main abilities list, span the right two columns --}}
         <section class="abilities grid-span-4">
           <h3>{{localize 'DECK_OF_DESTINY.sheet.sections.skills'}}</h3>
-          {{!-- This is a Handlebars partial. They're stored in the `/parts` folder next to this sheet, and defined in module/helpers/templates.mjs --}}
           {{> "systems/dod/src/templates/actor/parts/actor-abilities.hbs"}}
         </section>
         <section class="conditions grid-span-3">
