@@ -132,12 +132,7 @@
           from 1 to 12 and will create that number of columns.  --}}
           <div class="characteristics flexcol">
             <h3>{{localize 'DECK_OF_DESTINY.sheet.sections.characteristics'}}</h3>
-            {{#each system.characteristics as |characteristic key|}}
-            <div class="characteristic flexrow flex-group-center">
-              <label for="system.characteristics.{{key}}.value" class="resource-label addable flexlarge align-left" data-label="{{key}}" data-type="characteristic">{{localize (lookup @root.config.characteristics key)}}</label>
-              <input type="number" name="system.characteristics.{{key}}.value" value="{{characteristic.value}}" data-dtype="Number" min="0" />
-            </div>
-            {{/each}}
+            {{> "systems/dod/src/templates/actor/parts/actor-characteristics.hbs"}}
           </div>
         </aside>
 
