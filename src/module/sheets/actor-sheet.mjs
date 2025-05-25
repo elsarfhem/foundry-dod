@@ -197,6 +197,8 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     // Ability/Talent value setting.
     html.on('click', '.item-click', this._onIncreaseItemValue.bind(this));
     html.on('contextmenu', '.item-click', this._onDecreaseItemValue.bind(this));
+    html.on('click', '.item-increase-click', this._onIncreaseItemValue.bind(this));
+    html.on('click', '.item-decrease-click', this._onDecreaseItemValue.bind(this));
 
     // Condition name setting.
     html.on(
