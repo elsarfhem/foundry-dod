@@ -1,0 +1,27 @@
+{
+  "folder": null,
+  "name": "Svuota il mazzo",
+  "type": "script",
+  "author": "z3oC1uNtDP0TX1os",
+  "img": "icons/svg/downgrade.svg",
+  "scope": "global",
+  "command": "const deck = game.cards.getName(\"DoD - lista carte\");\nawait deck.recall({\n  chatNotification: false\n})",
+  "ownership": {
+    "default": 0,
+    "z3oC1uNtDP0TX1os": 3
+  },
+  "flags": {},
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "dod",
+    "systemVersion": "0.1.0",
+    "createdTime": 1748246678899,
+    "modifiedTime": 1748279503653,
+    "lastModifiedBy": "z3oC1uNtDP0TX1os"
+  },
+  "_id": "OyKV3iOVbc6fdGid",
+  "sort": 100000,
+  "_key": "!macros!OyKV3iOVbc6fdGid"
+}
