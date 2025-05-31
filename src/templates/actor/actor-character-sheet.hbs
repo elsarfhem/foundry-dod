@@ -83,7 +83,8 @@
         </div>
       </div>
       <hr>
-      <div class="resources grid-auto-fit">
+
+      <div class="resources grid grid-3col">
         <div class="resource attribute-group">
           <label for="system.attributes.fortune" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.fortune'}}</label>
           <button class="attribute-button attribute-click" data-dtype="Number" data-attribute-type="fortune">{{system.attributes.fortune.value}}</button>
@@ -94,8 +95,9 @@
           <span class="mt-half">{{localize (lookup @root.config.absorption system.attributes.absorption.value)}}</span>
         </div>
         <div class="resource attribute-group">
-          <label for="system.attributes.mitigation" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.mitigation'}}</label>
+          <label for="system.attributes.mitigation" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.mitigation.label'}}</label>
           <button class="attribute-button attribute-click" data-dtype="Number" data-attribute-type="mitigation">{{system.attributes.mitigation.value}}</button>
+          <span class="mt-half">{{localize (lookup @root.config.mitigation system.attributes.mitigation.value)}}</span>
         </div>
 
         {{!-- Additional Attributes --}}

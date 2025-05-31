@@ -27,7 +27,21 @@
         "max": "Max",
         "current": "Attuali"
       },
-      "mitigation": "Riduzione",
+      "mitigation": {
+        "0": {
+          "label": "Senza armatura"
+        },
+        "1": {
+          "label": "Armatura leggera"
+        },
+        "2": {
+          "label": "Armatura media"
+        },
+        "3": {
+          "label": "Armatura pesante"
+        },
+        "label": "Riduzione"
+      },
       "name": "Nome",
       "player": "Giocatore",
       "power": "Potere",
