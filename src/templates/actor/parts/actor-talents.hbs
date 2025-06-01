@@ -15,6 +15,7 @@
   </li>
   {{#each talents as |item id|}}
     <li class='item flexrow' data-item-id='{{item._id}}'>
+      <div class="item-tooltip">{{{item.system.description}}}</div>
       <div class='item-fixed-name'>
         <div class='item-image'>
             <img
