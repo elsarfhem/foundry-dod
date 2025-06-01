@@ -128,7 +128,7 @@
         "item": "Item",
         "talent": "Talent",
         "trauma": "Trauma",
-        "attribute": "Attribute"
+        "attribute": "Resource"
       }
     }
   }

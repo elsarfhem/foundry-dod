@@ -83,11 +83,16 @@
         </div>
       </div>
       <hr>
-
-      <div class="resources grid grid-3col">
+      
+      <a class="item-create plus-attribute flex-group-center" title="{{localize 'DECK_OF_DESTINY.labels.add' type=(localize 'DECK_OF_DESTINY.types.item.attribute' )}}" data-type="attribute">
+        <i class="fas fa-plus"></i>
+        {{localize 'DECK_OF_DESTINY.types.item.attribute'}}
+      </a>
+      <div class="resources grid grid-3col">       
         <div class="resource attribute-group">
           <label for="system.attributes.fortune" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.fortune'}}</label>
           <button class="attribute-button attribute-click" data-dtype="Number" data-attribute-type="fortune">{{system.attributes.fortune.value}}</button>
+          <span class="mt-half">&nbsp;</span>
         </div>
         <div class="resource attribute-group">
           <label for="system.attributes.absorption" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.absorption.label'}}</label>
@@ -115,13 +120,9 @@
               </a>
             </div>
             <button class="attribute-button item-click" data-dtype="Number">{{item.system.value}}</button>
+            <span class="mt-half">&nbsp;</span>
           </div>
         {{/each}}
-
-        <a class="item-create plus-attribute flex-group-center" title="{{localize 'DECK_OF_DESTINY.labels.add' type=(localize 'DECK_OF_DESTINY.types.item.attribute' )}}" data-type="attribute">
-          <i class="fas fa-plus"></i>
-          {{localize 'DECK_OF_DESTINY.types.item.attribute'}}
-        </a>
       </div>
     </div>
   </header>
