@@ -27,7 +27,21 @@
         "max": "Max",
         "current": "Current"
       },
-      "mitigation": "Mitigation",
+      "mitigation": {
+        "0": {
+          "label": "No armor"
+        },
+        "1": {
+          "label": "Light armor"
+        },
+        "2": {
+          "label": "Medium armor"
+        },
+        "3": {
+          "label": "High armor"
+        },
+        "label": "Reduction"
+      },
       "name": "Name",
       "player": "Player",
       "power": "Power",
@@ -114,7 +128,7 @@
         "item": "Item",
         "talent": "Talent",
         "trauma": "Trauma",
-        "attribute": "Attribute"
+        "attribute": "Resource"
       }
     }
   }

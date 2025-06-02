@@ -56,3 +56,10 @@ DECK_OF_DESTINY.absorption = {
   2: 'DECK_OF_DESTINY.attributes.absorption.2.label',
   3: 'DECK_OF_DESTINY.attributes.absorption.3.label'
 };
+
+DECK_OF_DESTINY.mitigation = {
+  0: 'DECK_OF_DESTINY.attributes.mitigation.0.label',
+  1: 'DECK_OF_DESTINY.attributes.mitigation.1.label',
+  2: 'DECK_OF_DESTINY.attributes.mitigation.2.label',
+  3: 'DECK_OF_DESTINY.attributes.mitigation.3.label'
+};

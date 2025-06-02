@@ -16,20 +16,34 @@
         </div>
         <div class="resource flex-group-center">
           <label for="system.xp" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.xp.label'}}</label>
-          <div class="xp-inputs flex-group-center">
+          <div class="flex-group-center xp-inputs">
             <div class="xp-input">
               <input name="system.xp.total" type="number" value="{{system.xp.total}}" placeholder="0" data-dtype="Number" min="0" />
-              <label for="system.xp.total">{{localize 'DECK_OF_DESTINY.attributes.xp.total'}}</label>
             </div>
             <div class="xp-input">
               <input name="system.xp.spent" type="number" value="{{system.xp.spent}}" placeholder="0" data-dtype="Number" min="0" />
-              <label for="system.xp.spent">{{localize 'DECK_OF_DESTINY.attributes.xp.spent'}}</label>
             </div>
             <div class="xp-input">
               <input name="system.xp.remaining" type="number" value="{{system.xp.remaining}}" placeholder="0" disabled data-dtype="Number" min="0" />
-              <label for="system.xp.remaining">{{localize 'DECK_OF_DESTINY.attributes.xp.remaining'}}</label>
             </div>
           </div>
+        </div>
+        <div class="resource flex-group-center xp-labels">
+          &nbsp;
+        </div>
+        <div class="resource flex-group-center xp-labels">
+          &nbsp;
+        </div>
+        <div class="resource flex-group-center xp-labels">
+          <div class="xp-label">
+              <label for="system.xp.total">{{localize 'DECK_OF_DESTINY.attributes.xp.total'}}</label>
+            </div>
+            <div class="xp-label">
+              <label for="system.xp.spent">{{localize 'DECK_OF_DESTINY.attributes.xp.spent'}}</label>
+            </div>
+            <div class="xp-label">
+              <label for="system.xp.remaining">{{localize 'DECK_OF_DESTINY.attributes.xp.remaining'}}</label>
+            </div>
         </div>
       </div>
       <div class="header-cards">
@@ -69,10 +83,16 @@
         </div>
       </div>
       <hr>
-      <div class="resources grid-auto-fit">
+      
+      <a class="item-create plus-attribute flex-group-center" title="{{localize 'DECK_OF_DESTINY.labels.add' type=(localize 'DECK_OF_DESTINY.types.item.attribute' )}}" data-type="attribute">
+        <i class="fas fa-plus"></i>
+        {{localize 'DECK_OF_DESTINY.types.item.attribute'}}
+      </a>
+      <div class="resources grid grid-3col">       
         <div class="resource attribute-group">
           <label for="system.attributes.fortune" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.fortune'}}</label>
           <button class="attribute-button attribute-click" data-dtype="Number" data-attribute-type="fortune">{{system.attributes.fortune.value}}</button>
+          <span class="mt-half">&nbsp;</span>
         </div>
         <div class="resource attribute-group">
           <label for="system.attributes.absorption" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.absorption.label'}}</label>
@@ -80,8 +100,9 @@
           <span class="mt-half">{{localize (lookup @root.config.absorption system.attributes.absorption.value)}}</span>
         </div>
         <div class="resource attribute-group">
-          <label for="system.attributes.mitigation" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.mitigation'}}</label>
+          <label for="system.attributes.mitigation" class="resource-label mb-half">{{localize 'DECK_OF_DESTINY.attributes.mitigation.label'}}</label>
           <button class="attribute-button attribute-click" data-dtype="Number" data-attribute-type="mitigation">{{system.attributes.mitigation.value}}</button>
+          <span class="mt-half">{{localize (lookup @root.config.mitigation system.attributes.mitigation.value)}}</span>
         </div>
 
         {{!-- Additional Attributes --}}
@@ -99,13 +120,9 @@
               </a>
             </div>
             <button class="attribute-button item-click" data-dtype="Number">{{item.system.value}}</button>
+            <span class="mt-half">&nbsp;</span>
           </div>
         {{/each}}
-
-        <a class="item-create plus-attribute flex-group-center" title="{{localize 'DECK_OF_DESTINY.labels.add' type=(localize 'DECK_OF_DESTINY.types.item.attribute' )}}" data-type="attribute">
-          <i class="fas fa-plus"></i>
-          {{localize 'DECK_OF_DESTINY.types.item.attribute'}}
-        </a>
       </div>
     </div>
   </header>
