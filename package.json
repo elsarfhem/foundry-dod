@@ -4,9 +4,11 @@
     "build:scss": "sass src/scss/dod.scss styles/dod.css --style=expanded --no-source-map",
     "build:packs:src": "fvtt package workon dod --type System && fvtt package unpack --inputDirectory packs --outputDirectory src/packs/cards -n cards && fvtt package unpack --inputDirectory packs --outputDirectory src/packs/macros -n macros",
     "build:packs:db": "fvtt package workon dod --type System && fvtt package pack --inputDirectory src/packs/cards --outputDirectory packs -n cards -t Cards && fvtt package pack --inputDirectory src/packs/macros --outputDirectory packs -n macros -t Macro && fvtt package pack --inputDirectory src/packs/journals --outputDirectory packs -n journals -t JournalEntry",
-    "lint": "prettier --check src/scss; eslint --ext .mjs --ignore-path .gitignore ./src/module",
-    "lint:fix": "prettier --write src/scss; eslint --ext .mjs --ignore-path .gitignore ./src/module --fix",
-    "watch": "sass src/scss/dod.scss styles/dod.css --style=expanded --source-map --watch"
+    "lint": "prettier --check src/scss && eslint --ext .mjs --ignore-path .gitignore ./src/module",
+    "lint:fix": "prettier --write src/scss && eslint --ext .mjs --ignore-path .gitignore ./src/module --fix",
+    "watch": "sass src/scss/dod.scss styles/dod.css --style=expanded --source-map --watch",
+    "prepare": "husky install",
+    "postinstall": "node -e \"try { require('husky').install() } catch (e) { console.log('Skipped husky installation') }\""
   },
   "devDependencies": {
     "@foundryvtt/foundryvtt-cli": "^1.0.3",
@@ -14,6 +16,7 @@
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
     "prettier": "^2.8.1",
     "sass": "^1.53.0"
   }

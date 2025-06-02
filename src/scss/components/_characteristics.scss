@@ -1,30 +1,30 @@
 .characteristic-label {
-    font-weight: bold;
-    margin: 0;
-    line-height: 1;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1;
 }
 
 .characteristic-circles {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 
-    .circle {
-        width: 1.25rem;
-        height: 1.25rem;
-        border-radius: 50%;
-        border: 2px solid #ccc;
-        background-color: transparent;
-        cursor: pointer;
-        transition: background-color 0.3s, border-color 0.3s;
+  .circle {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
 
-        &.filled {
-            background-color: $c-beige;
-            border-color: $c-tan;
-        }
-
-        &:hover {
-            border-color: $c-tan;
-        }
+    &.filled {
+      background-color: $c-beige;
+      border-color: $c-tan;
     }
+
+    &:hover {
+      border-color: $c-tan;
+    }
+  }
 }

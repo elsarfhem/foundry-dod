@@ -510,7 +510,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
    * @param {number} players - The number of players.
    */
   async _drawCardsFromPile(pile, hand, players) {
-    return await hand.draw(pile, Math.ceil(pile.cards.size /(3 + players)), {
+    return await hand.draw(pile, Math.ceil(pile.cards.size / (3 + players)), {
       how: CONST.CARD_DRAW_MODES.RANDOM,
       chatNotification: false
     });
