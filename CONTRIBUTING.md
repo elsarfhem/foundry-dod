@@ -65,3 +65,18 @@ Available commands:
 
 - `npm run lint` - Run both `eslint` and `prettier` to check and display any issues found.
 - `npm run lint:fix` - Automatically fix any code style issues that can be fixed.
+
+## Create a RC candiate
+
+Created a new tag
+```bash
+git tag 0.1.0-rc.x
+```
+Push the new tag to the remote repository
+```bash
+git push origin 0.1.0-rc.5
+```
+The pre-release workflow should now trigger because:
+1. The tag matches the required pattern '..-rc.' in the workflow trigger
+2. The base version (0.1.0) matches the version in system.json
+3. The tag has been properly pushed to the remote repository
