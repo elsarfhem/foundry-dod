@@ -66,7 +66,7 @@ Available commands:
 - `npm run lint` - Run both `eslint` and `prettier` to check and display any issues found.
 - `npm run lint:fix` - Automatically fix any code style issues that can be fixed.
 
-## Create a RC candiate
+## Create a RC candidate
 
 Created a new tag
 ```bash
