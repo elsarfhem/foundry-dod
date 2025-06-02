@@ -1,3 +1,34 @@
+# Foundry DoD
+
+## Development Setup
+
+### Prerequisites
+- Node.js
+- npm
+
+### Installation
+1. Clone the repository
+2. Run `npm install` to install dependencies
+3. Git hooks for linting will be automatically installed
+
+### Available Scripts
+- `npm run build` - Build all assets
+- `npm run lint` - Check code formatting and lint issues
+- `npm run lint:fix` - Fix code formatting and lint issues
+- `npm run watch` - Watch for changes to SCSS files
+
+### Git Hooks
+This project uses husky to manage git hooks:
+
+- **pre-push**: Runs linting checks before allowing a push to the repository
+  - If linting fails, the push will be blocked
+  - Run `npm run lint:fix` to fix issues
+
+To bypass hooks if necessary (not recommended):
+```
+git push --no-verify
+```
+
 # Deck of Destiny
 
 ![GitHub Release](https://img.shields.io/github/v/release/elsarfhem/foundry-dod)
