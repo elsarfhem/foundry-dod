@@ -121,17 +121,16 @@
     }
     &:hover {
       .item-tooltip {
-        display: block;
-        animation: fadeIn 200ms ease-in forwards;
+        @include show;
       }
     }
 
     .item-tooltip {
+      @include hide;
       position: absolute;
       z-index: 1000;
       bottom:0;
       left:40%;
-      display: none;
       opacity: 0;
       background-color: $c-dark;
       color: $c-light;
