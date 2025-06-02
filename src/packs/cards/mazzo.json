@@ -12,20 +12,20 @@
   "folder": null,
   "ownership": {
     "default": 3,
-    "r8RTNiMjzdQbTh3C": 3
+    "z3oC1uNtDP0TX1os": 3
   },
   "flags": {},
   "_stats": {
     "compendiumSource": null,
     "duplicateSource": null,
-    "coreVersion": "12.330",
+    "coreVersion": "12.343",
     "systemId": "dod",
     "systemVersion": "0.1.0",
-    "createdTime": 1719949333706,
-    "modifiedTime": 1719949333793,
-    "lastModifiedBy": "r8RTNiMjzdQbTh3C"
+    "createdTime": 1748279898937,
+    "modifiedTime": 1748279898937,
+    "lastModifiedBy": "z3oC1uNtDP0TX1os"
   },
-  "_id": "ZvcmM279wVb4Ybr2",
-  "sort": 200000,
-  "_key": "!cards!ZvcmM279wVb4Ybr2"
+  "_id": "eAAzeW9NxmBgjKI3",
+  "sort": 0,
+  "_key": "!cards!eAAzeW9NxmBgjKI3"
 }
