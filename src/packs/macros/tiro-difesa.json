@@ -1,14 +1,14 @@
 {
   "name": "Tiro Difesa",
   "type": "script",
-  "author": "r8RTNiMjzdQbTh3C",
+  "author": "z3oC1uNtDP0TX1os",
   "img": "icons/svg/combat.svg",
   "scope": "global",
-  "command": "let confirmed = false;\n\nnew Dialog({\n  title: \"Tiro Difesa\",\n  content: `\n     <form>\n\t    <div class=\"form-group\">\n       <label>Danni subiti:</label>\n       <input id=\"dmg\" name=\"dmg\" value=\"1\" autofocus onFocus=\"select()\" tabindex=\"1\" type=\"number\" min=\"1\"></input>\n      </div>\n      <div class=\"form-group\">\n       <label>Dadi aggiuntivi:</label>\n       <input id=\"additional\" name=\"additional\" value=\"0\" tabindex=\"2\"  type=\"number\" min=\"0\"></input>\n      </div>\n      <div class=\"form-group\">\n       <label>Coeff. di Assorbimento:</label>\n       <select name=\"defense\" id=\"defense\" tabindex=\"3\">\n         <option value=\"1\">Base</option>\n         <option value=\"2\">Leggero</option>\n         <option value=\"3\">Medio</option>\n         <option value=\"4\">Alto</option>\n       </select>\n      </div>\n     </form>\n     `,\n  buttons: {\n    one: {\n      icon: '<i class=\"fas fa-check\"></i>',\n      label: \"Tira\",\n      callback: () => confirmed = true\n    },\n    two: {\n      icon: '<i class=\"fas fa-times\"></i>',\n      label: \"Annulla\",\n      callback: () => confirmed = false\n    }\n  },\n  default: \"one\",\n  close: async (html) => {\n    if (confirmed) {\n      let dmg = parseInt(html.find('[name=dmg]')[0].value) || 0\n      let additionalDice = parseInt(html.find('[name=additional]')[0].value) || 0\n      var select = document.getElementById(\"defense\");\n      console.log(select)\n      let defenseLevel = parseInt(select.options[select.selectedIndex].value)\n      console.log(`${dmg + additionalDice}d6cs<=${defenseLevel}`)\n      let r = new Roll(`${dmg + additionalDice}d6cs<=${defenseLevel}`);\n      // Execute the roll\n\n        const roll = await r.evaluate({\n          async: true\n        });\n\n      game.dice3d.showForRoll(roll);\n\n        await r.toMessage({}, {\n          create: false\n        });\n\n        const rollsAsString = r.terms[0].results.map((d) => {\n          return `<li class=\"roll die d6 ${d.success ? 'success' : ''}\">${d.result}</li>`\n        }).join('')\n\n        await ChatMessage.create({\n          user: game.user.id,\n          content: `\n            <h2>Test Difesa</h2>\n            <p>Hai assorbito <span style=\"font-size: large; font-weight: bold;\">${r.result}</span> su ${dmg} dann${dmg>1 ? 'i' : 'o'}</p>\n\n            <div class=\"dice-tooltip expanded\" style=\"display: block;\">\n                <section class=\"tooltip-part\">\n                      <div class=\"dice\">\n                        <ol class=\"dice-rolls\">\n                          ${rollsAsString}\n                        </ol>\n                      </div>\n                </section>\n            </div>\n          `\n        });\n    }\n  }\n}).render(true);",
+  "command": "let confirmed = false;\n\nnew Dialog({\n  title: \"Tiro Difesa\",\n  content: `\n     <form>\n\t    <div class=\"form-group\">\n       <label>Danni subiti:</label>\n       <input id=\"dmg\" name=\"dmg\" value=\"1\" autofocus onFocus=\"select()\" tabindex=\"1\" type=\"number\" min=\"1\"></input>\n      </div>\n      <div class=\"form-group\">\n       <label>Dadi aggiuntivi:</label>\n       <input id=\"additional\" name=\"additional\" value=\"0\" tabindex=\"2\"  type=\"number\" min=\"0\"></input>\n      </div>\n      <div class=\"form-group\">\n       <label>Coeff. di Assorbimento:</label>\n       <select name=\"defense\" id=\"defense\" tabindex=\"3\">\n         <option value=\"1\">Base</option>\n         <option value=\"2\">Leggero</option>\n         <option value=\"3\">Medio</option>\n         <option value=\"4\">Alto</option>\n       </select>\n      </div>\n     </form>\n     `,\n  buttons: {\n    one: {\n      icon: '<i class=\"fas fa-check\"></i>',\n      label: \"Tira\",\n      callback: () => confirmed = true\n    },\n    two: {\n      icon: '<i class=\"fas fa-times\"></i>',\n      label: \"Annulla\",\n      callback: () => confirmed = false\n    }\n  },\n  default: \"one\",\n  close: async (html) => {\n    if (confirmed) {\n      let dmg = parseInt(html.find('[name=dmg]')[0].value) || 0\n      let additionalDice = parseInt(html.find('[name=additional]')[0].value) || 0\n      var select = document.getElementById(\"defense\");\n      console.log(select)\n      let defenseLevel = parseInt(select.options[select.selectedIndex].value)\n      console.log(`${dmg + additionalDice}d6cs<=${defenseLevel}`)\n      let r = new Roll(`${dmg + additionalDice}d6cs<=${defenseLevel}`);\n      // Execute the roll\n\n        const roll = await r.evaluate();\n\n        await r.toMessage({}, {\n          create: false\n        });\n\n        const rollsAsString = r.terms[0].results.map((d) => {\n          return `<li class=\"roll die d6 ${d.success ? 'success' : ''}\">${d.result}</li>`\n        }).join('')\n\n        await ChatMessage.create({\n          user: game.user.id,\n          content: `\n            <h2>Tiro Difesa</h2>\n            <p>Hai assorbito <span style=\"font-size: large; font-weight: bold;\">${r.result}</span> su ${dmg} dann${dmg>1 ? 'i' : 'o'}</p>\n\n            <div class=\"dice-tooltip expanded\" style=\"display: block;\">\n                <section class=\"tooltip-part\">\n                      <div class=\"dice\">\n                        <ol class=\"dice-rolls\">\n                          ${rollsAsString}\n                        </ol>\n                      </div>\n                </section>\n            </div>\n          `\n        });\n    }\n  }\n}).render(true);",
   "folder": null,
   "ownership": {
     "default": 2,
-    "r8RTNiMjzdQbTh3C": 3
+    "z3oC1uNtDP0TX1os": 3
   },
   "flags": {
     "advanced-macros": {
@@ -19,14 +19,14 @@
   "_stats": {
     "compendiumSource": null,
     "duplicateSource": null,
-    "coreVersion": "12.330",
+    "coreVersion": "12.343",
     "systemId": "dod",
     "systemVersion": "0.1.0",
-    "createdTime": 1719951079039,
-    "modifiedTime": 1719951079039,
-    "lastModifiedBy": "r8RTNiMjzdQbTh3C"
+    "createdTime": 1748279502635,
+    "modifiedTime": 1748279503653,
+    "lastModifiedBy": "z3oC1uNtDP0TX1os"
   },
-  "_id": "bwC1udwMLNkS4HU0",
-  "sort": 0,
-  "_key": "!macros!bwC1udwMLNkS4HU0"
+  "_id": "jeNqFUII5E4Mswul",
+  "sort": 200000,
+  "_key": "!macros!jeNqFUII5E4Mswul"
 }
