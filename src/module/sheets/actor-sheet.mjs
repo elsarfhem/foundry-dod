@@ -41,6 +41,9 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     context.system = actorData.system;
     context.flags = actorData.flags;
 
+    // Add isGM flag
+    context.isGM = game.user.isGM;
+
     // Adding a pointer to CONFIG.DECK_OF_DESTINY
     context.config = CONFIG.DECK_OF_DESTINY;
 

@@ -18,7 +18,7 @@
           <label for="system.xp" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.xp.label'}}</label>
           <div class="flex-group-center xp-inputs">
             <div class="xp-input">
-              <input name="system.xp.total" type="number" value="{{system.xp.total}}" placeholder="0" data-dtype="Number" min="0" />
+              <input name="system.xp.total" type="number" value="{{system.xp.total}}" placeholder="0" data-dtype="Number" min="0" {{#unless isGM}}disabled{{/unless}} />
             </div>
             <div class="xp-input">
               <input name="system.xp.spent" type="number" value="{{system.xp.spent}}" placeholder="0" data-dtype="Number" min="0" />
