@@ -24,11 +24,11 @@
         data-type="ability">{{item.name}}</label>
     </div>
     <div class='flex flex-row flex-group-center'>
-      <button class="ability-control item-decrease-click" title="{{localize 'DECK_OF_DESTINY.actions.decrease'}}">
+      <button class="ability-control item-decrease-click" title="{{localize 'DECK_OF_DESTINY.actions.decrease'}}: +{{localize (concat 'DECK_OF_DESTINY.attributes.xp.abilities.' item.system.value)}}">
         <i class="fas fa-minus"></i>
       </button>
       <span class="ability-value">{{item.system.value}}</span>
-      <button class="ability-control item-increase-click" title="{{localize 'DECK_OF_DESTINY.actions.increase'}}">
+      <button class="ability-control item-increase-click" title="{{localize 'DECK_OF_DESTINY.actions.increase'}}: -{{localize (concat 'DECK_OF_DESTINY.attributes.xp.abilities.' (add item.system.value 1))}}">
         <i class="fas fa-plus"></i>
       </button>
       <a class='item-control item-edit mx-half' title='{{localize ' DECK_OF_DESTINY.labels.edit'

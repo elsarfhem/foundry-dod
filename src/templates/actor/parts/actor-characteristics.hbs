@@ -4,19 +4,19 @@
             <label for="system.characteristics.{{key}}.value" class="characteristic-label addable flexlarge align-left"
                 data-label="{{key}}" data-type="characteristic">{{localize (lookup @root.config.characteristics key)}}</label>
             <div class="characteristic-circles mx-half" data-characteristic-key="{{key}}">
-                <span class="characteristic-click circle {{#if (gte characteristic.value 1)}}filled{{/if}}" data-value="1">
+                <span title="0 XP" class="characteristic-click circle {{#if (gte characteristic.value 1)}}filled{{/if}}" data-value="1">
                     {{#if (eq characteristic.value 1)}}1{{/if}}
                 </span>
-                <span class="characteristic-click circle {{#if (gte characteristic.value 2)}}filled{{/if}}" data-value="2">
+                <span title="5 XP" class="characteristic-click circle {{#if (gte characteristic.value 2)}}filled{{/if}}" data-value="2">
                     {{#if (eq characteristic.value 2)}}2{{/if}}
                 </span>
-                <span class="characteristic-click circle {{#if (gte characteristic.value 3)}}filled{{/if}}" data-value="3">
+                <span title="10 XP" class="characteristic-click circle {{#if (gte characteristic.value 3)}}filled{{/if}}" data-value="3">
                     {{#if (eq characteristic.value 3)}}3{{/if}}
                 </span>
-                <span class="characteristic-click circle {{#if (gte characteristic.value 4)}}filled{{/if}}" data-value="4">
+                <span title="15 XP" class="characteristic-click circle {{#if (gte characteristic.value 4)}}filled{{/if}}" data-value="4">
                     {{#if (eq characteristic.value 4)}}4{{/if}}
                 </span>
-                <span class="characteristic-click circle {{#if (gte characteristic.value 5)}}filled{{/if}}" data-value="5">
+                <span title="20 XP" class="characteristic-click circle {{#if (gte characteristic.value 5)}}filled{{/if}}" data-value="5">
                     {{#if (eq characteristic.value 5)}}5{{/if}}
                 </span>
             </div>

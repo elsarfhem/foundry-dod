@@ -3,7 +3,9 @@
     "actions": {
       "add_to_deck": "Aggiungi al Mazzo",
       "draw": "Pesca",
-      "reset": "Ripristina"
+      "reset": "Ripristina",
+      "increase": "Aumenta",
+      "decrease": "Diminuisci"
     },
     "attributes": {
       "absorption": {
@@ -49,7 +51,18 @@
         "label": "Punti Esperienza",
         "spent": "Spesi",
         "total": "Totali",
-        "remaining": "Rimanenti"
+        "remaining": "Rimanenti",
+        "abilities": {
+          "0": "0 PE",
+          "1": "1 PE",
+          "2": "2 PE",
+          "3": "3 PE",
+          "4": "4 PE",
+          "5": "5 PE",
+          "6": "10 PE",
+          "7": "10 PE",
+          "8": "0 PE"
+        }
       }
     },
     "cards": {

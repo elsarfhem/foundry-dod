@@ -3,7 +3,9 @@
     "actions": {
       "add_to_deck": "Add to Deck",
       "draw": "Draw",
-      "reset": "Reset"
+      "reset": "Reset",
+      "increase": "Increase",
+      "decrease": "Decrease"
     },
     "attributes": {
       "absorption": {
@@ -49,7 +51,18 @@
         "label": "XP",
         "spent": "Spent",
         "total": "Total",
-        "remaining": "Remaining"
+        "remaining": "Remaining",
+        "abilities": {
+          "0": "0 XP",
+          "1": "1 XP",
+          "2": "2 XP",
+          "3": "3 XP",
+          "4": "4 XP",
+          "5": "5 XP",
+          "6": "10 XP",
+          "7": "10 XP",
+          "8": "0 XP"
+        }
       }
     },
     "cards": {
