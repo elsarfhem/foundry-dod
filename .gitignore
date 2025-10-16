@@ -13,3 +13,4 @@ node_modules
 
 # System "Packs" generated via build
 /packs
+foundry-dev.yaml
