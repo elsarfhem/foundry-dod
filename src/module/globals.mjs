@@ -307,36 +307,57 @@ export async function componiIlMazzoEPesca() {
           const summary = Array.from(map)
             .map(([suit, num]) => `<li>${suitToName(suit)}: ${num}</li>`)
             .join('');
+
+          const buttons = [
+            {
+              label: 'Vedi la mano',
+              action: async () => {
+                const hand = game.cards.getName('Mano');
+                hand.sheet.render(true);
+              }
+            },
+            {
+              label: 'Vedi il mazzo',
+              action: async () => {
+                const pile = game.cards.getName('Mazzo');
+                pile.sheet.render(true);
+              }
+            },
+            {
+              label: 'Svuota il mazzo',
+              action: async () => {
+                game.macros
+                  .find((k, v) => k.name === 'Svuota il mazzo')
+                  .execute();
+              }
+            }
+          ];
+          if (playersNum > 1 && map.get('fortune') > 0) {
+            buttons.push({
+              label: 'Dividi Carte Fortuna',
+              action: async () => {
+                game.macros
+                  .find((k, v) => k.name === 'Divisione Carte Fortuna')
+                  .execute();
+              }
+            });
+          }
+          if (map.get('success') + map.get('fortune') >= map.get('failure')) {
+            buttons.push({
+              label: 'Rischia',
+              action: async () => {
+                game.macros.find((k, v) => k.name === 'Rischia').execute();
+              }
+            });
+          }
+
           showChatRequest({
             description: `<ul>${summary}</ul>
                   <div class="card-draw flexrow">${cardsHtml}</div>
                   `,
             img: 'icons/svg/card-hand.svg',
             title: 'Risultato della Prova',
-            buttonData: [
-              {
-                label: 'Vedi la mano',
-                action: async () => {
-                  const hand = game.cards.getName('Mano');
-                  hand.sheet.render(true);
-                }
-              },
-              {
-                label: 'Vedi il mazzo',
-                action: async () => {
-                  const pile = game.cards.getName('Mazzo');
-                  pile.sheet.render(true);
-                }
-              },
-              {
-                label: 'Svuota il mazzo',
-                action: async () => {
-                  game.macros
-                  .find((k, v) => k.name === 'Svuota il mazzo')
-                  .execute();
-                }
-              }
-            ]
+            buttonData: buttons
           });
         }
       }
@@ -489,7 +510,7 @@ export async function pesca() {
             }
           ];
 
-          if (map.get('fortune') > 0) {
+          if (playersNum > 1 && map.get('fortune') > 0) {
             buttons.push({
               label: 'Dividi Carte Fortuna',
               action: async () => {
@@ -712,10 +733,10 @@ export async function divisioneCarteFortuna() {
             return p.fortuneCards;
           })
           .reduce((a, b) => a + b, 0);
-        if (totalCardsNumber >= fortuneCards.length) {
+        if (totalCardsNumber < fortuneCards.length) {
           ChatMessage.create({
             user: game.user._id,
-            content: `Il totale delle carte (${totalCardsNumber}) é diverso dalle carte da dividere (${fortuneCards.length})`
+            content: `Il totale delle carte (${totalCardsNumber}) deve essere maggiore delle carte da dividere (${fortuneCards.length})`
           });
           return;
         }
