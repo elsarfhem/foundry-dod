@@ -326,9 +326,7 @@ export async function componiIlMazzoEPesca() {
             {
               label: 'Svuota il mazzo',
               action: async () => {
-                game.macros
-                  .find((k, v) => k.name === 'Svuota il mazzo')
-                  .execute();
+                game.macros.find((k, v) => k.name === 'Svuota il mazzo').execute();
               }
             }
           ];
@@ -503,9 +501,7 @@ export async function pesca() {
             {
               label: 'Svuota il mazzo',
               action: async () => {
-                game.macros
-                .find((k, v) => k.name === 'Svuota il mazzo')
-                .execute();
+                game.macros.find((k, v) => k.name === 'Svuota il mazzo').execute();
               }
             }
           ];
@@ -950,20 +946,26 @@ export async function tiroDifesa() {
 function showChatRequest({ description, img, title, buttonData }) {
   const htmlContent = `
     <h2>${title ?? ''}</h2>
-    ${img ? `<img src="${img}" style="width:2em;height:2em;vertical-align:middle;">` : ''}
+    ${
+      img
+        ? `<img src="${img}" style="width:2em;height:2em;vertical-align:middle;">`
+        : ''
+    }
     <div>${description ?? ''}</div>
     <div class="dod-macro-buttons">
-      ${(buttonData || []).map((b, i) => `<button data-dod-macro-btn="${i}">${b.label}</button>`).join('')}
+      ${(buttonData || [])
+        .map((b, i) => `<button data-dod-macro-btn="${i}">${b.label}</button>`)
+        .join('')}
     </div>
   `;
   ChatMessage.create({
     user: game.user.id,
     content: htmlContent
-  }).then(msg => {
+  }).then((msg) => {
     Hooks.once('renderChatMessage', (message, html, data) => {
       if (message.id !== msg.id) return;
       html.find('button[data-dod-macro-btn]').each((i, btn) => {
-        btn.addEventListener('click', ev => {
+        btn.addEventListener('click', (ev) => {
           buttonData[i]?.action?.();
         });
       });
