@@ -307,7 +307,7 @@ export async function componiIlMazzoEPesca() {
           const summary = Array.from(map)
             .map(([suit, num]) => `<li>${suitToName(suit)}: ${num}</li>`)
             .join('');
-          Requestor.request({
+          showChatRequest({
             description: `<ul>${summary}</ul>
                   <div class="card-draw flexrow">${cardsHtml}</div>
                   `,
@@ -326,6 +326,14 @@ export async function componiIlMazzoEPesca() {
                 action: async () => {
                   const pile = game.cards.getName('Mazzo');
                   pile.sheet.render(true);
+                }
+              },
+              {
+                label: 'Svuota il mazzo',
+                action: async () => {
+                  game.macros
+                  .find((k, v) => k.name === 'Svuota il mazzo')
+                  .execute();
                 }
               }
             ]
@@ -470,6 +478,14 @@ export async function pesca() {
               action: async () => {
                 game.cards.getName('Mazzo').sheet.render(true);
               }
+            },
+            {
+              label: 'Svuota il mazzo',
+              action: async () => {
+                game.macros
+                .find((k, v) => k.name === 'Svuota il mazzo')
+                .execute();
+              }
             }
           ];
 
@@ -492,7 +508,7 @@ export async function pesca() {
             });
           }
 
-          Requestor.request({
+          showChatRequest({
             description: `<ul>${summary}</ul>
               <div class="card-draw flexrow">${cardsHtml}</div>
               `,
@@ -696,7 +712,7 @@ export async function divisioneCarteFortuna() {
             return p.fortuneCards;
           })
           .reduce((a, b) => a + b, 0);
-        if (totalCardsNumber !== fortuneCards.length) {
+        if (totalCardsNumber >= fortuneCards.length) {
           ChatMessage.create({
             user: game.user._id,
             content: `Il totale delle carte (${totalCardsNumber}) é diverso dalle carte da dividere (${fortuneCards.length})`
@@ -904,4 +920,32 @@ export async function tiroDifesa() {
       }
     }
   }).render(true);
+}
+
+/**
+ * Helper to show a chat message with interactive buttons (Foundry v13+)
+ * @param {Object} opts - { description, img, title, buttonData }
+ */
+function showChatRequest({ description, img, title, buttonData }) {
+  const htmlContent = `
+    <h2>${title ?? ''}</h2>
+    ${img ? `<img src="${img}" style="width:2em;height:2em;vertical-align:middle;">` : ''}
+    <div>${description ?? ''}</div>
+    <div class="dod-macro-buttons">
+      ${(buttonData || []).map((b, i) => `<button data-dod-macro-btn="${i}">${b.label}</button>`).join('')}
+    </div>
+  `;
+  ChatMessage.create({
+    user: game.user.id,
+    content: htmlContent
+  }).then(msg => {
+    Hooks.once('renderChatMessage', (message, html, data) => {
+      if (message.id !== msg.id) return;
+      html.find('button[data-dod-macro-btn]').each((i, btn) => {
+        btn.addEventListener('click', ev => {
+          buttonData[i]?.action?.();
+        });
+      });
+    });
+  });
 }
