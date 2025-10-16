@@ -31,7 +31,8 @@
     "verified": 12
   },
   "esmodules": [
-    "src/module/dod.mjs"
+    "src/module/dod.mjs",
+    "src/module/globals.mjs"
   ],
   "styles": [
     "styles/dod.css"
