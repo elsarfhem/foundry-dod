@@ -127,7 +127,12 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       if (!this.isEditable) return;
       const li = $(ev.currentTarget);
       // ignore header rows and special condition rows
-      if (li.hasClass('inventory-header') || li.hasClass('items-header') || li.hasClass('condition')) return;
+      if (
+        li.hasClass('inventory-header') ||
+        li.hasClass('items-header') ||
+        li.hasClass('condition')
+      )
+        return;
       const item = this.actor.items.get(li.data('itemId'));
       if (item) item.sheet.render(true);
     });
