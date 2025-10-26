@@ -121,6 +121,17 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       item.sheet.render(true);
     });
 
+    // Double-clicking an item opens its sheet in edit mode (inventory, talents, background, etc.)
+    // Only allow if the sheet is editable
+    html.on('dblclick', 'li.item', (ev) => {
+      if (!this.isEditable) return;
+      const li = $(ev.currentTarget);
+      // ignore header rows and special condition rows
+      if (li.hasClass('inventory-header') || li.hasClass('items-header') || li.hasClass('condition')) return;
+      const item = this.actor.items.get(li.data('itemId'));
+      if (item) item.sheet.render(true);
+    });
+
     // -------------------------------------------------------------
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;

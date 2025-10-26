@@ -121,7 +121,7 @@
     }
     &:hover {
       .item-tooltip {
-        @include show(0.8, 300ms, 500ms);
+        @include show(0.8, 300ms, 1000ms);
       }
     }
 
@@ -131,7 +131,7 @@
       z-index: 1000;
       bottom: 0;
       left: 30%;
-      bottom: -30%;
+      bottom: 0;
       opacity: 0;
       background-color: $c-dark;
       color: $c-light;
