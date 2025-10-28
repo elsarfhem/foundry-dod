@@ -134,16 +134,17 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         li.hasClass('inventory-header') ||
         li.hasClass('items-header') ||
         li.hasClass('condition')
-      ) return;
+      )
+        return;
 
       const item = this.actor.items.get(li.data('itemId'));
       if (!item) return;
 
       // Only open sheets for inventory ('item'), abilities and talents
       if (['item', 'ability', 'talent'].includes(item.type)) {
-      item.sheet.render(true);
+        item.sheet.render(true);
       }
-    }
+    };
 
     // Right-clicking an item's name opens its sheet in edit mode for abilities, talents and inventory items.
     html.on('contextmenu', 'li.item .item-name', (ev) => {
@@ -745,21 +746,28 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
 
     // Update the item without triggering a re-render
     await item.update({ 'system.value': newVal }, { render: false });
-    
-  // Update the display value in-place. Support different templates:
-  // - Abilities use a span. Talents may render the value inside the button itself.
-  const valueSpan = li.querySelector('.ability-value') || li.querySelector('.item-core-button') || element;
-  if (valueSpan) valueSpan.textContent = newVal;
-    
+
+    // Update the display value in-place. Support different templates:
+    // - Abilities use a span. Talents may render the value inside the button itself.
+    const valueSpan =
+      li.querySelector('.ability-value') ||
+      li.querySelector('.item-core-button') ||
+      element;
+    if (valueSpan) valueSpan.textContent = newVal;
+
     // Update the tooltip to show the correct XP cost
     const decreaseBtn = li.querySelector('.item-decrease-click');
     const increaseBtn = li.querySelector('.item-increase-click');
     if (decreaseBtn) {
-      decreaseBtn.title = game.i18n.format('DECK_OF_DESTINY.actions.decrease') + ': +' + 
+      decreaseBtn.title =
+        game.i18n.format('DECK_OF_DESTINY.actions.decrease') +
+        ': +' +
         game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal}`);
     }
     if (increaseBtn) {
-      increaseBtn.title = game.i18n.format('DECK_OF_DESTINY.actions.increase') + ': -' + 
+      increaseBtn.title =
+        game.i18n.format('DECK_OF_DESTINY.actions.increase') +
+        ': -' +
         game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal + 1}`);
     }
   }
@@ -775,25 +783,32 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     const itemId = li.dataset.itemId;
     const item = this.actor.items.get(itemId);
     const value = item.system.value;
-    if( value <= 0) return; // min value reached
+    if (value <= 0) return; // min value reached
     const newVal = value - 1;
-    
+
     // Update the item without triggering a re-render
     await item.update({ 'system.value': newVal }, { render: false });
-    
-  // Update the display value in-place. Support different templates:
-  const valueSpan = li.querySelector('.ability-value') || li.querySelector('.item-core-button') || element;
-  if (valueSpan) valueSpan.textContent = newVal;
-    
+
+    // Update the display value in-place. Support different templates:
+    const valueSpan =
+      li.querySelector('.ability-value') ||
+      li.querySelector('.item-core-button') ||
+      element;
+    if (valueSpan) valueSpan.textContent = newVal;
+
     // Update the tooltip to show the correct XP cost
     const decreaseBtn = li.querySelector('.item-decrease-click');
     const increaseBtn = li.querySelector('.item-increase-click');
     if (decreaseBtn) {
-      decreaseBtn.title = game.i18n.format('DECK_OF_DESTINY.actions.decrease') + ': +' + 
+      decreaseBtn.title =
+        game.i18n.format('DECK_OF_DESTINY.actions.decrease') +
+        ': +' +
         game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal}`);
     }
     if (increaseBtn) {
-      increaseBtn.title = game.i18n.format('DECK_OF_DESTINY.actions.increase') + ': -' + 
+      increaseBtn.title =
+        game.i18n.format('DECK_OF_DESTINY.actions.increase') +
+        ': -' +
         game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal + 1}`);
     }
   }
