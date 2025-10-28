@@ -5,7 +5,7 @@
   "author": "z3oC1uNtDP0TX1os",
   "img": "icons/svg/downgrade.svg",
   "scope": "global",
-  "command": "const deck = game.cards.getName(\"DoD - lista carte\");\nawait deck.recall({\n  chatNotification: false\n})",
+  "command": "game.dod.macros.svuotaMazzo();",
   "ownership": {
     "default": 0,
     "z3oC1uNtDP0TX1os": 3

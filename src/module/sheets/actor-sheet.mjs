@@ -121,6 +121,48 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       item.sheet.render(true);
     });
 
+    const editOnRightClick = (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (!this.isEditable) return;
+
+      const nameDiv = $(ev.currentTarget);
+      const li = nameDiv.closest('li.item');
+
+      // ignore header rows and special condition rows
+      if (
+        li.hasClass('inventory-header') ||
+        li.hasClass('items-header') ||
+        li.hasClass('condition')
+      )
+        return;
+
+      const item = this.actor.items.get(li.data('itemId'));
+      if (!item) return;
+
+      // Only open sheets for inventory ('item'), abilities and talents
+      if (['item', 'ability', 'talent'].includes(item.type)) {
+        item.sheet.render(true);
+      }
+    };
+
+    // Right-clicking an item's name opens its sheet in edit mode for abilities, talents and inventory items.
+    html.on('contextmenu', 'li.item .item-name', (ev) => {
+      editOnRightClick(ev);
+    });
+
+    html.on('contextmenu', 'li.item .item-fixed-name', (ev) => {
+      editOnRightClick(ev);
+    });
+
+    html.on('contextmenu', 'li.item .item-description', (ev) => {
+      editOnRightClick(ev);
+    });
+
+    html.on('contextmenu', 'li.item .item-quantity', (ev) => {
+      editOnRightClick(ev);
+    });
+
     // -------------------------------------------------------------
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
@@ -688,10 +730,46 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   async _onIncreaseItemValue(event) {
     event.preventDefault();
     const element = event.currentTarget;
-    const itemId = element.closest('.item').dataset.itemId;
+    const li = element.closest('.item');
+    const itemId = li.dataset.itemId;
     const item = this.actor.items.get(itemId);
     const value = item.system.value;
-    await item.update({ 'system.value': value + 1 });
+    const proposed = value + 1;
+    // Determine caps by item type
+    const typeCaps = {
+      talent: 3,
+      ability: 7
+    };
+    const cap = typeCaps[item.type] ?? Number.POSITIVE_INFINITY;
+    const newVal = Math.min(proposed, cap);
+    if (newVal === value) return; // already at cap, nothing to do
+
+    // Update the item without triggering a re-render
+    await item.update({ 'system.value': newVal }, { render: false });
+
+    // Update the display value in-place. Support different templates:
+    // - Abilities use a span. Talents may render the value inside the button itself.
+    const valueSpan =
+      li.querySelector('.ability-value') ||
+      li.querySelector('.item-core-button') ||
+      element;
+    if (valueSpan) valueSpan.textContent = newVal;
+
+    // Update the tooltip to show the correct XP cost
+    const decreaseBtn = li.querySelector('.item-decrease-click');
+    const increaseBtn = li.querySelector('.item-increase-click');
+    if (decreaseBtn) {
+      decreaseBtn.title =
+        game.i18n.format('DECK_OF_DESTINY.actions.decrease') +
+        ': +' +
+        game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal}`);
+    }
+    if (increaseBtn) {
+      increaseBtn.title =
+        game.i18n.format('DECK_OF_DESTINY.actions.increase') +
+        ': -' +
+        game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal + 1}`);
+    }
   }
 
   /**
@@ -701,10 +779,38 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   async _onDecreaseItemValue(event) {
     event.preventDefault();
     const element = event.currentTarget;
-    const itemId = element.closest('.item').dataset.itemId;
+    const li = element.closest('.item');
+    const itemId = li.dataset.itemId;
     const item = this.actor.items.get(itemId);
     const value = item.system.value;
-    await item.update({ 'system.value': value - 1 });
+    if (value <= 0) return; // min value reached
+    const newVal = value - 1;
+
+    // Update the item without triggering a re-render
+    await item.update({ 'system.value': newVal }, { render: false });
+
+    // Update the display value in-place. Support different templates:
+    const valueSpan =
+      li.querySelector('.ability-value') ||
+      li.querySelector('.item-core-button') ||
+      element;
+    if (valueSpan) valueSpan.textContent = newVal;
+
+    // Update the tooltip to show the correct XP cost
+    const decreaseBtn = li.querySelector('.item-decrease-click');
+    const increaseBtn = li.querySelector('.item-increase-click');
+    if (decreaseBtn) {
+      decreaseBtn.title =
+        game.i18n.format('DECK_OF_DESTINY.actions.decrease') +
+        ': +' +
+        game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal}`);
+    }
+    if (increaseBtn) {
+      increaseBtn.title =
+        game.i18n.format('DECK_OF_DESTINY.actions.increase') +
+        ': -' +
+        game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal + 1}`);
+    }
   }
 
   /**

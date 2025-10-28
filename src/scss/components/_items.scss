@@ -121,7 +121,7 @@
     }
     &:hover {
       .item-tooltip {
-        @include show(0.8, 300ms, 500ms);
+        @include show(0.8, 300ms, 1000ms);
       }
     }
 
@@ -130,7 +130,7 @@
       position: absolute;
       z-index: 1000;
       bottom: 0;
-      left: 60%;
+      left: 30%;
       opacity: 0;
       background-color: $c-dark;
       color: $c-light;
@@ -139,6 +139,7 @@
       padding: 5px 10px;
       max-width: 400px;
       max-height: 300px;
+      pointer-events: none; // Prevent tooltip from interfering with clicks
     }
 
     .item-name {
