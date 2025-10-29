@@ -171,11 +171,29 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     html.on('click', '.item-create', this._onItemCreate.bind(this));
 
     // Delete Inventory Item
-    html.on('click', '.item-delete', (ev) => {
-      const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'));
-      item.delete();
-      li.slideUp(200, () => this.render(false));
+    html.on('click', '.item-delete', async (ev) => {
+      ev.preventDefault();
+      const btn = ev.currentTarget;
+      const li = btn.closest('.item');
+      if (!li) return;
+      const itemId = li.dataset.itemId;
+      if (!itemId) return;
+      const item = this.actor.items.get(itemId);
+      if (!item) return;
+      // Only delete for inventory items, abilities, and talents
+      if (!['item', 'ability', 'talent'].includes(item.type)) return;
+      btn.disabled = true;
+      try {
+        await this.actor.deleteEmbeddedDocuments('Item', [itemId], { render: false });
+        const $li = $(li);
+        $li.slideUp(150, () => $li.remove());
+      } catch (err) {
+        console.error('Item deletion failed:', err);
+        ui.notifications.error(
+          game.i18n.localize('DECK_OF_DESTINY.errors.itemDeleteFailed') || 'Item deletion failed'
+        );
+        btn.disabled = false;
+      }
     });
 
     // Add event listener to all input fields to handle keydown events
