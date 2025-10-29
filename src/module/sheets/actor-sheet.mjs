@@ -195,7 +195,8 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       } catch (err) {
         console.error('Item deletion failed:', err);
         ui.notifications.error(
-          game.i18n.localize('DECK_OF_DESTINY.errors.itemDeleteFailed') || 'Item deletion failed'
+          game.i18n.localize('DECK_OF_DESTINY.errors.itemDeleteFailed') ||
+            'Item deletion failed'
         );
         btn.disabled = false;
       }
@@ -318,7 +319,8 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     const header = event.currentTarget;
     const type = header.dataset.type;
     const data = foundry.utils.duplicate(header.dataset);
-    const name = game.i18n.localize(`DECK_OF_DESTINY.types.item.${type}`) || `New ${type}`;
+    const name =
+      game.i18n.localize(`DECK_OF_DESTINY.types.item.${type}`) || `New ${type}`;
     const itemData = { name, type, system: data };
     delete itemData.system['type'];
 
@@ -332,7 +334,10 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     try {
       created = await Item.create(itemData, { parent: this.actor, render: false });
     } catch (err) {
-      console.error('Optimized item creation failed; falling back to full render:', err);
+      console.error(
+        'Optimized item creation failed; falling back to full render:',
+        err
+      );
       return Item.create(itemData, { parent: this.actor });
     }
 
@@ -341,7 +346,9 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
 
     // Find the list for this type via its create button
     const root = this.element[0];
-    const createBtn = root.querySelector(`.item-control.item-create[data-type='${type}']`);
+    const createBtn = root.querySelector(
+      `.item-control.item-create[data-type='${type}']`
+    );
     const list = createBtn?.closest('ol.items-list');
     if (!list) {
       this.render(false);
@@ -351,7 +358,10 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     // Render the shared partial
     let rowHtml;
     try {
-      rowHtml = await renderTemplate('systems/dod/src/templates/actor/parts/actor-item-row.hbs', { item: created });
+      rowHtml = await renderTemplate(
+        'systems/dod/src/templates/actor/parts/actor-item-row.hbs',
+        { item: created }
+      );
     } catch (tplErr) {
       console.error('Failed to render item row partial; re-rendering sheet:', tplErr);
       this.render(false);
@@ -372,9 +382,13 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       }
       newLi.style.display = 'none';
       list.appendChild(newLi);
-      if (window.$) $(newLi).slideDown(160); else newLi.style.display = '';
+      if (window.$) $(newLi).slideDown(160);
+      else newLi.style.display = '';
     } catch (injectErr) {
-      console.error('Failed to inject rendered item row; re-rendering sheet:', injectErr);
+      console.error(
+        'Failed to inject rendered item row; re-rendering sheet:',
+        injectErr
+      );
       this.render(false);
     }
 
@@ -424,7 +438,10 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     const cardType = event.currentTarget.dataset.cardType;
     const newVal = data.cards[cardType].value + 1;
     // Update without forcing a full sheet re-render and update header input in-place
-    await this.actor.update({ [`system.cards.${cardType}.value`]: newVal }, { render: false });
+    await this.actor.update(
+      { [`system.cards.${cardType}.value`]: newVal },
+      { render: false }
+    );
     try {
       const sheet = this.element[0];
       const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
@@ -444,7 +461,10 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     const cardType = event.currentTarget.dataset.cardType;
     const newVal = data.cards[cardType].value - 1;
     // Update without forcing a full sheet re-render and update header input in-place
-    await this.actor.update({ [`system.cards.${cardType}.value`]: newVal }, { render: false });
+    await this.actor.update(
+      { [`system.cards.${cardType}.value`]: newVal },
+      { render: false }
+    );
     try {
       const sheet = this.element[0];
       const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
@@ -655,13 +675,13 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       content: `<p>I added to ${pile.link}: </p>
       <ul>
         <li>Success Cards: ${Math.max(
-        0,
-        data.success.value + data.success.modifier
-      )}</li>
+          0,
+          data.success.value + data.success.modifier
+        )}</li>
         <li>Failure Cards: ${Math.max(
-        0,
-        data.failure.value + data.failure.modifier
-      )}</li>
+          0,
+          data.failure.value + data.failure.modifier
+        )}</li>
         <li>Issue Cards: ${Math.max(data.issue.value + data.issue.modifier)}</li>
         <li>Fortune Cards: ${Math.max(data.fortune.value + data.fortune.modifier)}</li>
         <li>Destiny Cards: ${Math.max(data.destiny.value + data.destiny.modifier)}</li>
@@ -758,7 +778,10 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     }
     const newVal = actor.cards[cardType].value + value;
     // Update without forcing a full sheet re-render and update header input in-place
-    await this.actor.update({ [`system.cards.${cardType}.value`]: newVal }, { render: false });
+    await this.actor.update(
+      { [`system.cards.${cardType}.value`]: newVal },
+      { render: false }
+    );
     try {
       const sheet = this.element[0];
       const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
