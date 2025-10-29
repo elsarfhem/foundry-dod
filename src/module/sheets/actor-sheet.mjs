@@ -1,1004 +1,332 @@
+import {createItem, decreaseItemValue, deleteItemRow, increaseItemValue} from "./actor-sheet/items.mjs";
+import {
+    addCards,
+    addCardsToPile,
+    addSheetCard,
+    drawCardsFromPile,
+    resetActorCards,
+    subtractSheetCard
+} from "./actor-sheet/cards.mjs";
+import {decreaseAttribute, increaseAttribute, setCharacteristicValue} from "./actor-sheet/attributes.mjs";
+import {changeConditionName, changeTrauma, toggleConditionDeadly} from "./actor-sheet/conditions-trauma.mjs";
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
  */
 export class DeckOfDestinyActorSheet extends ActorSheet {
-  /** @override */
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['dod', 'sheet', 'actor'],
-      width: 850,
-      height: 600,
-      tabs: [
-        {
-          navSelector: '.sheet-tabs',
-          contentSelector: '.sheet-body',
-          initial: 'core'
+    /** @override */
+    static get defaultOptions() {
+        return foundry.utils.mergeObject(super.defaultOptions, {
+            classes: ['dod', 'sheet', 'actor'],
+            width: 850,
+            height: 600,
+            tabs: [
+                {
+                    navSelector: '.sheet-tabs',
+                    contentSelector: '.sheet-body',
+                    initial: 'core'
+                }
+            ]
+        });
+    }
+
+    /** @override */
+    get template() {
+        return `systems/dod/src/templates/actor/actor-${this.actor.type}-sheet.hbs`;
+    }
+
+    /* -------------------------------------------- */
+
+    /** @override */
+    async getData() {
+        // Retrieve the data structure from the base sheet. You can inspect or log
+        // the context variable to see the structure, but some key properties for
+        // sheets are the actor object, the data object, whether or not it's
+        // editable, the items array.
+        const context = super.getData();
+
+        // Use a safe clone of the actor data for further operations.
+        const actorData = this.document.toPlainObject();
+
+        // Add the actor's data to context.data for easier access, as well as flags.
+        context.system = actorData.system;
+        context.flags = actorData.flags;
+
+        // Add isGM flag
+        context.isGM = game.user.isGM;
+
+        // Adding a pointer to CONFIG.DECK_OF_DESTINY
+        context.config = CONFIG.DECK_OF_DESTINY;
+
+        // Prepare items to display
+        this._prepareItems(context);
+
+        // Enrich biography info for display
+        // Enrichment turns text like `[[/r 1d20]]` into buttons
+        context.enrichedBiography = await TextEditor.enrichHTML(
+            this.actor.system.biography,
+            {
+                // Whether to show secret blocks in the finished html
+                secrets: this.document.isOwner,
+                // Necessary in v11, can be removed in v12
+                async: true,
+                // Data to fill in for inline rolls
+                rollData: this.actor.getRollData(),
+                // Relative UUID resolution
+                relativeTo: this.actor
+            }
+        );
+
+        return context;
+    }
+
+    /**
+     * Organize and classify Items for Actor sheets.
+     *
+     * @param {object} context The context object to mutate
+     */
+    _prepareItems(context) {
+        const gear = [];
+        const abilities = [];
+        const talents = [];
+        const conditions = [];
+        const traumas = [];
+        const attributes = []; // user-defined attributes
+
+        for (const i of context.items) {
+            i.img = i.img || Item.DEFAULT_ICON;
+            if (i.type === 'item') {
+                gear.push(i);
+            } else if (i.type === 'ability') {
+                abilities.push(i);
+            } else if (i.type === 'talent') {
+                talents.push(i);
+            } else if (i.type === 'condition') {
+                conditions.push(i);
+            } else if (i.type === 'trauma') {
+                traumas.push(i);
+            } else if (i.type === 'attribute') {
+                attributes.push(i);
+            }
         }
-      ]
-    });
-  }
 
-  /** @override */
-  get template() {
-    return `systems/dod/src/templates/actor/actor-${this.actor.type}-sheet.hbs`;
-  }
-
-  /* -------------------------------------------- */
-
-  /** @override */
-  async getData() {
-    // Retrieve the data structure from the base sheet. You can inspect or log
-    // the context variable to see the structure, but some key properties for
-    // sheets are the actor object, the data object, whether or not it's
-    // editable, the items array.
-    const context = super.getData();
-
-    // Use a safe clone of the actor data for further operations.
-    const actorData = this.document.toPlainObject();
-
-    // Add the actor's data to context.data for easier access, as well as flags.
-    context.system = actorData.system;
-    context.flags = actorData.flags;
-
-    // Add isGM flag
-    context.isGM = game.user.isGM;
-
-    // Adding a pointer to CONFIG.DECK_OF_DESTINY
-    context.config = CONFIG.DECK_OF_DESTINY;
-
-    // Prepare items to display
-    this._prepareItems(context);
-
-    // Enrich biography info for display
-    // Enrichment turns text like `[[/r 1d20]]` into buttons
-    context.enrichedBiography = await TextEditor.enrichHTML(
-      this.actor.system.biography,
-      {
-        // Whether to show secret blocks in the finished html
-        secrets: this.document.isOwner,
-        // Necessary in v11, can be removed in v12
-        async: true,
-        // Data to fill in for inline rolls
-        rollData: this.actor.getRollData(),
-        // Relative UUID resolution
-        relativeTo: this.actor
-      }
-    );
-
-    return context;
-  }
-
-  /**
-   * Organize and classify Items for Actor sheets.
-   *
-   * @param {object} context The context object to mutate
-   */
-  _prepareItems(context) {
-    const gear = [];
-    const abilities = [];
-    const talents = [];
-    const conditions = [];
-    const traumas = [];
-    const attributes = []; // user-defined attributes
-
-    for (const i of context.items) {
-      i.img = i.img || Item.DEFAULT_ICON;
-      if (i.type === 'item') {
-        gear.push(i);
-      } else if (i.type === 'ability') {
-        abilities.push(i);
-      } else if (i.type === 'talent') {
-        talents.push(i);
-      } else if (i.type === 'condition') {
-        conditions.push(i);
-      } else if (i.type === 'trauma') {
-        traumas.push(i);
-      } else if (i.type === 'attribute') {
-        attributes.push(i);
-      }
+        // Assign and return
+        context.gear = gear;
+        context.abilities = abilities;
+        context.talents = talents;
+        context.conditions = conditions;
+        context.traumas = traumas;
+        context.attributes = attributes;
     }
 
-    // Assign and return
-    context.gear = gear;
-    context.abilities = abilities;
-    context.talents = talents;
-    context.conditions = conditions;
-    context.traumas = traumas;
-    context.attributes = attributes;
-  }
+    /* -------------------------------------------- */
 
-  /* -------------------------------------------- */
+    /** @override */
+    activateListeners(html) {
+        super.activateListeners(html);
 
-  /** @override */
-  activateListeners(html) {
-    super.activateListeners(html);
+        // Ensure eq helper exists for the partial conditionals
+        if (!Handlebars.helpers.eq) {
+            Handlebars.registerHelper('eq', (a, b) => a === b);
+        }
 
-    // Ensure eq helper exists for the partial conditionals
-    if (!Handlebars.helpers.eq) {
-      Handlebars.registerHelper('eq', (a, b) => a === b);
-    }
+        // Render the item sheet for viewing/editing prior to the editable check.
+        html.on('click', '.item-edit', (ev) => {
+            const li = $(ev.currentTarget).parents('.item');
+            const item = this.actor.items.get(li.data('itemId'));
+            item.sheet.render(true);
+        });
 
-    // Render the item sheet for viewing/editing prior to the editable check.
-    html.on('click', '.item-edit', (ev) => {
-      const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'));
-      item.sheet.render(true);
-    });
+        const editOnRightClick = (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            if (!this.isEditable) return;
 
-    const editOnRightClick = (ev) => {
-      ev.preventDefault();
-      ev.stopPropagation();
-      if (!this.isEditable) return;
+            const nameDiv = $(ev.currentTarget);
+            const li = nameDiv.closest('li.item');
 
-      const nameDiv = $(ev.currentTarget);
-      const li = nameDiv.closest('li.item');
+            // ignore header rows and special condition rows
+            if (
+                li.hasClass('inventory-header') ||
+                li.hasClass('items-header') ||
+                li.hasClass('condition')
+            )
+                return;
 
-      // ignore header rows and special condition rows
-      if (
-        li.hasClass('inventory-header') ||
-        li.hasClass('items-header') ||
-        li.hasClass('condition')
-      )
-        return;
+            const item = this.actor.items.get(li.data('itemId'));
+            if (!item) return;
 
-      const item = this.actor.items.get(li.data('itemId'));
-      if (!item) return;
+            // Only open sheets for inventory ('item'), abilities and talents
+            if (['item', 'ability', 'talent'].includes(item.type)) {
+                item.sheet.render(true);
+            }
+        };
 
-      // Only open sheets for inventory ('item'), abilities and talents
-      if (['item', 'ability', 'talent'].includes(item.type)) {
-        item.sheet.render(true);
-      }
-    };
+        // Right-clicking an item's name opens its sheet in edit mode for abilities, talents and inventory items.
+        html.on('contextmenu', 'li.item .item-name', (ev) => {
+            editOnRightClick(ev);
+        });
 
-    // Right-clicking an item's name opens its sheet in edit mode for abilities, talents and inventory items.
-    html.on('contextmenu', 'li.item .item-name', (ev) => {
-      editOnRightClick(ev);
-    });
+        html.on('contextmenu', 'li.item .item-fixed-name', (ev) => {
+            editOnRightClick(ev);
+        });
 
-    html.on('contextmenu', 'li.item .item-fixed-name', (ev) => {
-      editOnRightClick(ev);
-    });
+        html.on('contextmenu', 'li.item .item-description', (ev) => {
+            editOnRightClick(ev);
+        });
 
-    html.on('contextmenu', 'li.item .item-description', (ev) => {
-      editOnRightClick(ev);
-    });
+        html.on('contextmenu', 'li.item .item-quantity', (ev) => {
+            editOnRightClick(ev);
+        });
 
-    html.on('contextmenu', 'li.item .item-quantity', (ev) => {
-      editOnRightClick(ev);
-    });
+        // -------------------------------------------------------------
+        // Everything below here is only needed if the sheet is editable
+        if (!this.isEditable) return;
 
-    // -------------------------------------------------------------
-    // Everything below here is only needed if the sheet is editable
-    if (!this.isEditable) return;
+        // Add Inventory Item
+        html.on('click', '.item-create', (e) => createItem(this, e));
 
-    // Add Inventory Item
-    html.on('click', '.item-create', this._onItemCreate.bind(this));
+        // Delete Inventory Item
+        html.on('click', '.item-delete', async (e) => deleteItemRow(this, e));
 
-    // Delete Inventory Item
-    html.on('click', '.item-delete', async (ev) => {
-      ev.preventDefault();
-      const btn = ev.currentTarget;
-      const li = btn.closest('.item');
-      if (!li) return;
-      const itemId = li.dataset.itemId;
-      if (!itemId) return;
-      const item = this.actor.items.get(itemId);
-      if (!item) return;
-      // Only delete for inventory items, abilities, and talents
-      if (!['item', 'ability', 'talent'].includes(item.type)) return;
-      btn.disabled = true;
-      try {
-        await this.actor.deleteEmbeddedDocuments('Item', [itemId], { render: false });
-        const $li = $(li);
-        $li.slideUp(150, () => $li.remove());
-      } catch (err) {
-        console.error('Item deletion failed:', err);
-        ui.notifications.error(
-          game.i18n.localize('DECK_OF_DESTINY.errors.itemDeleteFailed') ||
-            'Item deletion failed'
+        // Add event listener to all input fields to handle keydown events
+        html.find('input').on('keydown', this._onInputKeydown.bind(this));
+
+        // Rollable characteristics.
+        html.on('click', '.rollable', this._onRoll.bind(this));
+
+        // Addable characteristics.
+        html.on('click', '.addable', (e) => addCards(this, e));
+
+        // Add or subtract cards.
+        html.on('contextmenu', '.manage-sheet-card', (e) => subtractSheetCard(this, e));
+        html.on('click', '.manage-sheet-card', (e) => addSheetCard(this, e));
+
+        // Reset cards.
+        html.on('mouseenter', '.reset-sheet-cards', () => {
+            if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+                document.activeElement.blur(); // Remove focus from the active input element
+            }
+        });
+        html.on('click', '.reset-sheet-cards', async (event) => {
+            event.target.blur(); // Remove focus from the button.
+            await resetActorCards(this);
+        });
+
+        // Add cards from sheet to pile.
+        html.on('mouseenter', '.add-sheet-cards-to-pile', (event) => {
+            if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+                document.activeElement.blur(); // Remove focus from the active input element
+            }
+        });
+        html.on('click', '.add-sheet-cards-to-pile', async (event) => {
+            event.target.blur(); // Remove focus from the button.
+            await addCardsToPile(this);
+        });
+
+        // Draw cards from the pile.
+        html.on('mouseenter', '.draw-from-pile', (event) => {
+            if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+                document.activeElement.blur(); // Remove focus from the active input element
+            }
+        });
+        html.on('click', '.draw-cards-from-pile', async (event) => {
+            event.target.blur(); // Remove focus from the button.
+            await drawCardsFromPile(this);
+        });
+
+        // Characteristic value setting.
+        html.on(
+            'click',
+            '.characteristic-click',
+            (e) => setCharacteristicValue(this, e)
         );
-        btn.disabled = false;
-      }
-    });
 
-    // Add event listener to all input fields to handle keydown events
-    html.find('input').on('keydown', this._onInputKeydown.bind(this));
-
-    // Rollable characteristics.
-    html.on('click', '.rollable', this._onRoll.bind(this));
-
-    // Addable characteristics.
-    html.on('click', '.addable', this._onAdd.bind(this));
-
-    // Add or subtract cards.
-    html.on('contextmenu', '.manage-sheet-card', this._onSubtractSheetCard.bind(this));
-    html.on('click', '.manage-sheet-card', this._onAddSheetCard.bind(this));
-
-    // Reset cards.
-    html.on('mouseenter', '.reset-sheet-cards', (event) => {
-      if (document.activeElement && document.activeElement.tagName === 'INPUT') {
-        document.activeElement.blur(); // Remove focus from the active input element
-      }
-    });
-    html.on('click', '.reset-sheet-cards', async (event) => {
-      event.target.blur(); // Remove focus from the button.
-      this._onResetSheetCards(event);
-    });
-
-    // Add cards from sheet to pile.
-    html.on('mouseenter', '.add-sheet-cards-to-pile', (event) => {
-      if (document.activeElement && document.activeElement.tagName === 'INPUT') {
-        document.activeElement.blur(); // Remove focus from the active input element
-      }
-    });
-    html.on('click', '.add-sheet-cards-to-pile', async (event) => {
-      event.target.blur(); // Remove focus from the button.
-      this._onAddSheetCardsToPile(event);
-    });
-
-    // Draw cards from the pile.
-    html.on('mouseenter', '.draw-from-pile', (event) => {
-      if (document.activeElement && document.activeElement.tagName === 'INPUT') {
-        document.activeElement.blur(); // Remove focus from the active input element
-      }
-    });
-    html.on('click', '.draw-cards-from-pile', async (event) => {
-      event.target.blur(); // Remove focus from the button.
-      this._onDrawCardsFromPile(event);
-    });
-
-    // Characteristic value setting.
-    html.on(
-      'click',
-      '.characteristic-click',
-      this._onCharacteristicValueSetting.bind(this)
-    );
-
-    // Attribute value setting.
-    html.on('click', '.attribute-click', this._onIncreaseAttributeValue.bind(this));
-    html.on(
-      'contextmenu',
-      '.attribute-click',
-      this._onDecreaseAttributeValue.bind(this)
-    );
-
-    // Ability/Talent value setting.
-    html.on('click', '.item-click', this._onIncreaseItemValue.bind(this));
-    html.on('contextmenu', '.item-click', this._onDecreaseItemValue.bind(this));
-    html.on('click', '.item-increase-click', this._onIncreaseItemValue.bind(this));
-    html.on('click', '.item-decrease-click', this._onDecreaseItemValue.bind(this));
-
-    // Condition name setting.
-    html.on(
-      'focusout',
-      '.item-condition-input',
-      this._onConditionNameChange.bind(this)
-    );
-
-    // Condition deadly setting.
-    html.on('click', '.item-condition-deadly', this._onConditionDeadly.bind(this));
-
-    // Handle trauma selection
-    html.on('click', '.trauma-input', this._onTraumaChange.bind(this));
-
-    // Drag events for macros.
-    if (this.actor.isOwner) {
-      const handler = (ev) => this._onDragStart(ev);
-      html.find('li.item').each((i, li) => {
-        if (
-          li.classList.contains('inventory-header') ||
-          li.classList.contains('items-header') ||
-          li.classList.contains('condition')
-        )
-          return;
-        li.setAttribute('draggable', true);
-        li.addEventListener('dragstart', handler, false);
-      });
-    }
-  }
-
-  /**
-   * Stop enter key press from triggering buttons and trigger focusout event.
-   * @param {Event} event - The originating keydown event.
-   */
-  _onInputKeydown(event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      event.currentTarget.blur(); // Trigger the blur event to simulate focusout
-    }
-  }
-
-  /**
-   * Handle creating a new Owned Item for the actor using initial data defined in the HTML dataset
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  async _onItemCreate(event) {
-    event.preventDefault();
-    const header = event.currentTarget;
-    const type = header.dataset.type;
-    const data = foundry.utils.duplicate(header.dataset);
-    const name =
-      game.i18n.localize(`DECK_OF_DESTINY.types.item.${type}`) || `New ${type}`;
-    const itemData = { name, type, system: data };
-    delete itemData.system['type'];
-
-    const optimizeTypes = ['item', 'ability', 'talent'];
-    if (!optimizeTypes.includes(type)) {
-      // Non-optimized types (conditions, traumas, attributes) fall back to normal creation
-      return await Item.create(itemData, { parent: this.actor });
-    }
-
-    let created;
-    try {
-      created = await Item.create(itemData, { parent: this.actor, render: false });
-    } catch (err) {
-      console.error(
-        'Optimized item creation failed; falling back to full render:',
-        err
-      );
-      return Item.create(itemData, { parent: this.actor });
-    }
-
-    // Sheet might have closed while creating
-    if (!this.rendered || !this.element || !this.element[0]) return created;
-
-    // Find the list for this type via its create button
-    const root = this.element[0];
-    const createBtn = root.querySelector(
-      `.item-control.item-create[data-type='${type}']`
-    );
-    const list = createBtn?.closest('ol.items-list');
-    if (!list) {
-      this.render(false);
-      return created;
-    }
-
-    // Render the shared partial
-    let rowHtml;
-    try {
-      rowHtml = await renderTemplate(
-        'systems/dod/src/templates/actor/parts/actor-item-row.hbs',
-        { item: created }
-      );
-    } catch (tplErr) {
-      console.error('Failed to render item row partial; re-rendering sheet:', tplErr);
-      this.render(false);
-      return created;
-    }
-    if (!rowHtml) {
-      this.render(false);
-      return created;
-    }
-
-    try {
-      const temp = document.createElement('div');
-      temp.innerHTML = rowHtml.trim();
-      const newLi = temp.firstElementChild;
-      if (!newLi) {
-        this.render(false);
-        return created;
-      }
-      newLi.style.display = 'none';
-      list.appendChild(newLi);
-      if (window.$) $(newLi).slideDown(160);
-      else newLi.style.display = '';
-    } catch (injectErr) {
-      console.error(
-        'Failed to inject rendered item row; re-rendering sheet:',
-        injectErr
-      );
-      this.render(false);
-    }
-
-    return created;
-  }
-
-  /**
-   * Handle clickable rolls.
-   * @param {Event} event   The originating click event
-   * @return {Roll} The rolled result.
-   * @private
-   */
-  _onRoll(event) {
-    event.preventDefault();
-    const element = event.currentTarget;
-    const dataset = element.dataset;
-
-    // Handle item rolls.
-    if (dataset.rollType) {
-      if (dataset.rollType == 'item') {
-        const itemId = element.closest('.item').dataset.itemId;
-        const item = this.actor.items.get(itemId);
-        if (item) return item.roll();
-      }
-    }
-
-    // Handle rolls that supply the formula directly.
-    if (dataset.roll) {
-      const label = dataset.label ? `[characteristic] ${dataset.label}` : '';
-      const roll = new Roll(dataset.roll, this.actor.getRollData());
-      roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        flavor: label,
-        rollMode: game.settings.get('core', 'rollMode')
-      });
-      return roll;
-    }
-  }
-
-  /**
-   * Handle adding a card.
-   * @param {Event} event - The originating left click event.
-   */
-  async _onAddSheetCard(event) {
-    event.preventDefault();
-    const data = this.actor.toObject().system;
-    const cardType = event.currentTarget.dataset.cardType;
-    const newVal = data.cards[cardType].value + 1;
-    // Update without forcing a full sheet re-render and update header input in-place
-    await this.actor.update(
-      { [`system.cards.${cardType}.value`]: newVal },
-      { render: false }
-    );
-    try {
-      const sheet = this.element[0];
-      const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
-      if (input) input.value = newVal;
-    } catch (err) {
-      console.debug('Could not update card input in-place', err);
-    }
-  }
-
-  /**
-   * Handle subtracting a card.
-   * @param {Event} event - The originating right click event.
-   */
-  async _onSubtractSheetCard(event) {
-    event.preventDefault();
-    const data = this.actor.toObject().system;
-    const cardType = event.currentTarget.dataset.cardType;
-    const newVal = data.cards[cardType].value - 1;
-    // Update without forcing a full sheet re-render and update header input in-place
-    await this.actor.update(
-      { [`system.cards.${cardType}.value`]: newVal },
-      { render: false }
-    );
-    try {
-      const sheet = this.element[0];
-      const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
-      if (input) input.value = newVal;
-    } catch (err) {
-      console.debug('Could not update card input in-place', err);
-    }
-  }
-
-  /**
-   * Handle resetting the cards.
-   * @param {Event} event - The originating click event.
-   */
-  async _onResetSheetCards(event) {
-    event.preventDefault();
-    await this._resetActorSheetCards();
-  }
-
-  /**
-   * Handle adding the cards to the deck.
-   * @param {Event} event - The originating click event.
-   */
-  async _onAddSheetCardsToPile(event) {
-    event.preventDefault();
-    try {
-      const data = this.actor.toObject().system.cards;
-      if (this._isEmptyCardData(data)) {
-        return ui.notifications.warn('There are no cards to add to pile.');
-      }
-
-      const deck = game.cards.getName('DoD - lista carte');
-      if (!deck) {
-        return ui.notifications.error(
-          'The deck of cards is not available. Please make sure the deck is loaded.'
+        // Attribute value setting.
+        html.on('click', '.attribute-click', (e) => increaseAttribute(this, e));
+        html.on(
+            'contextmenu',
+            '.attribute-click',
+            (e) => decreaseAttribute(this, e)
         );
-      }
 
-      const pile = game.cards.getName('Mazzo');
-      if (!pile) {
-        return ui.notifications.error(
-          'The pile of cards is not available. Please make sure the pile is loaded.'
+        // Ability/Talent value setting.
+        html.on('click', '.item-click', (e) => increaseItemValue(this, e));
+        html.on('contextmenu', '.item-click', (e) => decreaseItemValue(this, e));
+        html.on('click', '.item-increase-click', (e) => increaseItemValue(this, e));
+        html.on('click', '.item-decrease-click', (e) => decreaseItemValue(this, e));
+
+        // Condition name setting.
+        html.on(
+            'focusout',
+            '.item-condition-input',
+            (e) => changeConditionName(this, e)
         );
-      }
 
-      const cards = this._getSheetCardsToAdd(deck, data);
-      if (cards.length === 0) {
-        return ui.notifications.warn('No available cards to add to pile.');
-      }
+        // Condition deadly setting.
+        html.on('click', '.item-condition-deadly', (e) => toggleConditionDeadly(this, e));
 
-      await this._passSheetCardsToPile(deck, pile, cards);
-      this._notifyAddedCardsToChat(pile, data);
-      await this._resetActorSheetCards();
-    } catch (error) {
-      console.error('Error adding cards to pile:', error);
-      ui.notifications.error('An error occurred while adding cards to pile.');
+        // Handle trauma selection
+        html.on('click', '.trauma-input', (e) => changeTrauma(this, e));
+
+        // Drag events for macros.
+        if (this.actor.isOwner) {
+            const handler = (ev) => this._onDragStart(ev);
+            html.find('li.item').each((i, li) => {
+                if (
+                    li.classList.contains('inventory-header') ||
+                    li.classList.contains('items-header') ||
+                    li.classList.contains('condition')
+                )
+                    return;
+                li.setAttribute('draggable', true);
+                li.addEventListener('dragstart', handler, false);
+            });
+        }
     }
-  }
 
-  /**
-   * Handle drawing cards from pile.
-   * @param {Event} event - The originating click event.
-   */
-  async _onDrawCardsFromPile(event) {
-    event.preventDefault();
-    try {
-      const deck = game.cards.getName('DoD - lista carte');
-      if (!deck) {
-        return ui.notifications.error(
-          'The deck of cards is not available. Please make sure the deck is loaded.'
-        );
-      }
-      const pile = game.cards.getName('Mazzo');
-      if (!pile) {
-        return ui.notifications.error(
-          'The pile of cards is not available. Please make sure the pile is loaded.'
-        );
-      }
-      if (pile.cards.size === 0) {
-        return ui.notifications.warn(
-          'The pile of cards is empty. Please add cards to the pile.'
-        );
-      }
-      const hand = game.cards.getName('Mano');
-      if (!hand) {
-        return ui.notifications.error(
-          'The hand of cards is not available. Please make sure the hand is loaded.'
-        );
-      }
-      await this._drawCardsFromPileDialog(deck, pile, hand);
-    } catch (error) {
-      console.error('Error drawing cards from pile:', error);
-      ui.notifications.error('An error occurred while drawing cards from pile.');
+    /**
+     * Stop enter key press from triggering buttons and trigger focusout event.
+     * @param {Event} event - The originating keydown event.
+     */
+    _onInputKeydown(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            event.currentTarget.blur(); // Trigger the blur event to simulate focusout
+        }
     }
-  }
 
-  /**
-   * Draw cards from pile Dialog.
-   * @param {Object} deck - The deck of cards.
-   * @param {Object} pile - The pile of cards.
-   * @param {Object} hand - The hand of cards.
-   */
-  async _drawCardsFromPileDialog(deck, pile, hand) {
-    const confirmed = await Dialog.prompt({
-      title: 'Draw Cards',
-      content: `
-        <form>
-          <div class="form-group">
-            <label>Test Players Number:</label>
-            <input id="num-players" name="num-players" value="1" autofocus onFocus="select()" tabindex="1" type="number" min="1"></input>
-          </div>
-        </form>
-      `,
-      label: 'Draw',
-      rejectClose: false
-    });
+    /**
+     * Handle clickable rolls.
+     * @param {Event} event   The originating click event
+     * @return {Roll} The rolled result.
+     * @private
+     */
+    _onRoll(event) {
+        event.preventDefault();
+        const element = event.currentTarget;
+        const dataset = element.dataset;
 
-    if (confirmed) {
-      const players = parseInt(document.querySelector('[name=num-players]').value) || 1;
-      await this._passWhiteCardsToPile(deck, pile);
-      await this._drawCardsFromPile(pile, hand, players);
-      this._notifyDrawnCardsToChat(hand);
+        // Handle item rolls.
+        if (dataset.rollType) {
+            if (dataset.rollType == 'item') {
+                const itemId = element.closest('.item').dataset.itemId;
+                const item = this.actor.items.get(itemId);
+                if (item) return item.roll();
+            }
+        }
+
+        // Handle rolls that supply the formula directly.
+        if (dataset.roll) {
+            const label = dataset.label ? `[characteristic] ${dataset.label}` : '';
+            const roll = new Roll(dataset.roll, this.actor.getRollData());
+            roll.toMessage({
+                speaker: ChatMessage.getSpeaker({actor: this.actor}),
+                flavor: label,
+                rollMode: game.settings.get('core', 'rollMode')
+            });
+            return roll;
+        }
     }
-  }
-
-  /**
-   * Check if the card data is empty.
-   * @param {Object} data - The card data.
-   * @return {boolean} - True if the card data is empty, false otherwise.
-   */
-  _isEmptyCardData(data) {
-    return (
-      Object.values(data).reduce((sum, card) => {
-        return sum + Math.max(0, card.value + card.modifier);
-      }, 0) === 0
-    );
-  }
-
-  /**
-   * Get the cards to add to the pile.
-   * @param {Object} deck - The deck of cards.
-   * @param {Object} data - The card data.
-   * @return {Array} - The array of cards to add.
-   */
-  _getSheetCardsToAdd(deck, data) {
-    const cards = [];
-    for (const [cardType, cardObj] of Object.entries(data)) {
-      cards.push(
-        ...deck.availableCards
-          .filter((card) => card.suit === cardType)
-          .slice(0, Math.max(0, cardObj.value + cardObj.modifier))
-      );
-    }
-    return cards;
-  }
-
-  /**
-   * Pass the cards to the pile.
-   * @param {Object} deck - The deck of cards.
-   * @param {Object} pile - The pile of cards.
-   * @param {Array} cards - The array of cards to pass.
-   */
-  async _passSheetCardsToPile(deck, pile, cards) {
-    await deck.pass(
-      pile,
-      cards.map((card) => card.id),
-      { chatNotification: false }
-    );
-  }
-
-  /**
-   * Pass white cards to the pile.
-   * @param {Object} deck - The deck of cards.
-   * @param {Object} pile - The pile of cards.
-   */
-  async _passWhiteCardsToPile(deck, pile) {
-    const whiteCardsNum = Math.max(0, 20 - pile.cards.size);
-    const whiteCards = deck.availableCards
-      .filter((card) => card.suit === 'white')
-      .slice(0, whiteCardsNum);
-    await deck.pass(
-      pile,
-      whiteCards.map((card) => card.id),
-      { chatNotification: false }
-    );
-  }
-
-  /**
-   * Draw cards from pile.
-   * @param {Object} pile - The pile of cards.
-   * @param {Object} hand - The hand of cards.
-   * @param {number} players - The number of players.
-   */
-  async _drawCardsFromPile(pile, hand, players) {
-    return await hand.draw(pile, Math.ceil(pile.cards.size / (3 + players)), {
-      how: CONST.CARD_DRAW_MODES.RANDOM,
-      chatNotification: false
-    });
-  }
-
-  /**
-   * Notify the added cards to chat.
-   * @param {Object} pile - The pile of cards.
-   * @param {Object} data - The card data.
-   */
-  _notifyAddedCardsToChat(pile, data) {
-    ChatMessage.create({
-      user: game.user._id,
-      content: `<p>I added to ${pile.link}: </p>
-      <ul>
-        <li>Success Cards: ${Math.max(
-          0,
-          data.success.value + data.success.modifier
-        )}</li>
-        <li>Failure Cards: ${Math.max(
-          0,
-          data.failure.value + data.failure.modifier
-        )}</li>
-        <li>Issue Cards: ${Math.max(data.issue.value + data.issue.modifier)}</li>
-        <li>Fortune Cards: ${Math.max(data.fortune.value + data.fortune.modifier)}</li>
-        <li>Destiny Cards: ${Math.max(data.destiny.value + data.destiny.modifier)}</li>
-      </ul>`
-    });
-  }
-
-  /**
-   * Notify the drawn cards to chat.
-   * @param {Object} hand - The hand of cards.
-   */
-  _notifyDrawnCardsToChat(hand) {
-    const suitToName = (suit) => {
-      switch (suit) {
-        case 'white':
-          return 'White Cards';
-        case 'success':
-          return 'Success Cards';
-        case 'issue':
-          return 'Issue Cards';
-        case 'destiny':
-          return 'Destiny Cards';
-        case 'failure':
-          return 'Failure Cards';
-        case 'fortune':
-          return 'Fortune Cards';
-      }
-    };
-    const cardsMap = new Map();
-    hand.cards.forEach((card) => {
-      let cardTypeNum = cardsMap.get(card.suit);
-      if (cardTypeNum > 0) {
-        cardsMap.set(card.suit, ++cardTypeNum);
-      } else {
-        cardsMap.set(card.suit, 1);
-      }
-    });
-    const cardsHtml = hand.cards
-      .map(
-        (card) =>
-          `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px;margin-right: 5px;margin-bottom: 5px;"/>`
-      )
-      .join('');
-    const summary = Array.from(cardsMap)
-      .map(([suit, num]) => `<li>${suitToName(suit)}: ${num}</li>`)
-      .join('');
-    ChatMessage.create({
-      user: game.user._id,
-      content: `<p>I drew ${hand.link}: </p>
-      <ul>${summary}</ul>
-      <div class="card-draw flexrow">${cardsHtml}</div>`
-    });
-  }
-
-  /**
-   * Reset the actor's cards.
-   */
-  async _resetActorSheetCards() {
-    await this.actor.update({
-      'system.cards': {
-        'success.value': 0,
-        'failure.value': 0,
-        'issue.value': 0,
-        'destiny.value': 0,
-        'fortune.value': 0
-      }
-    });
-  }
-
-  /**
-   * Handle adding Success Cards based on the selected characteristic.
-   * @param {Event} event - The originating left click event.
-   */
-  async _onAdd(event) {
-    event.preventDefault();
-    const actor = this.actor.toObject().system;
-    const element = event.currentTarget;
-    const elementData = element.dataset;
-    let value = 0;
-    let cardType = '';
-    if (elementData.type === 'characteristic') {
-      value = actor.characteristics[elementData.label].value;
-      cardType = 'success';
-    } else if (elementData.type === 'ability') {
-      const itemId = element.closest('.item').dataset.itemId;
-      const item = this.actor.items.get(itemId);
-      value = item.system.value;
-      cardType = 'success';
-    } else if (elementData.type === 'condition') {
-      const itemId = element.closest('.item').dataset.itemId;
-      const item = this.actor.items.get(itemId);
-      value = item.system.value;
-      cardType = 'failure';
-    }
-    const newVal = actor.cards[cardType].value + value;
-    // Update without forcing a full sheet re-render and update header input in-place
-    await this.actor.update(
-      { [`system.cards.${cardType}.value`]: newVal },
-      { render: false }
-    );
-    try {
-      const sheet = this.element[0];
-      const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
-      if (input) input.value = newVal;
-    } catch (err) {
-      // If the sheet DOM isn't available for some reason, ignore and allow the update to persist
-      console.debug('Could not update card input in-place', err);
-    }
-  }
-
-  /**
-   * Handle clicks on characteristic circles.
-   * @param {Event} event - The originating click event.
-   */
-  async _onCharacteristicValueSetting(event) {
-    event.preventDefault();
-    const target = event.currentTarget;
-    const characteristicKey = target.closest('.characteristic-circles').dataset
-      .characteristicKey;
-    const newValue = parseInt(target.dataset.value);
-
-    // Update the characteristic value
-    await this.actor.update({
-      [`system.characteristics.${characteristicKey}.value`]: newValue
-    });
-  }
-
-  /**
-   * Handle increasing the attribute value.
-   * @param {Event} event - The originating left click event.
-   */
-  async _onIncreaseAttributeValue(event) {
-    event.preventDefault();
-    const data = this.actor.toObject().system;
-    const attributeType = event.currentTarget.dataset.attributeType;
-    await this.actor.update({
-      [`system.attributes.${attributeType}.value`]:
-        data.attributes[attributeType].value + 1
-    });
-  }
-
-  /**
-   * Handle decreasing the attribute value.
-   * @param {Event} event - The originating right click event.
-   */
-  async _onDecreaseAttributeValue(event) {
-    event.preventDefault();
-    const data = this.actor.toObject().system;
-    const attributeType = event.currentTarget.dataset.attributeType;
-    await this.actor.update({
-      [`system.attributes.${attributeType}.value`]:
-        data.attributes[attributeType].value - 1
-    });
-  }
-
-  /**
-   * Handle increasing the ability/talent value.
-   * @param {Event} event - The originating left click event.
-   */
-  async _onIncreaseItemValue(event) {
-    event.preventDefault();
-    const element = event.currentTarget;
-    const li = element.closest('.item');
-    const itemId = li.dataset.itemId;
-    const item = this.actor.items.get(itemId);
-    const value = item.system.value;
-    const proposed = value + 1;
-    // Determine caps by item type
-    const typeCaps = {
-      talent: 3,
-      ability: 7
-    };
-    const cap = typeCaps[item.type] ?? Number.POSITIVE_INFINITY;
-    const newVal = Math.min(proposed, cap);
-    if (newVal === value) return; // already at cap, nothing to do
-
-    // Update the item without triggering a re-render
-    await item.update({ 'system.value': newVal }, { render: false });
-
-    // Update the display value in-place. Support different templates:
-    // - Abilities use a span. Talents may render the value inside the button itself.
-    const valueSpan =
-      li.querySelector('.ability-value') ||
-      li.querySelector('.item-core-button') ||
-      element;
-    if (valueSpan) valueSpan.textContent = newVal;
-
-    // Update the tooltip to show the correct XP cost
-    const decreaseBtn = li.querySelector('.item-decrease-click');
-    const increaseBtn = li.querySelector('.item-increase-click');
-    if (decreaseBtn) {
-      decreaseBtn.title =
-        game.i18n.format('DECK_OF_DESTINY.actions.decrease') +
-        ': +' +
-        game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal}`);
-    }
-    if (increaseBtn) {
-      increaseBtn.title =
-        game.i18n.format('DECK_OF_DESTINY.actions.increase') +
-        ': -' +
-        game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal + 1}`);
-    }
-  }
-
-  /**
-   * Handle decreasing the ability/talent value.
-   * @param {Event} event - The originating right click event.
-   */
-  async _onDecreaseItemValue(event) {
-    event.preventDefault();
-    const element = event.currentTarget;
-    const li = element.closest('.item');
-    const itemId = li.dataset.itemId;
-    const item = this.actor.items.get(itemId);
-    const value = item.system.value;
-    if (value <= 0) return; // min value reached
-    const newVal = value - 1;
-
-    // Update the item without triggering a re-render
-    await item.update({ 'system.value': newVal }, { render: false });
-
-    // Update the display value in-place. Support different templates:
-    const valueSpan =
-      li.querySelector('.ability-value') ||
-      li.querySelector('.item-core-button') ||
-      element;
-    if (valueSpan) valueSpan.textContent = newVal;
-
-    // Update the tooltip to show the correct XP cost
-    const decreaseBtn = li.querySelector('.item-decrease-click');
-    const increaseBtn = li.querySelector('.item-increase-click');
-    if (decreaseBtn) {
-      decreaseBtn.title =
-        game.i18n.format('DECK_OF_DESTINY.actions.decrease') +
-        ': +' +
-        game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal}`);
-    }
-    if (increaseBtn) {
-      increaseBtn.title =
-        game.i18n.format('DECK_OF_DESTINY.actions.increase') +
-        ': -' +
-        game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal + 1}`);
-    }
-  }
-
-  /**
-   * Handle changing the condition name.
-   * @param {Event} event - The originating focusout event.
-   */
-  async _onConditionNameChange(event) {
-    event.preventDefault();
-    const element = event.currentTarget;
-    const itemId = element.closest('.item').dataset.itemId;
-    const item = this.actor.items.get(itemId);
-    const name = element.value;
-    if (name.trim() !== '') {
-      // check if name is empty
-      await item.update({ 'system.name': name, 'system.enabled': true });
-    } else {
-      await item.update({
-        'system.name': '',
-        'system.enabled': false,
-        'system.deadly': false
-      });
-    }
-    // update actor failure cards modifier
-    const items = this.actor.toObject().items;
-    const modifier = items.reduce((sum, item) => {
-      return item.type === 'condition' && item.system.enabled
-        ? sum + item.system.value
-        : sum;
-    }, 0);
-    // NOTE: for now, only conditions update the failure modifier
-    // in the future, other items might affect the modifier (?)
-    // remember to modify this part of the code accordingly
-    await this.actor.update({
-      'system.cards.failure.modifier': modifier
-    });
-  }
-
-  /**
-   * Handle changing the condition deadly.
-   * @param {Event} event - The originating click event.
-   */
-  async _onConditionDeadly(event) {
-    event.preventDefault();
-    const element = event.currentTarget;
-    const itemId = element.closest('.item').dataset.itemId;
-    const item = this.actor.items.get(itemId);
-    await item.update({ 'system.deadly': !item.system.deadly });
-  }
-
-  /**
-   * Handle changing the trauma.
-   * @param {Event} event - The originating click event.
-   */
-  async _onTraumaChange(event) {
-    event.preventDefault();
-    const traumaModifier = parseInt(event.currentTarget.dataset.modifier);
-    const traumaIndex = parseInt(event.currentTarget.id.split('-')[1]);
-    const traumas = this.actor.items.filter((item) => item.type === 'trauma');
-    const currentSelectedTrauma = traumas.find((trauma) => trauma.system.selected);
-    let modifier = 0;
-    // Toggle the selected trauma
-    for (const [index, trauma] of traumas.entries()) {
-      const isSelected = index === traumaIndex;
-      // Deselect if the same trauma is clicked again
-      await trauma.update({
-        'system.selected': isSelected && trauma !== currentSelectedTrauma
-      });
-      if (isSelected && trauma !== currentSelectedTrauma) {
-        modifier = traumaModifier;
-      }
-    }
-    // Update the success modifier
-    await this.actor.update({
-      'system.cards.success.modifier': modifier
-    });
-  }
 }
