@@ -114,6 +114,11 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Ensure eq helper exists for the partial conditionals
+    if (!Handlebars.helpers.eq) {
+      Handlebars.registerHelper('eq', (a, b) => a === b);
+    }
+
     // Render the item sheet for viewing/editing prior to the editable check.
     html.on('click', '.item-edit', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
@@ -171,11 +176,30 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     html.on('click', '.item-create', this._onItemCreate.bind(this));
 
     // Delete Inventory Item
-    html.on('click', '.item-delete', (ev) => {
-      const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'));
-      item.delete();
-      li.slideUp(200, () => this.render(false));
+    html.on('click', '.item-delete', async (ev) => {
+      ev.preventDefault();
+      const btn = ev.currentTarget;
+      const li = btn.closest('.item');
+      if (!li) return;
+      const itemId = li.dataset.itemId;
+      if (!itemId) return;
+      const item = this.actor.items.get(itemId);
+      if (!item) return;
+      // Only delete for inventory items, abilities, and talents
+      if (!['item', 'ability', 'talent'].includes(item.type)) return;
+      btn.disabled = true;
+      try {
+        await this.actor.deleteEmbeddedDocuments('Item', [itemId], { render: false });
+        const $li = $(li);
+        $li.slideUp(150, () => $li.remove());
+      } catch (err) {
+        console.error('Item deletion failed:', err);
+        ui.notifications.error(
+          game.i18n.localize('DECK_OF_DESTINY.errors.itemDeleteFailed') ||
+            'Item deletion failed'
+        );
+        btn.disabled = false;
+      }
     });
 
     // Add event listener to all input fields to handle keydown events
@@ -293,23 +317,82 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
   async _onItemCreate(event) {
     event.preventDefault();
     const header = event.currentTarget;
-    // Get the type of item to create.
     const type = header.dataset.type;
-    // Grab any data associated with this control.
     const data = foundry.utils.duplicate(header.dataset);
-    // Initialize a default name.
-    const name = game.i18n.localize(`DECK_OF_DESTINY.types.item.${type}`);
-    // Prepare the item object.
-    const itemData = {
-      name: name,
-      type: type,
-      system: data
-    };
-    // Remove the type from the dataset since it's in the itemData.type prop.
+    const name =
+      game.i18n.localize(`DECK_OF_DESTINY.types.item.${type}`) || `New ${type}`;
+    const itemData = { name, type, system: data };
     delete itemData.system['type'];
 
-    // Finally, create the item!
-    return await Item.create(itemData, { parent: this.actor });
+    const optimizeTypes = ['item', 'ability', 'talent'];
+    if (!optimizeTypes.includes(type)) {
+      // Non-optimized types (conditions, traumas, attributes) fall back to normal creation
+      return await Item.create(itemData, { parent: this.actor });
+    }
+
+    let created;
+    try {
+      created = await Item.create(itemData, { parent: this.actor, render: false });
+    } catch (err) {
+      console.error(
+        'Optimized item creation failed; falling back to full render:',
+        err
+      );
+      return Item.create(itemData, { parent: this.actor });
+    }
+
+    // Sheet might have closed while creating
+    if (!this.rendered || !this.element || !this.element[0]) return created;
+
+    // Find the list for this type via its create button
+    const root = this.element[0];
+    const createBtn = root.querySelector(
+      `.item-control.item-create[data-type='${type}']`
+    );
+    const list = createBtn?.closest('ol.items-list');
+    if (!list) {
+      this.render(false);
+      return created;
+    }
+
+    // Render the shared partial
+    let rowHtml;
+    try {
+      rowHtml = await renderTemplate(
+        'systems/dod/src/templates/actor/parts/actor-item-row.hbs',
+        { item: created }
+      );
+    } catch (tplErr) {
+      console.error('Failed to render item row partial; re-rendering sheet:', tplErr);
+      this.render(false);
+      return created;
+    }
+    if (!rowHtml) {
+      this.render(false);
+      return created;
+    }
+
+    try {
+      const temp = document.createElement('div');
+      temp.innerHTML = rowHtml.trim();
+      const newLi = temp.firstElementChild;
+      if (!newLi) {
+        this.render(false);
+        return created;
+      }
+      newLi.style.display = 'none';
+      list.appendChild(newLi);
+      if (window.$) $(newLi).slideDown(160);
+      else newLi.style.display = '';
+    } catch (injectErr) {
+      console.error(
+        'Failed to inject rendered item row; re-rendering sheet:',
+        injectErr
+      );
+      this.render(false);
+    }
+
+    return created;
   }
 
   /**
@@ -353,9 +436,19 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     event.preventDefault();
     const data = this.actor.toObject().system;
     const cardType = event.currentTarget.dataset.cardType;
-    await this.actor.update({
-      [`system.cards.${cardType}.value`]: data.cards[cardType].value + 1
-    });
+    const newVal = data.cards[cardType].value + 1;
+    // Update without forcing a full sheet re-render and update header input in-place
+    await this.actor.update(
+      { [`system.cards.${cardType}.value`]: newVal },
+      { render: false }
+    );
+    try {
+      const sheet = this.element[0];
+      const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
+      if (input) input.value = newVal;
+    } catch (err) {
+      console.debug('Could not update card input in-place', err);
+    }
   }
 
   /**
@@ -366,9 +459,19 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     event.preventDefault();
     const data = this.actor.toObject().system;
     const cardType = event.currentTarget.dataset.cardType;
-    await this.actor.update({
-      [`system.cards.${cardType}.value`]: data.cards[cardType].value - 1
-    });
+    const newVal = data.cards[cardType].value - 1;
+    // Update without forcing a full sheet re-render and update header input in-place
+    await this.actor.update(
+      { [`system.cards.${cardType}.value`]: newVal },
+      { render: false }
+    );
+    try {
+      const sheet = this.element[0];
+      const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
+      if (input) input.value = newVal;
+    } catch (err) {
+      console.debug('Could not update card input in-place', err);
+    }
   }
 
   /**
@@ -673,9 +776,20 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       value = item.system.value;
       cardType = 'failure';
     }
-    await this.actor.update({
-      [`system.cards.${cardType}.value`]: actor.cards[cardType].value + value
-    });
+    const newVal = actor.cards[cardType].value + value;
+    // Update without forcing a full sheet re-render and update header input in-place
+    await this.actor.update(
+      { [`system.cards.${cardType}.value`]: newVal },
+      { render: false }
+    );
+    try {
+      const sheet = this.element[0];
+      const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
+      if (input) input.value = newVal;
+    } catch (err) {
+      // If the sheet DOM isn't available for some reason, ignore and allow the update to persist
+      console.debug('Could not update card input in-place', err);
+    }
   }
 
   /**
