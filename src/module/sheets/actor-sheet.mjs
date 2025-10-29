@@ -353,9 +353,16 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     event.preventDefault();
     const data = this.actor.toObject().system;
     const cardType = event.currentTarget.dataset.cardType;
-    await this.actor.update({
-      [`system.cards.${cardType}.value`]: data.cards[cardType].value + 1
-    });
+    const newVal = data.cards[cardType].value + 1;
+    // Update without forcing a full sheet re-render and update header input in-place
+    await this.actor.update({ [`system.cards.${cardType}.value`]: newVal }, { render: false });
+    try {
+      const sheet = this.element[0];
+      const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
+      if (input) input.value = newVal;
+    } catch (err) {
+      console.debug('Could not update card input in-place', err);
+    }
   }
 
   /**
@@ -366,9 +373,16 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
     event.preventDefault();
     const data = this.actor.toObject().system;
     const cardType = event.currentTarget.dataset.cardType;
-    await this.actor.update({
-      [`system.cards.${cardType}.value`]: data.cards[cardType].value - 1
-    });
+    const newVal = data.cards[cardType].value - 1;
+    // Update without forcing a full sheet re-render and update header input in-place
+    await this.actor.update({ [`system.cards.${cardType}.value`]: newVal }, { render: false });
+    try {
+      const sheet = this.element[0];
+      const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
+      if (input) input.value = newVal;
+    } catch (err) {
+      console.debug('Could not update card input in-place', err);
+    }
   }
 
   /**
@@ -673,9 +687,17 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       value = item.system.value;
       cardType = 'failure';
     }
-    await this.actor.update({
-      [`system.cards.${cardType}.value`]: actor.cards[cardType].value + value
-    });
+    const newVal = actor.cards[cardType].value + value;
+    // Update without forcing a full sheet re-render and update header input in-place
+    await this.actor.update({ [`system.cards.${cardType}.value`]: newVal }, { render: false });
+    try {
+      const sheet = this.element[0];
+      const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
+      if (input) input.value = newVal;
+    } catch (err) {
+      // If the sheet DOM isn't available for some reason, ignore and allow the update to persist
+      console.debug('Could not update card input in-place', err);
+    }
   }
 
   /**
