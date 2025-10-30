@@ -101,7 +101,7 @@
       "remove": "Rimuovi {type}",
       "value": "Valore",
       "weight": "Peso",
-      "toggleHeadersCards": "Attiva/Disattiva Intestazioni Carte"
+      "toggleHeaderCards": "Attiva/Disattiva Intestazioni Carte"
     },
     "sheet": {
       "labels": {

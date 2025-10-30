@@ -101,7 +101,7 @@
       "remove": "Remove {type}",
       "value": "Value",
       "weight": "Weight",
-      "toggleHeadersCards": "Toggle Card Headers"
+      "toggleHeaderCards": "Toggle Card Headers"
     },
     "sheet": {
       "labels": {
