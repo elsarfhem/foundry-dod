@@ -100,7 +100,8 @@
       "quantity": "Quantity",
       "remove": "Remove {type}",
       "value": "Value",
-      "weight": "Weight"
+      "weight": "Weight",
+      "toggleHeadersCards": "Toggle Card Headers"
     },
     "sheet": {
       "labels": {

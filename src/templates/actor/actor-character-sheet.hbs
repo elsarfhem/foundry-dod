@@ -46,10 +46,10 @@
             </div>
         </div>
       </div>
+      <button type="button" class="toggle-header-cards" aria-expanded="true">
+          {{localize 'DECK_OF_DESTINY.labels.toggleHeaderCards'}}
+      </button>
       <div class="header-cards">
-          <button type="button" class="toggle-header-cards" aria-expanded="true">
-              {{localize 'DECK_OF_DESTINY.labels.toggleHeaderCards'}}
-          </button>
         <div class="header-profile">
         {{#if editable}}
             <img class="profile-img small" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />

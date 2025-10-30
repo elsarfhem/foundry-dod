@@ -38,6 +38,60 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    margin-bottom: 0.5em;
+    padding: 0.25em 0.5em;
+    background: rgba(240, 240, 240, 0.7);
+    border-radius: 6px;
+    position: relative;
+    min-height: 0;
+
+    .toggle-header-cards {
+      position: absolute;
+      top: 0.2em;
+      right: 0.5em;
+      background: none;
+      border: none;
+      color: #444;
+      font-size: 0.9em;
+      cursor: pointer;
+      z-index: 2;
+      padding: 0.1em 0.5em;
+      border-radius: 4px;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #e0e0e0;
+      }
+    }
+
+    .header-cards-content {
+      width: 100%;
+      transition: max-height 0.3s ease, opacity 0.3s;
+      overflow: hidden;
+      max-height: 500px;
+      opacity: 1;
+
+      &.collapsed {
+        max-height: 0;
+        opacity: 0.2;
+        pointer-events: none;
+        padding: 0;
+      }
+    }
+
+    .profile-img {
+      height: 64px;
+      width: 64px;
+      object-fit: cover;
+      margin: 5px;
+      border-radius: 6px;
+    }
+
+    .card-img {
+      height: 80px;
+      width: auto;
+      margin-bottom: 3px;
+    }
 
     .card {
       display: flex;
@@ -324,7 +378,7 @@
         }
 
         label:active,
-        input:focus + label {
+        input:focus+label {
           background: rgba(0, 0, 0, 0.05);
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
           border: 1px solid #666;
@@ -332,7 +386,7 @@
           opacity: 1;
         }
 
-        input:checked + label {
+        input:checked+label {
           background: rgba(0, 0, 0, 0.05);
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
           border: 1px solid #333;
