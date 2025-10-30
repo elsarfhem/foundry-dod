@@ -47,8 +47,15 @@
         </div>
       </div>
       <div class="header-cards">
+          <button type="button" class="toggle-header-cards" aria-expanded="true">
+              {{localize 'DECK_OF_DESTINY.labels.toggleHeaderCards'}}
+          </button>
         <div class="header-profile">
-          <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+        {{#if editable}}
+            <img class="profile-img small" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+        {{else}}
+            <img class="profile-img small" src="{{actor.img}}" title="{{actor.name}}" />
+        {{/if}}
           <label for="system.health" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.health.label'}}</label>
           <div class="health-inputs flex-group-center">
             <div class="health-input health-current">
