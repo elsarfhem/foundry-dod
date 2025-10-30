@@ -45,12 +45,12 @@
     max-height: 500px;
     opacity: 1;
 
-      &.collapsed {
-        max-height: 0;
-        opacity: 0.2;
-        pointer-events: none;
-        padding: 0;
-      }
+    &.collapsed {
+      max-height: 0;
+      opacity: 0.2;
+      pointer-events: none;
+      padding: 0;
+    }
 
     .toggle-header-cards {
       position: absolute;
