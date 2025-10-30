@@ -151,6 +151,14 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       item.sheet.render(true);
     });
 
+    html.on('click', '.toggle-header-cards', function (ev) {
+      const $btn = $(ev.currentTarget);
+      const $cards = html.find('.header-cards');
+      $cards.toggleClass('collapsed');
+      const expanded = !$cards.hasClass('collapsed');
+      $btn.attr('aria-expanded', expanded);
+    });
+
     const editOnRightClick = (ev) => {
       ev.preventDefault();
       ev.stopPropagation();

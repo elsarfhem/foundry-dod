@@ -11,12 +11,6 @@
   justify-content: flex-start;
   margin-bottom: 10px;
 
-  .profile-img {
-    height: 200px;
-    width: auto;
-    margin: 10px;
-  }
-
   .header-fields {
     flex: 1;
   }
@@ -45,6 +39,19 @@
     position: relative;
     min-height: 0;
 
+    width: 100%;
+    transition: max-height 0.3s ease, opacity 0.3s;
+    overflow: hidden;
+    max-height: 500px;
+    opacity: 1;
+
+      &.collapsed {
+        max-height: 0;
+        opacity: 0.2;
+        pointer-events: none;
+        padding: 0;
+      }
+
     .toggle-header-cards {
       position: absolute;
       top: 0.2em;
@@ -64,24 +71,8 @@
       }
     }
 
-    .header-cards-content {
-      width: 100%;
-      transition: max-height 0.3s ease, opacity 0.3s;
-      overflow: hidden;
-      max-height: 500px;
-      opacity: 1;
-
-      &.collapsed {
-        max-height: 0;
-        opacity: 0.2;
-        pointer-events: none;
-        padding: 0;
-      }
-    }
-
     .profile-img {
-      height: 64px;
-      width: 64px;
+      height: 180px;
       object-fit: cover;
       margin: 5px;
       border-radius: 6px;
