@@ -179,6 +179,19 @@ export async function drawCardsFromPile(sheet) {
 }
 
 /**
+ * Toggle the collapsed state of the header-cards section.
+ * @param {JQuery} html - The jQuery-wrapped HTML of the sheet
+ * @param {Event} ev - The click event
+ */
+export function toggleHeaderCards(html, ev) {
+  const $btn = $(ev.currentTarget);
+  const $cards = html.find('.header-cards');
+  $cards.toggleClass('collapsed');
+  const expanded = !$cards.hasClass('collapsed');
+  $btn.attr('aria-expanded', expanded);
+}
+
+/**
  *
  * @param {Object} data
  * @return {boolean}

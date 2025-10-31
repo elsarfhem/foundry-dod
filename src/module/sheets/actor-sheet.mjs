@@ -10,7 +10,8 @@ import {
   addSheetCard,
   drawCardsFromPile,
   resetActorCards,
-  subtractSheetCard
+  subtractSheetCard,
+  toggleHeaderCards
 } from './actor-sheet/cards.mjs';
 import {
   decreaseAttribute,
@@ -151,13 +152,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       item.sheet.render(true);
     });
 
-    html.on('click', '.toggle-header-cards', function (ev) {
-      const $btn = $(ev.currentTarget);
-      const $cards = html.find('.header-cards');
-      $cards.toggleClass('collapsed');
-      const expanded = !$cards.hasClass('collapsed');
-      $btn.attr('aria-expanded', expanded);
-    });
+    html.on('click', '.toggle-header-cards', (ev) => toggleHeaderCards(this, ev));
 
     const editOnRightClick = (ev) => {
       ev.preventDefault();
