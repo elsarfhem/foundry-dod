@@ -91,7 +91,8 @@ export class DeckOfDestinyActor extends Actor {
           if (item.name in CONFIG.DECK_OF_DESTINY.traumas) {
             item.system.label =
               CONFIG.DECK_OF_DESTINY.traumas[parseInt(item.name)].label;
-            item.system.optional = CONFIG.DECK_OF_DESTINY.traumas[parseInt(item.name)].optional;
+            item.system.optional =
+              CONFIG.DECK_OF_DESTINY.traumas[parseInt(item.name)].optional;
             item.system.enabled = !item.system.optional || item.system.enabled;
           }
           break;

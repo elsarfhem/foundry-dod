@@ -61,6 +61,11 @@ export async function changeTrauma(sheet, event) {
   await sheet.actor.update({ 'system.cards.success.modifier': modifier });
 }
 
+/**
+ *
+ * @param {*} sheet
+ * @param {Event} event
+ */
 export async function toggleTraumaOptional(sheet, event) {
   event.preventDefault();
   const element = event.currentTarget;

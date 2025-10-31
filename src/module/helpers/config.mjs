@@ -43,7 +43,7 @@ DECK_OF_DESTINY.traumas = {
   },
   2: {
     value: -2,
-    label: 'DECK_OF_DESTINY.traumas.2.label', 
+    label: 'DECK_OF_DESTINY.traumas.2.label',
     optional: false
   },
   3: {
