@@ -60,3 +60,21 @@ export async function changeTrauma(sheet, event) {
   }
   await sheet.actor.update({ 'system.cards.success.modifier': modifier });
 }
+
+export async function toggleTraumaOptional(sheet, event) {
+  event.preventDefault();
+  const element = event.currentTarget;
+  const itemId = element.closest('.trauma-button').dataset.itemId;
+  const item = sheet.actor.items.get(itemId);
+  const enabled = element.checked;
+  await item.update({ 'system.enabled': enabled });
+  // If disabling a trauma that is currently selected, deselect it.
+  if (!enabled && item.system.selected) {
+    await item.update({ 'system.selected': false });
+    // Update success card modifier.
+    const traumas = sheet.actor.items.filter((it) => it.type === 'trauma');
+    const selectedTrauma = traumas.find((t) => t.system.selected);
+    const modifier = selectedTrauma ? selectedTrauma.system.value : 0;
+    await sheet.actor.update({ 'system.cards.success.modifier': modifier });
+  }
+}

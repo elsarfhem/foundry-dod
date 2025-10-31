@@ -21,7 +21,8 @@ import {
 import {
   changeConditionName,
   changeTrauma,
-  toggleConditionDeadly
+  toggleConditionDeadly,
+  toggleTraumaOptional
 } from './actor-sheet/conditions-trauma.mjs';
 
 /**
@@ -273,6 +274,9 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
 
     // Handle trauma selection
     html.on('click', '.trauma-input', (e) => changeTrauma(this, e));
+
+    // Handle trauma optional toggle
+    html.on('click', '.trauma-optional-input', (e) => toggleTraumaOptional(this, e));
 
     // Drag events for macros.
     if (this.actor.isOwner) {

@@ -120,14 +120,26 @@
         "attributes": "Attributes"
       }
     },
+    "tooltips": {
+      "optionalTrauma": "Check only if you have the Die Hard talent"
+    },
     "traumas": {
       "1": {
-        "label": "-2 Successes"
+        "label": "Healthy"
       },
       "2": {
-        "label": "-5 Successes"
+        "label": "-2 Successes"
       },
       "3": {
+        "label": "-2 Successes"
+      },
+      "4": {
+        "label": "-5 Successes"
+      },
+      "5": {
+        "label": "-5 Successes"
+      },
+      "6": {
         "label": "Dying"
       }
     },
