@@ -153,7 +153,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
       item.sheet.render(true);
     });
 
-    html.on('click', '.toggle-header-cards', (ev) => toggleHeaderCards(this, ev));
+    html.on('click', '.toggle-header-cards', (ev) => toggleHeaderCards(html, ev));
 
     const editOnRightClick = (ev) => {
       ev.preventDefault();
