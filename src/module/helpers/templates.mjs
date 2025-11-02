@@ -12,6 +12,7 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/dod/src/templates/actor/parts/actor-conditions.hbs',
     'systems/dod/src/templates/actor/parts/actor-traumas.hbs',
     'systems/dod/src/templates/actor/parts/actor-items.hbs',
-    'systems/dod/src/templates/actor/parts/actor-item-row.hbs'
+    'systems/dod/src/templates/actor/parts/actor-item-row.hbs',
+      'systems/dod/src/templates/actor/parts/actor-powers.hbs'
   ]);
 };

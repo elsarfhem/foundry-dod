@@ -1,0 +1,20 @@
+<ol class='items-list'>
+    <li class='item flexrow items-header'>
+        <div class='item-fixed-name'>{{localize 'DECK_OF_DESTINY.labels.name'}}</div>
+        <div class='item-description'>{{localize 'DECK_OF_DESTINY.labels.description'}}</div>
+        <div class='item-controls'>
+            <a
+                    class='item-control item-create'
+                    title='{{localize 'DECK_OF_DESTINY.labels.add' type=(localize 'DECK_OF_DESTINY.types.item.power')}}'
+                    data-type='power'
+            >
+                <i class='fas fa-plus'></i>
+                {{localize 'DECK_OF_DESTINY.types.item.power'}}
+            </a>
+        </div>
+    </li>
+    {{#each powers as |item id|}}
+        {{> systems/dod/src/templates/actor/parts/actor-item-row.hbs item=item }}
+    {{/each}}
+</ol>
+

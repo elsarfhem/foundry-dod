@@ -106,7 +106,8 @@
       "talent": {},
       "condition": {},
       "trauma": {},
-      "attribute": {}
+      "attribute": {},
+        "power": {}
     }
   },
   "socket": false,

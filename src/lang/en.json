@@ -46,7 +46,6 @@
       },
       "name": "Name",
       "player": "Player",
-      "power": "Power",
       "xp": {
         "label": "XP",
         "spent": "Spent",
@@ -117,7 +116,8 @@
         "skills": "Abilities",
         "talents": "Talents",
         "traumas": "Traumas",
-        "attributes": "Attributes"
+        "attributes": "Attributes",
+        "powers": "Powers"
       }
     },
     "tooltips": {
@@ -154,7 +154,8 @@
         "item": "Item",
         "talent": "Talent",
         "trauma": "Trauma",
-        "attribute": "Resource"
+        "attribute": "Resource",
+        "power": "Power"
       }
     }
   }
