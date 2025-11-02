@@ -24,3 +24,28 @@
   min-width: 1000px;
   min-height: 820px;
 }
+
+.card-face {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  z-index: 2;
+  position: relative;
+
+  // Ensure parent allows overflow
+  & {
+    pointer-events: auto;
+  }
+
+  &:hover {
+    transform: scale(5) translateY(-10px);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.45);
+    z-index: 100;
+  }
+}
+
+// Ensure chat containers allow overflow for zoom effect
+.chat-message .message-content,
+.card-draw,
+ol.items-list {
+  overflow: visible !important;
+}
