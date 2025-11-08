@@ -37,16 +37,34 @@ DECK_OF_DESTINY.conditions = {
 
 DECK_OF_DESTINY.traumas = {
   1: {
-    value: -2,
-    label: 'DECK_OF_DESTINY.traumas.1.label'
+    value: 0,
+    label: 'DECK_OF_DESTINY.traumas.1.label',
+    optional: true
   },
   2: {
-    value: -5,
-    label: 'DECK_OF_DESTINY.traumas.2.label'
+    value: -2,
+    label: 'DECK_OF_DESTINY.traumas.2.label',
+    optional: false
   },
   3: {
+    value: -2,
+    label: 'DECK_OF_DESTINY.traumas.3.label',
+    optional: true
+  },
+  4: {
+    value: -5,
+    label: 'DECK_OF_DESTINY.traumas.4.label',
+    optional: false
+  },
+  5: {
+    value: -5,
+    label: 'DECK_OF_DESTINY.traumas.5.label',
+    optional: true
+  },
+  6: {
     value: 0,
-    label: 'DECK_OF_DESTINY.traumas.3.label'
+    label: 'DECK_OF_DESTINY.traumas.6.label',
+    optional: false
   }
 };
 

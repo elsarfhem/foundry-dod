@@ -28,7 +28,7 @@
   "version": "0.1.0",
   "compatibility": {
     "minimum": 12,
-    "verified": 12
+    "verified": 13
   },
   "esmodules": [
     "src/module/dod.mjs",
@@ -106,7 +106,8 @@
       "talent": {},
       "condition": {},
       "trauma": {},
-      "attribute": {}
+      "attribute": {},
+        "power": {}
     }
   },
   "socket": false,

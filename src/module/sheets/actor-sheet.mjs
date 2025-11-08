@@ -1,14 +1,29 @@
-import {createItem, decreaseItemValue, deleteItemRow, increaseItemValue} from "./actor-sheet/items.mjs";
+import {
+    createItem,
+    decreaseItemValue,
+    deleteItemRow,
+    increaseItemValue
+} from './actor-sheet/items.mjs';
 import {
     addCards,
     addCardsToPile,
     addSheetCard,
     drawCardsFromPile,
     resetActorCards,
-    subtractSheetCard
-} from "./actor-sheet/cards.mjs";
-import {decreaseAttribute, increaseAttribute, setCharacteristicValue} from "./actor-sheet/attributes.mjs";
-import {changeConditionName, changeTrauma, toggleConditionDeadly} from "./actor-sheet/conditions-trauma.mjs";
+    subtractSheetCard,
+    toggleHeaderCards
+} from './actor-sheet/cards.mjs';
+import {
+    decreaseAttribute,
+    increaseAttribute,
+    setCharacteristicValue
+} from './actor-sheet/attributes.mjs';
+import {
+    changeConditionName,
+    changeTrauma,
+    toggleConditionDeadly,
+    toggleTraumaOptional
+} from './actor-sheet/conditions-trauma.mjs';
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -93,6 +108,8 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         const conditions = [];
         const traumas = [];
         const attributes = []; // user-defined attributes
+        const powers = [];
+
 
         for (const i of context.items) {
             i.img = i.img || Item.DEFAULT_ICON;
@@ -108,6 +125,8 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
                 traumas.push(i);
             } else if (i.type === 'attribute') {
                 attributes.push(i);
+            } else if (i.type === 'power') {
+                powers.push(i);
             }
         }
 
@@ -118,6 +137,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         context.conditions = conditions;
         context.traumas = traumas;
         context.attributes = attributes;
+        context.powers = powers;
     }
 
     /* -------------------------------------------- */
@@ -137,6 +157,8 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
             const item = this.actor.items.get(li.data('itemId'));
             item.sheet.render(true);
         });
+
+        html.on('click', '.toggle-header-cards', (ev) => toggleHeaderCards(html, ev));
 
         const editOnRightClick = (ev) => {
             ev.preventDefault();
@@ -158,7 +180,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
             if (!item) return;
 
             // Only open sheets for inventory ('item'), abilities and talents
-            if (['item', 'ability', 'talent'].includes(item.type)) {
+            if (['item', 'ability', 'talent', 'power'].includes(item.type)) {
                 item.sheet.render(true);
             }
         };
@@ -237,19 +259,11 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         });
 
         // Characteristic value setting.
-        html.on(
-            'click',
-            '.characteristic-click',
-            (e) => setCharacteristicValue(this, e)
-        );
+        html.on('click', '.characteristic-click', (e) => setCharacteristicValue(this, e));
 
         // Attribute value setting.
         html.on('click', '.attribute-click', (e) => increaseAttribute(this, e));
-        html.on(
-            'contextmenu',
-            '.attribute-click',
-            (e) => decreaseAttribute(this, e)
-        );
+        html.on('contextmenu', '.attribute-click', (e) => decreaseAttribute(this, e));
 
         // Ability/Talent value setting.
         html.on('click', '.item-click', (e) => increaseItemValue(this, e));
@@ -258,17 +272,16 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         html.on('click', '.item-decrease-click', (e) => decreaseItemValue(this, e));
 
         // Condition name setting.
-        html.on(
-            'focusout',
-            '.item-condition-input',
-            (e) => changeConditionName(this, e)
-        );
+        html.on('focusout', '.item-condition-input', (e) => changeConditionName(this, e));
 
         // Condition deadly setting.
         html.on('click', '.item-condition-deadly', (e) => toggleConditionDeadly(this, e));
 
         // Handle trauma selection
         html.on('click', '.trauma-input', (e) => changeTrauma(this, e));
+
+        // Handle trauma optional toggle
+        html.on('click', '.trauma-optional-input', (e) => toggleTraumaOptional(this, e));
 
         // Drag events for macros.
         if (this.actor.isOwner) {

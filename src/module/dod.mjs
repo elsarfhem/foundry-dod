@@ -53,7 +53,8 @@ Hooks.once('init', function () {
     talent: models.DeckOfDestinyTalent,
     condition: models.DeckOfDestinyCondition,
     trauma: models.DeckOfDestinyTrauma,
-    attribute: models.DeckOfDestinyAttribute
+    attribute: models.DeckOfDestinyAttribute,
+    power: models.DeckOfDestinyPower
   };
 
   // Register sheet application classes

@@ -1,16 +1,22 @@
 // Item-related helper functions for DeckOfDestinyActorSheet
 // Each function receives the sheet instance as first argument.
 
+/**
+ *
+ * @param {*} sheet
+ * @param {Event} event
+ */
 export async function createItem(sheet, event) {
   event.preventDefault();
   const header = event.currentTarget;
   const type = header.dataset.type;
   const data = foundry.utils.duplicate(header.dataset);
-  const name = game.i18n.localize(`DECK_OF_DESTINY.types.item.${type}`) || `New ${type}`;
+  const name =
+    game.i18n.localize(`DECK_OF_DESTINY.types.item.${type}`) || `New ${type}`;
   const itemData = { name, type, system: data };
   delete itemData.system['type'];
 
-  const optimizeTypes = ['item', 'ability', 'talent'];
+  const optimizeTypes = ['item', 'ability', 'talent', 'power'];
   if (!optimizeTypes.includes(type)) {
     return await Item.create(itemData, { parent: sheet.actor });
   }
@@ -26,7 +32,9 @@ export async function createItem(sheet, event) {
   if (!sheet.rendered || !sheet.element || !sheet.element[0]) return created;
 
   const root = sheet.element[0];
-  const createBtn = root.querySelector(`.item-control.item-create[data-type='${type}']`);
+  const createBtn = root.querySelector(
+    `.item-control.item-create[data-type='${type}']`
+  );
   const list = createBtn?.closest('ol.items-list');
   if (!list) {
     sheet.render(false);
@@ -36,7 +44,10 @@ export async function createItem(sheet, event) {
   // Render shared partial for item row
   let rowHtml;
   try {
-    rowHtml = await renderTemplate('systems/dod/src/templates/actor/parts/actor-item-row.hbs', { item: created });
+    rowHtml = await renderTemplate(
+      'systems/dod/src/templates/actor/parts/actor-item-row.hbs',
+      { item: created }
+    );
   } catch (tplErr) {
     console.error('Failed to render item row partial; re-rendering sheet:', tplErr);
     sheet.render(false);
@@ -57,7 +68,8 @@ export async function createItem(sheet, event) {
     }
     newLi.style.display = 'none';
     list.appendChild(newLi);
-    if (window.$) $(newLi).slideDown(160); else newLi.style.display = '';
+    if (window.$) $(newLi).slideDown(160);
+    else newLi.style.display = '';
   } catch (injectErr) {
     console.error('Failed to inject rendered item row; re-rendering sheet:', injectErr);
     sheet.render(false);
@@ -66,6 +78,10 @@ export async function createItem(sheet, event) {
   return created;
 }
 
+/**
+ * @param {*} sheet
+ * @param {Event} event
+ */
 export async function deleteItemRow(sheet, event) {
   event.preventDefault();
   const btn = event.currentTarget;
@@ -75,7 +91,7 @@ export async function deleteItemRow(sheet, event) {
   if (!itemId) return;
   const item = sheet.actor.items.get(itemId);
   if (!item) return;
-  if (!['item', 'ability', 'talent'].includes(item.type)) return;
+  if (!['item', 'ability', 'talent', 'power'].includes(item.type)) return;
   btn.disabled = true;
   try {
     await sheet.actor.deleteEmbeddedDocuments('Item', [itemId], { render: false });
@@ -84,12 +100,17 @@ export async function deleteItemRow(sheet, event) {
   } catch (err) {
     console.error('Item deletion failed:', err);
     ui.notifications.error(
-      game.i18n.localize('DECK_OF_DESTINY.errors.itemDeleteFailed') || 'Item deletion failed'
+      game.i18n.localize('DECK_OF_DESTINY.errors.itemDeleteFailed') ||
+        'Item deletion failed'
     );
     btn.disabled = false;
   }
 }
 
+/**
+ * @param {*} sheet
+ * @param {Event} event
+ */
 export async function increaseItemValue(sheet, event) {
   event.preventDefault();
   const element = event.currentTarget;
@@ -105,7 +126,10 @@ export async function increaseItemValue(sheet, event) {
   const newVal = Math.min(proposed, cap);
   if (newVal === value) return;
   await item.update({ 'system.value': newVal }, { render: false });
-  const valueSpan = li.querySelector('.ability-value') || li.querySelector('.item-core-button') || element;
+  const valueSpan =
+    li.querySelector('.ability-value') ||
+    li.querySelector('.item-core-button') ||
+    element;
   if (valueSpan) valueSpan.textContent = newVal;
   const decreaseBtn = li.querySelector('.item-decrease-click');
   const increaseBtn = li.querySelector('.item-increase-click');
@@ -123,6 +147,10 @@ export async function increaseItemValue(sheet, event) {
   }
 }
 
+/**
+ * @param {*} sheet
+ * @param {Event} event
+ */
 export async function decreaseItemValue(sheet, event) {
   event.preventDefault();
   const element = event.currentTarget;
@@ -135,7 +163,10 @@ export async function decreaseItemValue(sheet, event) {
   if (value <= 0) return;
   const newVal = value - 1;
   await item.update({ 'system.value': newVal }, { render: false });
-  const valueSpan = li.querySelector('.ability-value') || li.querySelector('.item-core-button') || element;
+  const valueSpan =
+    li.querySelector('.ability-value') ||
+    li.querySelector('.item-core-button') ||
+    element;
   if (valueSpan) valueSpan.textContent = newVal;
   const decreaseBtn = li.querySelector('.item-decrease-click');
   const increaseBtn = li.querySelector('.item-increase-click');
@@ -152,4 +183,3 @@ export async function decreaseItemValue(sheet, event) {
       game.i18n.format(`DECK_OF_DESTINY.attributes.xp.abilities.${newVal + 1}`);
   }
 }
-

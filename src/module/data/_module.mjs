@@ -11,3 +11,4 @@ export { default as DeckOfDestinyTalent } from './item-talent.mjs';
 export { default as DeckOfDestinyCondition } from './item-condition.mjs';
 export { default as DeckOfDestinyTrauma } from './item-trauma.mjs';
 export { default as DeckOfDestinyAttribute } from './item-attribute.mjs';
+export { default as DeckOfDestinyPower } from './item-power.mjs';

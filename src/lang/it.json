@@ -46,7 +46,6 @@
       },
       "name": "Nome",
       "player": "Giocatore",
-      "power": "Potere",
       "xp": {
         "label": "Punti Esperienza",
         "spent": "Spesi",
@@ -100,7 +99,9 @@
       "quantity": "Quantità",
       "remove": "Rimuovi {type}",
       "value": "Valore",
-      "weight": "Peso"
+      "weight": "Peso",
+      "showCards": "Mostra Carte",
+      "hideCards": "Nascondi Carte"
     },
     "sheet": {
       "labels": {
@@ -116,17 +117,30 @@
         "skills": "Abilità",
         "talents": "Talenti",
         "traumas": "Critici",
-        "attributes": "Attributi"
+        "attributes": "Attributi",
+        "powers": "Poteri"
       }
+    },
+    "tooltips": {
+      "optionalTrauma": "Seleziona solo se hai il talento Duro a Morire"
     },
     "traumas": {
       "1": {
-        "label": "-2 Successi"
+        "label": "Sano"
       },
       "2": {
-        "label": "-5 Successi"
+        "label": "-2 Successi"
       },
       "3": {
+        "label": "-2 Successi"
+      },
+      "4": {
+        "label": "-5 Successi"
+      },
+      "5": {
+        "label": "-5 Successi"
+      },
+      "6": {
         "label": "Morente"
       }
     },
@@ -141,7 +155,8 @@
         "item": "Oggetto",
         "talent": "Talento",
         "trauma": "Critico",
-        "attribute": "Risorsa"
+        "attribute": "Risorsa",
+        "power": "Potere"
       }
     }
   }

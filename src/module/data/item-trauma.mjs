@@ -30,6 +30,16 @@ export default class DeckOfDestinyTrauma extends DeckOfDestinyItemBase {
       initial: false
     });
 
+    schema.optional = new fields.BooleanField({
+      required: true,
+      initial: false
+    });
+
+    schema.enabled = new fields.BooleanField({
+      required: true,
+      initial: false
+    });
+
     return schema;
   }
 }
