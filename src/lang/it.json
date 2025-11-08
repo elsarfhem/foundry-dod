@@ -100,7 +100,8 @@
       "remove": "Rimuovi {type}",
       "value": "Valore",
       "weight": "Peso",
-      "toggleHeaderCards": "Mostra/Nascondi le tue Carte"
+      "showCards": "Mostra Carte",
+      "hideCards": "Nascondi Carte"
     },
     "sheet": {
       "labels": {

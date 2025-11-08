@@ -189,6 +189,11 @@ export function toggleHeaderCards(html, ev) {
   $cards.toggleClass('collapsed');
   const expanded = !$cards.hasClass('collapsed');
   $btn.attr('aria-expanded', expanded);
+
+  // Update button text based on expanded state
+  const hideLabel = $btn.data('label-hide');
+  const showLabel = $btn.data('label-show');
+  $btn.text(expanded ? hideLabel : showLabel);
 }
 
 /**

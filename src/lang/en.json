@@ -100,7 +100,8 @@
       "remove": "Remove {type}",
       "value": "Value",
       "weight": "Weight",
-      "toggleHeaderCards": "Show/Hide your Cards"
+      "showCards": "Show Cards",
+      "hideCards": "Hide Cards"
     },
     "sheet": {
       "labels": {
