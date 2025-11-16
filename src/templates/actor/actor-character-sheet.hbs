@@ -50,44 +50,7 @@
           {{localize 'DECK_OF_DESTINY.labels.hideCards'}}
       </button>
       <div class="header-cards">
-        <div class="header-profile">
-        {{#if editable}}
-            <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
-        {{else}}
-            <img class="profile-img" src="{{actor.img}}" title="{{actor.name}}" />
-        {{/if}}
-          <label for="system.health" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.health.label'}}</label>
-          <div class="health-inputs flex-group-center">
-            <div class="health-input health-current">
-              <input type="number" name="system.health.value" value="{{system.health.value}}" data-dtype="Number" data-dtype="Number" min="0" />
-              <label for="system.health.value" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.health.current'}}</label>
-            </div>
-            <div class="health-input health-max">
-              <input type="number" name="system.health.max" value="{{system.health.max}}" data-dtype="Number" />
-              <label for="system.health.max" class="resource-label">{{localize 'DECK_OF_DESTINY.attributes.health.max'}}</label>
-            </div>
-          </div>
-        </div>
-        <div class="resources grid grid-6col">
-          {{#each system.cards as |card key|}}
-            <div class="resource card flex-group-center">
-              <img class="card-img manage-sheet-card" src="systems/dod/assets/cards/{{key}}.png" alt="{{key}} card"
-                data-card-type="{{key}}">
-              <label for="system.cards.{{key}}.value" class="resource-label">{{localize (lookup @root.config.cards key)}}</label>
-              <div class="card-input-container">
-                <input class="card-input" name="system.cards.{{key}}.value" type="number" value="{{card.value}}" min="0" />
-                {{#if (ne card.modifier 0)}}
-                  <span class="modifier">{{#if (gt card.modifier 0)}}+{{/if}}{{card.modifier}}</span>
-                {{/if}}
-              </div>
-            </div>
-          {{/each}}
-          <div class="resource card-buttons flex-group-center">
-            <button class="card-button draw-cards-from-pile">{{localize 'DECK_OF_DESTINY.actions.draw'}}</button>
-            <button class="card-button add-sheet-cards-to-pile">{{localize 'DECK_OF_DESTINY.actions.add_to_deck'}}</button>
-            <button class="card-button reset-sheet-cards">{{localize 'DECK_OF_DESTINY.actions.reset'}}</button>
-          </div>
-        </div>
+        {{> "systems/dod/src/templates/actor/parts/actor-header-cards.hbs"}}
       </div>
       <hr>
       

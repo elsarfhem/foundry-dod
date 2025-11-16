@@ -65,11 +65,25 @@
       }
     },
     "cards": {
+      "white": "Bianca",
       "destiny": "Destino",
       "failure": "Fallimento",
       "fortune": "Fortuna",
       "issue": "Imprevisto",
       "success": "Successo"
+    },
+    "chat": {
+      "buttons": {
+        "viewHand": "Vedi la mano",
+        "viewDeck": "Vedi il mazzo",
+        "emptyDeck": "Svuota il mazzo",
+        "divideFortune": "Dividi Carte Fortuna",
+        "risk": "Rischia"
+      },
+      "titles": {
+        "drawResult": "Risultato della Prova",
+        "riskResult": "Rischia - Risultato"
+      }
     },
     "characteristics": {
       "body": "Corpo",
