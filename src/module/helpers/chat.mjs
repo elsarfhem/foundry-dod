@@ -71,19 +71,19 @@ export function createDrawChat(drawCards, playersNum) {
     },
     {
       label: game.i18n.localize('DECK_OF_DESTINY.chat.buttons.emptyDeck'),
-      action: () => game.macros.find((m) => m.name === 'Svuota il mazzo')?.execute()
+      action: () => game.dod?.macros?.svuotaMazzo?.()
     }
   ];
   if (playersNum > 1 && fortuneCount > 0) {
     buttons.push({
       label: game.i18n.localize('DECK_OF_DESTINY.chat.buttons.divideFortune'),
-      action: () => game.macros.find((m) => m.name === 'Divisione Carte Fortuna')?.execute()
+      action: () => game.dod?.macros?.divisioneCarteFortuna?.()
     });
   }
   if (successCount <= failureCount && failureCount <= successCount + fortuneCount) {
     buttons.push({
       label: game.i18n.localize('DECK_OF_DESTINY.chat.buttons.risk'),
-      action: () => game.macros.find((m) => m.name === 'Rischia')?.execute()
+      action: () => game.dod?.macros?.rischia?.()
     });
   }
   showChatRequest({

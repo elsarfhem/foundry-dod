@@ -452,6 +452,10 @@ export async function rischia() {
   const drawCards = [];
   let cardsHtml = '';
   do {
+      if(pile.cards.size === 0) {
+          ui.notifications.error('No success or failure cards found in the deck! The risk action cannot be completed.');
+          return
+      }
     [drawCard] =
       (await hand.draw(pile, 1, {
         how: CONST.CARD_DRAW_MODES.RANDOM,
@@ -752,6 +756,11 @@ export async function richiediProva() {
  * Returns all cards to the main deck.
  */
 export async function svuotaMazzo() {
+  // GM-only safeguard
+  if (!game.user?.isGM) {
+    ui.notifications.warn('Only the GM can empty the deck.');
+    return;
+  }
   const deck = game.cards.getName('DoD - lista carte');
   await deck.recall({ chatNotification: false });
   ChatMessage.create({
