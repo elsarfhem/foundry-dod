@@ -65,11 +65,25 @@
       }
     },
     "cards": {
+      "white": "White",
       "destiny": "Destiny",
       "failure": "Failure",
       "fortune": "Fortune",
       "issue": "Issue",
       "success": "Success"
+    },
+    "chat": {
+      "buttons": {
+        "viewHand": "View Hand",
+        "viewDeck": "View Deck",
+        "emptyDeck": "Empty Deck",
+        "divideFortune": "Divide Fortune Cards",
+        "risk": "Risk"
+      },
+      "titles": {
+        "drawResult": "Draw Result",
+        "riskResult": "Risk - Result"
+      }
     },
     "characteristics": {
       "body": "Body",

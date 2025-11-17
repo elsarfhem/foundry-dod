@@ -1,3 +1,6 @@
+import {getCardsToDraw} from "./sheets/actor-sheet/cards.mjs";
+import { createDrawChat } from './helpers/chat.mjs';
+
 Hooks.once('init', () => {
   console.log('Deck of Destiny | Macros module initialized');
 
@@ -284,79 +287,13 @@ export async function componiIlMazzoEPesca() {
         if (pile.cards.size > 0) {
           const drawCards = await hand.draw(
             pile,
-            Math.ceil(pile.cards.size / (3 + playersNum)),
+            getCardsToDraw(pile.cards.size, playersNum),
             {
               how: CONST.CARD_DRAW_MODES.RANDOM,
               chatNotification: false
             }
           );
-
-          drawCards.sort((a, b) => a.suit.localeCompare(b.suit));
-          console.log(drawCards);
-          const map = new Map();
-          drawCards.forEach((card) => {
-            let cardTypeNum = map.get(card.suit);
-            if (cardTypeNum > 0) {
-              map.set(card.suit, ++cardTypeNum);
-            } else {
-              map.set(card.suit, 1);
-            }
-            cardsHtml += `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px;margin-right: 5px;margin-bottom: 5px;"/>`;
-          });
-          console.log('map ' + map);
-          const summary = Array.from(map)
-            .map(([suit, num]) => `<li>${suitToName(suit)}: ${num}</li>`)
-            .join('');
-
-          const buttons = [
-            {
-              label: 'Vedi la mano',
-              action: async () => {
-                const hand = game.cards.getName('Mano');
-                hand.sheet.render(true);
-              }
-            },
-            {
-              label: 'Vedi il mazzo',
-              action: async () => {
-                const pile = game.cards.getName('Mazzo');
-                pile.sheet.render(true);
-              }
-            },
-            {
-              label: 'Svuota il mazzo',
-              action: async () => {
-                game.macros.find((k, v) => k.name === 'Svuota il mazzo').execute();
-              }
-            }
-          ];
-          if (playersNum > 1 && map.get('fortune') > 0) {
-            buttons.push({
-              label: 'Dividi Carte Fortuna',
-              action: async () => {
-                game.macros
-                  .find((k, v) => k.name === 'Divisione Carte Fortuna')
-                  .execute();
-              }
-            });
-          }
-          if (map.get('success') + map.get('fortune') >= map.get('failure')) {
-            buttons.push({
-              label: 'Rischia',
-              action: async () => {
-                game.macros.find((k, v) => k.name === 'Rischia').execute();
-              }
-            });
-          }
-
-          showChatRequest({
-            description: `<ul>${summary}</ul>
-                  <div class="card-draw flexrow">${cardsHtml}</div>
-                  `,
-            img: 'icons/svg/card-hand.svg',
-            title: 'Risultato della Prova',
-            buttonData: buttons
-          });
+          createDrawChat(drawCards, playersNum);
         }
       }
     }
@@ -461,78 +398,13 @@ export async function pesca() {
         if (pile.cards.size > 0) {
           const drawCards = await hand.draw(
             pile,
-            Math.ceil(pile.cards.size / (3 + playersNum)),
+            getCardsToDraw(pile.cards.size, playersNum),
             {
               how: CONST.CARD_DRAW_MODES.RANDOM,
               chatNotification: false
             }
           );
-          // pile.passDialog()
-          console.log(drawCards);
-          drawCards.sort((a, b) => a.suit.localeCompare(b.suit));
-          const map = new Map();
-          drawCards.forEach((card) => {
-            let cardTypeNum = map.get(card.suit);
-            if (cardTypeNum > 0) {
-              map.set(card.suit, ++cardTypeNum);
-            } else {
-              map.set(card.suit, 1);
-            }
-            cardsHtml += `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px;margin-right: 5px;margin-bottom: 5px;"/>`;
-          });
-          console.log('map ' + map);
-          const summary = Array.from(map)
-            .map(([suit, num]) => `<li>${suitToName(suit)}: ${num}</li>`)
-            .join('');
-
-          const buttons = [
-            {
-              label: 'Vedi la mano',
-              action: async () => {
-                game.cards.getName('Mano').sheet.render(true);
-              }
-            },
-            {
-              label: 'Vedi il mazzo',
-              action: async () => {
-                game.cards.getName('Mazzo').sheet.render(true);
-              }
-            },
-            {
-              label: 'Svuota il mazzo',
-              action: async () => {
-                game.macros.find((k, v) => k.name === 'Svuota il mazzo').execute();
-              }
-            }
-          ];
-
-          if (playersNum > 1 && map.get('fortune') > 0) {
-            buttons.push({
-              label: 'Dividi Carte Fortuna',
-              action: async () => {
-                game.macros
-                  .find((k, v) => k.name === 'Divisione Carte Fortuna')
-                  .execute();
-              }
-            });
-          }
-          if (map.get('success') + map.get('fortune') >= map.get('failure')) {
-            buttons.push({
-              label: 'Rischia',
-              action: async () => {
-                game.macros.find((k, v) => k.name === 'Rischia').execute();
-              }
-            });
-          }
-
-          showChatRequest({
-            description: `<ul>${summary}</ul>
-              <div class="card-draw flexrow">${cardsHtml}</div>
-              `,
-            img: 'icons/svg/card-hand.svg',
-            title: 'Risultato della Prova',
-            buttonData: buttons
-          });
+          createDrawChat(drawCards, playersNum);
         }
       }
     }
@@ -580,6 +452,10 @@ export async function rischia() {
   const drawCards = [];
   let cardsHtml = '';
   do {
+      if(pile.cards.size === 0) {
+          ui.notifications.error('No success or failure cards found in the deck! The risk action cannot be completed.');
+          return
+      }
     [drawCard] =
       (await hand.draw(pile, 1, {
         how: CONST.CARD_DRAW_MODES.RANDOM,
@@ -598,7 +474,7 @@ export async function rischia() {
       } else {
         map.set(card.suit, 1);
       }
-      cardsHtml += `<img class=\"card-face\" src=\"${card.img}\" alt=\"${card.name}\" title=\"${card.name}\" style=\"max-width: 90px;margin-right: 5px;margin-bottom: 5px;\"/>`;
+      cardsHtml += `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px;margin-right: 5px;margin-bottom: 5px;"/>`;
     });
     console.log('map ' + map);
     const summary = Array.from(map)
@@ -880,10 +756,18 @@ export async function richiediProva() {
  * Returns all cards to the main deck.
  */
 export async function svuotaMazzo() {
+  // GM-only safeguard
+  if (!game.user?.isGM) {
+    ui.notifications.warn('Only the GM can empty the deck.');
+    return;
+  }
   const deck = game.cards.getName('DoD - lista carte');
-  await deck.recall({
-    chatNotification: false
+  await deck.recall({ chatNotification: false });
+  ChatMessage.create({
+    user: game.user.id,
+    content: `<p><strong>Mazzo svuotato:</strong> tutte le carte sono state richiamate</p>`
   });
+  ui.notifications.info('Il mazzo è stato svuotato.');
 }
 
 /**

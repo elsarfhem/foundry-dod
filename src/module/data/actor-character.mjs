@@ -59,8 +59,8 @@ export default class DeckOfDestinyCharacter extends DeckOfDestinyActorBase {
           obj[characteristic] = new fields.SchemaField({
             value: new fields.NumberField({
               ...requiredInteger,
-              initial: 0,
-              min: 0,
+              initial: 1,
+              min: 1,
               max: 5
             })
           });

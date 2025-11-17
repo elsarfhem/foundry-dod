@@ -1,3 +1,5 @@
+import { createDrawChat } from '../../helpers/chat.mjs';
+
 // Card management helpers
 /**
  *
@@ -56,37 +58,42 @@ export async function resetActorCards(sheet) {
  */
 export async function addCards(sheet, event) {
   event.preventDefault();
-  const actor = sheet.actor.toObject().system;
+  const actorSystem = sheet.actor.toObject().system;
   const element = event.currentTarget;
   const elementData = element.dataset;
   let value = 0;
   let cardType = '';
   if (elementData.type === 'characteristic') {
-    value = actor.characteristics[elementData.label].value;
+    value = actorSystem.characteristics[elementData.label].value;
     cardType = 'success';
   } else if (elementData.type === 'ability') {
-    const itemId = element.closest('.item').dataset.itemId;
-    const item = sheet.actor.items.get(itemId);
-    value = item.system.value;
+    const itemId = element.closest('.item')?.dataset.itemId;
+    const item = itemId ? sheet.actor.items.get(itemId) : null;
+    value = item?.system.value ?? 0;
     cardType = 'success';
   } else if (elementData.type === 'condition') {
-    const itemId = element.closest('.item').dataset.itemId;
-    const item = sheet.actor.items.get(itemId);
-    value = item.system.value;
+    const itemId = element.closest('.item')?.dataset.itemId;
+    const item = itemId ? sheet.actor.items.get(itemId) : null;
+    value = item?.system.value ?? 0;
     cardType = 'failure';
+  } else {
+    return; // Unhandled type
   }
-  const newVal = actor.cards[cardType].value + value;
-  // Update without forcing a full sheet re-render and update header input in-place
-  await sheet.actor.update(
-    { [`system.cards.${cardType}.value`]: newVal },
-    { render: false }
-  );
+  const newVal = actorSystem.cards[cardType].value + value;
+  await sheet.actor.update({ [`system.cards.${cardType}.value`]: newVal }, { render: false });
+
+  // Update only the specific input element, no fragment rerender
   try {
-    const input = sheet.querySelector(`input[name="system.cards.${cardType}.value"]`);
-    if (input) input.value = newVal;
+    const root = sheet.element[0];
+    const input = root.querySelector(`input[name="system.cards.${cardType}.value"]`);
+    if (input) {
+      input.value = newVal;
+      // Optional visual feedback
+      input.classList.add('dod-pulse');
+      setTimeout(() => input.classList.remove('dod-pulse'), 500);
+    }
   } catch (err) {
-    // If the sheet DOM isn't available for some reason, ignore and allow the update to persist
-    console.debug('Could not update card input in-place', err);
+    console.debug('Direct card input update failed (non-fatal):', err);
   }
 }
 
@@ -137,6 +144,16 @@ export async function addCardsToPile(sheet) {
 }
 
 /**
+ * Calculate the number of cards to draw from the pile based on pile size and number of players.
+ * @param {number} pileSize - The number of cards in the pile.
+ * @param {number} players - The number of players.
+ * @returns {number} The number of cards to draw.
+ */
+export function getCardsToDraw(pileSize, players) {
+    return Math.max(1, Math.floor(pileSize / (4 + players)));
+}
+
+/**
  *
  * @param {Object} sheet
  * @return {Promise<void>}
@@ -170,11 +187,12 @@ export async function drawCardsFromPile(sheet) {
   if (confirmed) {
     const players = parseInt(document.querySelector('[name=num-players]').value) || 1;
     await passWhiteCardsToPile(deck, pile);
-    await hand.draw(pile, Math.ceil(pile.cards.size / (3 + players)), {
+    await hand.draw(pile, getCardsToDraw(pile.cards.size, players), {
       how: CONST.CARD_DRAW_MODES.RANDOM,
       chatNotification: false
     });
-    notifyDrawnCardsToChat(hand);
+    const drawn = Array.from(hand.cards.values());
+    createDrawChat(drawn, players);
   }
 }
 
@@ -265,38 +283,5 @@ function notifyAddedCardsToChat(pile, data) {
     )}</li><li>Destiny Cards: ${Math.max(
       data.destiny.value + data.destiny.modifier
     )}</li></ul>`
-  });
-}
-
-/**
- *
- * @param {*} hand
- */
-function notifyDrawnCardsToChat(hand) {
-  const suitToName = (suit) =>
-    ({
-      white: 'White Cards',
-      success: 'Success Cards',
-      issue: 'Issue Cards',
-      destiny: 'Destiny Cards',
-      failure: 'Failure Cards',
-      fortune: 'Fortune Cards'
-    }[suit]);
-  const cardsMap = new Map();
-  hand.cards.forEach((card) => {
-    cardsMap.set(card.suit, (cardsMap.get(card.suit) || 0) + 1);
-  });
-  const cardsHtml = hand.cards
-    .map(
-      (card) =>
-        `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px;margin-right: 5px;margin-bottom: 5px;"/>`
-    )
-    .join('');
-  const summary = Array.from(cardsMap)
-    .map(([suit, num]) => `<li>${suitToName(suit)}: ${num}</li>`)
-    .join('');
-  ChatMessage.create({
-    user: game.user._id,
-    content: `<p>I drew ${hand.link}: </p><ul>${summary}</ul><div class="card-draw flexrow">${cardsHtml}</div>`
   });
 }
