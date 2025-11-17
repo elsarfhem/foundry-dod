@@ -434,7 +434,7 @@ export async function rischia() {
     return;
   }
 
-  if (numSuccess !== numFailure) {
+  if (numSuccess !== numFailure || numSuccess === 0) {
     msg =
       'Attenzione: il numero di successi e di fallimenti nella mano non sono uguali. Successi: ' +
       numSuccess +
