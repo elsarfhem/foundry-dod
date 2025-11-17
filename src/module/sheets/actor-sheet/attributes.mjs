@@ -40,12 +40,12 @@ export async function decreaseAttribute(sheet, event) {
 export async function setCharacteristicValue(sheet, event) {
   event.preventDefault();
   const target = event.currentTarget;
-  const characteristicKey = target.closest('.characteristic-circles').dataset
-    .characteristicKey;
+  const root = sheet.element[0];
+  const characteristicKey = target.closest('.characteristic-circles').dataset.characteristicKey;
   const newValue = parseInt(target.dataset.value);
-  await sheet.actor.update({
-    [`system.characteristics.${characteristicKey}.value`]: newValue
-  });
+  // Update actor without triggering full sheet render
+  await sheet.actor.update({ [`system.characteristics.${characteristicKey}.value`]: newValue }, { render: false });
+  updateCharacteristicCircles(root, characteristicKey, newValue);
 }
 
 function updateAttributeDisplay(root, attributeType, newVal) {
@@ -72,5 +72,24 @@ function updateAttributeDisplay(root, attributeType, newVal) {
     }
   } catch (e) {
     console.debug('Attribute display update skipped', e);
+  }
+}
+
+function updateCharacteristicCircles(root, characteristicKey, newValue) {
+  try {
+    const container = root.querySelector(`.characteristic-circles[data-characteristic-key="${characteristicKey}"]`);
+    if (!container) return;
+    container.querySelectorAll('span.characteristic-click.circle').forEach(span => {
+      const val = parseInt(span.dataset.value);
+      if (val <= newValue) {
+        span.classList.add('filled');
+      } else {
+        span.classList.remove('filled');
+      }
+      // Show numeric value only on the selected circle (matching original template behavior)
+      span.textContent = (val === newValue) ? String(val) : '';
+    });
+  } catch (e) {
+    console.debug('Characteristic circles update skipped', e);
   }
 }
