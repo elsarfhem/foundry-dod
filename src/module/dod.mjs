@@ -8,6 +8,7 @@ import { DeckOfDestinyItemSheet } from './sheets/item-sheet.mjs';
 import './sheets/actor-sheet/xp-lite.mjs';
 import './sheets/actor-sheet/cards-lite.mjs';
 import './sheets/actor-sheet/health-lite.mjs';
+import './sheets/actor-sheet/name-player-lite.mjs';
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
 import { DECK_OF_DESTINY } from './helpers/config.mjs';
