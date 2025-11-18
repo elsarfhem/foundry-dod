@@ -5,7 +5,8 @@
       "draw": "Pesca",
       "reset": "Ripristina",
       "increase": "Aumenta",
-      "decrease": "Diminuisci"
+      "decrease": "Diminuisci",
+      "defense_roll": "Tiro Difesa"
     },
     "attributes": {
       "absorption": {

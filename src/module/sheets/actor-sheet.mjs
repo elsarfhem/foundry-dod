@@ -24,6 +24,7 @@ import {
     toggleConditionDeadly,
     toggleTraumaOptional
 } from './actor-sheet/conditions-trauma.mjs';
+import {tiroDifesa} from "../globals.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -231,6 +232,12 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
         html.on('click', '.draw-cards-from-pile', async (event) => {
             event.target.blur(); // Remove focus from the button.
             await drawCardsFromPile(this);
+        });
+
+        // Defense roll button.
+        html.on('click', '.defense-roll', async (event) => {
+            event.target.blur(); // Remove focus from the button.
+            await tiroDifesa();
         });
 
         // Characteristic value setting.

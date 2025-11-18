@@ -785,7 +785,7 @@ export async function tiroDifesa() {
   let confirmed = false;
   new Dialog({
     title: 'Tiro Difesa',
-    content: `      <form> \t    <div class="form-group">        <label>Danni subiti:</label>        <input id="dmg" name="dmg" value="1" autofocus onFocus="select()" tabindex="1" type="number" min="1"></input>       </div>       <div class="form-group">        <label>Dadi aggiuntivi:</label>        <input id="additional" name="additional" value="0" tabindex="2"  type="number" min="0"></input>       </div>       <div class="form-group">        <label>Coeff. di Assorbimento:</label>        <select name="defense" id="defense" tabindex="3">          <option value="1">Base</option>          <option value="2">Leggero</option>          <option value="3">Medio</option>          <option value="4">Alto</option>        </select>       </div>      </form>      `,
+    content: `      <form>    <div class="form-group">        <label>Danni subiti:</label>        <input id="dmg" name="dmg" value="1" autofocus onFocus="select()" tabindex="1" type="number" min="1"></input>       </div>       <div class="form-group">        <label>Dadi aggiuntivi:</label>        <input id="additional" name="additional" value="0" tabindex="2"  type="number" min="0"></input>       </div>       <div class="form-group">        <label>Coeff. di Assorbimento:</label>        <select name="defense" id="defense" tabindex="3">          <option value="1">Base</option>          <option value="2">Leggero</option>          <option value="3">Medio</option>          <option value="4">Alto</option>        </select>       </div>      </form>      `,
     buttons: {
       one: {
         icon: '<i class="fas fa-check"></i>',
