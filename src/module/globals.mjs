@@ -783,9 +783,49 @@ export async function svuotaMazzo() {
  */
 export async function tiroDifesa() {
   let confirmed = false;
+
+  // Dialog content HTML
+  const dialogContent = `
+    <form>
+      <div class="form-group">
+        <label>Danni subiti:</label>
+        <input 
+          id="dmg" 
+          name="dmg" 
+          value="1" 
+          autofocus 
+          onFocus="select()" 
+          tabindex="1" 
+          type="number" 
+          min="1"
+        />
+      </div>
+      <div class="form-group">
+        <label>Dadi aggiuntivi:</label>
+        <input 
+          id="additional" 
+          name="additional" 
+          value="0" 
+          tabindex="2" 
+          type="number" 
+          min="0"
+        />
+      </div>
+      <div class="form-group">
+        <label>Coeff. di Assorbimento:</label>
+        <select name="defense" id="defense" tabindex="3">
+          <option value="1">Base</option>
+          <option value="2">Leggero</option>
+          <option value="3">Medio</option>
+          <option value="4">Alto</option>
+        </select>
+      </div>
+    </form>
+  `;
+
   new Dialog({
     title: 'Tiro Difesa',
-    content: `      <form>    <div class="form-group">        <label>Danni subiti:</label>        <input id="dmg" name="dmg" value="1" autofocus onFocus="select()" tabindex="1" type="number" min="1"></input>       </div>       <div class="form-group">        <label>Dadi aggiuntivi:</label>        <input id="additional" name="additional" value="0" tabindex="2"  type="number" min="0"></input>       </div>       <div class="form-group">        <label>Coeff. di Assorbimento:</label>        <select name="defense" id="defense" tabindex="3">          <option value="1">Base</option>          <option value="2">Leggero</option>          <option value="3">Medio</option>          <option value="4">Alto</option>        </select>       </div>      </form>      `,
+    content: dialogContent,
     buttons: {
       one: {
         icon: '<i class="fas fa-check"></i>',
@@ -804,7 +844,6 @@ export async function tiroDifesa() {
         const dmg = parseInt(html.find('[name=dmg]')[0].value) || 0;
         const additionalDice = parseInt(html.find('[name=additional]')[0].value) || 0;
         const select = document.getElementById('defense');
-        console.log(select);
         const defenseLevel = parseInt(select.options[select.selectedIndex].value);
         console.log(`${dmg + additionalDice}d6cs<=${defenseLevel}`);
         const r = new Roll(`${dmg + additionalDice}d6cs<=${defenseLevel}`); // Execute the roll
@@ -812,18 +851,35 @@ export async function tiroDifesa() {
         await r.toMessage({}, { create: false });
         const rollsAsString = r.terms[0].results
           .map((d) => {
-            return `<li class="roll die d6 ${d.success ? 'success' : ''}">${
-              d.result
-            }</li>`;
+            const successClass = d.success ? 'success' : '';
+            return `<li class="roll die d6 ${successClass}">${d.result}</li>`;
           })
           .join('');
+
+        // Build chat message HTML
+        const absorbed = r.result;
+        const damageWord = dmg > 1 ? 'danni' : 'danno';
+        const chatContent = `
+          <h2>Tiro Difesa</h2>
+          <p>
+            Hai assorbito 
+            <span style="font-size: large; font-weight: bold;">${absorbed}</span> 
+            su ${dmg} ${damageWord}
+          </p>
+          <div class="dice-tooltip expanded" style="display: block;">
+            <section class="tooltip-part">
+              <div class="dice">
+                <ol class="dice-rolls">
+                  ${rollsAsString}
+                </ol>
+              </div>
+            </section>
+          </div>
+        `;
+
         await ChatMessage.create({
           user: game.user.id,
-          content: `             <h2>Tiro Difesa</h2>             <p>Hai assorbito <span style="font-size: large; font-weight: bold;">${
-            r.result
-          }</span> su ${dmg} dann${
-            dmg > 1 ? 'i' : 'o'
-          }</p>              <div class="dice-tooltip expanded" style="display: block;">                 <section class="tooltip-part">                       <div class="dice">                         <ol class="dice-rolls">                           ${rollsAsString}                         </ol>                       </div>                 </section>             </div>           `
+          content: chatContent
         });
       }
     }
