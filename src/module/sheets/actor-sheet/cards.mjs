@@ -300,3 +300,34 @@ function notifyAddedCardsToChat(pile, data) {
     )}</li></ul>`
   });
 }
+
+/**
+ * Update a single card value without full sheet rerender.
+ * @param {Object} sheet - The actor sheet instance
+ * @param {Event} event - The change/blur event
+ */
+export async function changeCardValue(sheet, event) {
+  event.preventDefault();
+  const input = event.currentTarget;
+  const name = input.name; // system.cards.<type>.value
+  const match = /system\.cards\.(\w+)\.value/.exec(name);
+  if (!match) return;
+
+  const cardType = match[1];
+  let newVal = parseInt(input.value);
+  if (isNaN(newVal) || newVal < 0) newVal = 0;
+
+  try {
+    await sheet.actor.update({ [name]: newVal }, { render: false });
+  } catch (e) {
+    console.warn('Silent card value update failed, fallback render', e);
+    await sheet.actor.update({ [name]: newVal });
+  }
+
+  // Patch just this input
+  updateCardInput(sheet, cardType, newVal);
+
+  // Pulse feedback
+  input.classList.add('dod-pulse');
+  setTimeout(() => input.classList.remove('dod-pulse'), 400);
+}

@@ -30,7 +30,7 @@ import {tiroDifesa} from "../globals.mjs";
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
  */
-export class DeckOfDestinyActorSheet extends ActorSheet {
+export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
     /** @override */
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {

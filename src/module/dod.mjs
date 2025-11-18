@@ -4,6 +4,10 @@ import { DeckOfDestinyItem } from './documents/item.mjs';
 // Import sheet classes.
 import { DeckOfDestinyActorSheet } from './sheets/actor-sheet.mjs';
 import { DeckOfDestinyItemSheet } from './sheets/item-sheet.mjs';
+// Import lightweight non-rerender enhancements
+import './sheets/actor-sheet/xp-lite.mjs';
+import './sheets/actor-sheet/cards-lite.mjs';
+import './sheets/actor-sheet/health-lite.mjs';
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
 import { DECK_OF_DESTINY } from './helpers/config.mjs';
@@ -76,7 +80,7 @@ Hooks.once('init', function () {
   };
 
   // Register sheet application classes
-  Actors.unregisterSheet('core', ActorSheet);
+  Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);
   Actors.registerSheet('dod', DeckOfDestinyActorSheet, {
     makeDefault: true,
     label: 'DECK_OF_DESTINY.sheet.labels.actor'
