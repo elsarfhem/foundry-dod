@@ -1,7 +1,7 @@
 import {
     createItem,
     decreaseItemValue,
-    deleteItemRow,
+    deleteItemRow, editOnRightClick,
     increaseItemValue
 } from './actor-sheet/items.mjs';
 import {
@@ -79,7 +79,7 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
 
         // Enrich biography info for display
         // Enrichment turns text like `[[/r 1d20]]` into buttons
-        context.enrichedBiography = await TextEditor.enrichHTML(
+        context.enrichedBiography = await foundry.applications.ux.TextEditor.enrichHTML(
             this.actor.system.biography,
             {
                 // Whether to show secret blocks in the finished html
@@ -160,52 +160,27 @@ export class DeckOfDestinyActorSheet extends ActorSheet {
 
         html.on('click', '.toggle-header-cards', (ev) => toggleHeaderCards(html, ev));
 
-        const editOnRightClick = (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            if (!this.isEditable) return;
-
-            const nameDiv = $(ev.currentTarget);
-            const li = nameDiv.closest('li.item');
-
-            // ignore header rows and special condition rows
-            if (
-                li.hasClass('inventory-header') ||
-                li.hasClass('items-header') ||
-                li.hasClass('condition')
-            )
-                return;
-
-            const item = this.actor.items.get(li.data('itemId'));
-            if (!item) return;
-
-            // Only open sheets for inventory ('item'), abilities and talents
-            if (['item', 'ability', 'talent', 'power'].includes(item.type)) {
-                item.sheet.render(true);
-            }
-        };
-
-        // Right-clicking an item's name opens its sheet in edit mode for abilities, talents and inventory items.
-        html.on('contextmenu', 'li.item .item-name', (ev) => {
-            editOnRightClick(ev);
-        });
-
-        html.on('contextmenu', 'li.item .item-fixed-name', (ev) => {
-            editOnRightClick(ev);
-        });
-
-        html.on('contextmenu', 'li.item .item-description', (ev) => {
-            editOnRightClick(ev);
-        });
-
-        html.on('contextmenu', 'li.item .item-quantity', (ev) => {
-            editOnRightClick(ev);
-        });
 
         // -------------------------------------------------------------
         // Everything below here is only needed if the sheet is editable
         if (!this.isEditable) return;
 
+        // Right-clicking an item's name opens its sheet in edit mode for abilities, talents and inventory items.
+        html.on('contextmenu', 'li.item .item-name', (ev) => {
+            editOnRightClick(this, ev);
+        });
+
+        html.on('contextmenu', 'li.item .item-fixed-name', (ev) => {
+            editOnRightClick(this, ev);
+        });
+
+        html.on('contextmenu', 'li.item .item-description', (ev) => {
+            editOnRightClick(this, ev);
+        });
+
+        html.on('contextmenu', 'li.item .item-quantity', (ev) => {
+            editOnRightClick(this, ev);
+        });
         // Add Inventory Item
         html.on('click', '.item-create', (e) => createItem(this, e));
 

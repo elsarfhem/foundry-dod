@@ -42,7 +42,7 @@ export class DeckOfDestinyItemSheet extends ItemSheet {
 
     // Enrich description info for display
     // Enrichment turns text like `[[/r 1d20]]` into buttons
-    context.enrichedDescription = await TextEditor.enrichHTML(
+    context.enrichedDescription = await foundry.applications.ux.TextEditor.enrichHTML(
       this.item.system.description,
       {
         // Whether to show secret blocks in the finished html
