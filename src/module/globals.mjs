@@ -885,37 +885,3 @@ export async function tiroDifesa() {
     }
   }).render(true);
 }
-
-/**
- * Helper to show a chat message with interactive buttons (Foundry v13+)
- * @param {Object} opts - { description, img, title, buttonData }
- */
-function showChatRequest({ description, img, title, buttonData }) {
-  const htmlContent = `
-    <h2>${title ?? ''}</h2>
-    ${
-      img
-        ? `<img src="${img}" style="width:2em;height:2em;vertical-align:middle;">`
-        : ''
-    }
-    <div>${description ?? ''}</div>
-    <div class="dod-macro-buttons">
-      ${(buttonData || [])
-        .map((b, i) => `<button data-dod-macro-btn="${i}">${b.label}</button>`)
-        .join('')}
-    </div>
-  `;
-  ChatMessage.create({
-    user: game.user.id,
-    content: htmlContent
-  }).then((msg) => {
-    Hooks.once('renderChatMessage', (message, html, data) => {
-      if (message.id !== msg.id) return;
-      html.find('button[data-dod-macro-btn]').each((i, btn) => {
-        btn.addEventListener('click', (ev) => {
-          buttonData[i]?.action?.();
-        });
-      });
-    });
-  });
-}
