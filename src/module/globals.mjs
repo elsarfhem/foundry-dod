@@ -1,20 +1,6 @@
 import {getCardsToDraw} from "./sheets/actor-sheet/cards.mjs";
 import { createDrawChat } from './helpers/chat.mjs';
 
-Hooks.once('init', () => {
-  console.log('Deck of Destiny | Macros module initialized');
-
-  game.dod.macros = {
-    aggiungiAlMazzo,
-    componiIlMazzoEPesca,
-    divisioneCarteFortuna,
-    pesca,
-    rischia,
-    svuotaMazzo,
-    tiroDifesa
-  };
-});
-
 const suitToName = (suit) => {
   switch (suit) {
     case 'white':

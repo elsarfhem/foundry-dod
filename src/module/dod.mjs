@@ -9,6 +9,15 @@ import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
 import { DECK_OF_DESTINY } from './helpers/config.mjs';
 // Import DataModel classes
 import * as models from './data/_module.mjs';
+import {
+    aggiungiAlMazzo,
+    componiIlMazzoEPesca,
+    divisioneCarteFortuna,
+    pesca,
+    rischia,
+    svuotaMazzo,
+    tiroDifesa
+} from "./globals.mjs";
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -20,7 +29,16 @@ Hooks.once('init', function () {
   game.dod = {
     DeckOfDestinyActor,
     DeckOfDestinyItem,
-    rollItemMacro
+    rollItemMacro,
+      macros: {
+          aggiungiAlMazzo,
+          componiIlMazzoEPesca,
+          divisioneCarteFortuna,
+          pesca,
+          rischia,
+          svuotaMazzo,
+          tiroDifesa
+      }
   };
 
   // Add custom constants for configuration.
