@@ -107,3 +107,20 @@ ol.items-list {
   border-radius: 4px;
   text-align: center;
 }
+
+// Pulse animation for card updates
+@keyframes dod-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 100, 0, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(255, 100, 0, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 100, 0, 0);
+  }
+}
+
+.dod-pulse {
+  animation: dod-pulse 0.4s ease-out;
+}

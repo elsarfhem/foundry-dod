@@ -36,19 +36,34 @@ export async function subtractSheetCard(sheet, event) {
 }
 
 /**
- *
+ * Reset all card values to 0 without full sheet rerender.
  * @param {*} sheet
  */
 export async function resetActorCards(sheet) {
   await sheet.actor.update({
-    'system.cards': {
-      'success.value': 0,
-      'failure.value': 0,
-      'issue.value': 0,
-      'destiny.value': 0,
-      'fortune.value': 0
-    }
-  });
+    'system.cards.success.value': 0,
+    'system.cards.failure.value': 0,
+    'system.cards.issue.value': 0,
+    'system.cards.destiny.value': 0,
+    'system.cards.fortune.value': 0
+  }, { render: false });
+
+  // Update only the card inputs in the DOM
+  try {
+    const root = sheet.element[0];
+    const cardTypes = ['success', 'failure', 'issue', 'destiny', 'fortune'];
+    cardTypes.forEach(cardType => {
+      const input = root.querySelector(`input[name="system.cards.${cardType}.value"]`);
+      if (input) {
+        input.value = 0;
+        // Optional: Add visual feedback
+        input.classList.add('dod-pulse');
+        setTimeout(() => input.classList.remove('dod-pulse'), 400);
+      }
+    });
+  } catch (e) {
+    console.debug('Card reset DOM update skipped', e);
+  }
 }
 
 /**
