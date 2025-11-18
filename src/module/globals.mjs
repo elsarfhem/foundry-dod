@@ -85,32 +85,31 @@ export async function aggiungiAlMazzo() {
     close: async (html) => {
       if (confirmed) {
         const successCards = deck.cards.filter(
-          (card) => card.suit == 'success' && !card.drawn
+          (card) => card.suit === 'success' && !card.drawn
         );
         const issueCards = deck.cards.filter(
-          (card) => card.suit == 'issue' && !card.drawn
+          (card) => card.suit === 'issue' && !card.drawn
         );
         const destinyCards = deck.cards.filter(
-          (card) => card.suit == 'destiny' && !card.drawn
+          (card) => card.suit === 'destiny' && !card.drawn
         );
         const failureCards = deck.cards.filter(
-          (card) => card.suit == 'failure' && !card.drawn
+          (card) => card.suit === 'failure' && !card.drawn
         );
         const fortuneCards = deck.cards.filter(
-          (card) => card.suit == 'fortune' && !card.drawn
+          (card) => card.suit === 'fortune' && !card.drawn
         );
 
-        const issueCardsNum = parseInt(html.find('[name=issue-cards]')[0].value) || 0;
-        const successCardsNum =
-          parseInt(html.find('[name=success-cards]')[0].value) || 0;
-        const destinyCardsNum =
-          parseInt(html.find('[name=destiny-cards]')[0].value) || 0;
-        const failureCardsNum =
-          parseInt(html.find('[name=failure-cards]')[0].value) || 0;
-        const fortuneCardsNum =
-          parseInt(html.find('[name=fortune-cards]')[0].value) || 0;
+          const {
+              issueCardsNum,
+              successCardsNum,
+              destinyCardsNum,
+              failureCardsNum,
+              fortuneCardsNum,
+          } = getCardCountsFromDialog(html);
 
-        const successSelected = successCards.slice(0, successCardsNum);
+
+          const successSelected = successCards.slice(0, successCardsNum);
         const issueSelected = issueCards.slice(0, issueCardsNum);
         const destinySelected = destinyCards.slice(0, destinyCardsNum);
         const failureSelected = failureCards.slice(0, failureCardsNum);
@@ -154,6 +153,16 @@ export async function aggiungiAlMazzo() {
   }).render(true);
 }
 
+function getCardCountsFromDialog(html) {
+    return {
+        issueCardsNum: parseInt(html.find('[name=issue-cards]')[0].value) || 0,
+        successCardsNum: parseInt(html.find('[name=success-cards]')[0].value) || 0,
+        destinyCardsNum: parseInt(html.find('[name=destiny-cards]')[0].value) || 0,
+        failureCardsNum: parseInt(html.find('[name=failure-cards]')[0].value) || 0,
+        fortuneCardsNum: parseInt(html.find('[name=fortune-cards]')[0].value) || 0,
+    };
+}
+
 /**
  * Composes the deck and draws cards based on user configuration.
  * Opens a dialog to configure deck composition and number of players, then draws cards.
@@ -166,12 +175,12 @@ export async function componiIlMazzoEPesca() {
   const pile = game.cards.getName('Mazzo');
   const hand = game.cards.getName('Mano');
 
-  const whiteCards = deck.cards.filter((card) => card.suit == 'white');
-  const successCards = deck.cards.filter((card) => card.suit == 'success');
-  const issueCards = deck.cards.filter((card) => card.suit == 'issue');
-  const destinyCards = deck.cards.filter((card) => card.suit == 'destiny');
-  const failureCards = deck.cards.filter((card) => card.suit == 'failure');
-  const fortuneCards = deck.cards.filter((card) => card.suit == 'fortune');
+  const whiteCards = deck.cards.filter((card) => card.suit === 'white');
+  const successCards = deck.cards.filter((card) => card.suit === 'success');
+  const issueCards = deck.cards.filter((card) => card.suit === 'issue');
+  const destinyCards = deck.cards.filter((card) => card.suit === 'destiny');
+  const failureCards = deck.cards.filter((card) => card.suit === 'failure');
+  const fortuneCards = deck.cards.filter((card) => card.suit === 'fortune');
 
   let confirmed = false;
 
@@ -221,17 +230,15 @@ export async function componiIlMazzoEPesca() {
     close: async (html) => {
       if (confirmed) {
         const playersNum = parseInt(html.find('[name=num-players]')[0].value) || 1;
-        const issueCardsNum = parseInt(html.find('[name=issue-cards]')[0].value) || 0;
-        const successCardsNum =
-          parseInt(html.find('[name=success-cards]')[0].value) || 0;
-        const destinyCardsNum =
-          parseInt(html.find('[name=destiny-cards]')[0].value) || 0;
-        const failureCardsNum =
-          parseInt(html.find('[name=failure-cards]')[0].value) || 0;
-        const fortuneCardsNum =
-          parseInt(html.find('[name=fortune-cards]')[0].value) || 0;
+          const {
+              issueCardsNum,
+              successCardsNum,
+              destinyCardsNum,
+              failureCardsNum,
+              fortuneCardsNum,
+          } = getCardCountsFromDialog(html);
 
-        ChatMessage.create({
+          ChatMessage.create({
           user: game.user._id,
           content: `<p>Il mazzo é composto da: </p>
           <ul>
@@ -336,12 +343,12 @@ export async function pesca() {
         let pile = game.cards.getName('Mazzo');
         const hand = game.cards.getName('Mano');
 
-        const whiteCards = deck.cards.filter((card) => card.suit == 'white');
-        const successSelected = pile.cards.filter((card) => card.suit == 'success');
-        const issueSelected = pile.cards.filter((card) => card.suit == 'issue');
-        const destinySelected = pile.cards.filter((card) => card.suit == 'destiny');
-        const failureSelected = pile.cards.filter((card) => card.suit == 'failure');
-        const fortuneSelected = pile.cards.filter((card) => card.suit == 'fortune');
+        const whiteCards = deck.cards.filter((card) => card.suit === 'white');
+        const successSelected = pile.cards.filter((card) => card.suit === 'success');
+        const issueSelected = pile.cards.filter((card) => card.suit === 'issue');
+        const destinySelected = pile.cards.filter((card) => card.suit === 'destiny');
+        const failureSelected = pile.cards.filter((card) => card.suit === 'failure');
+        const fortuneSelected = pile.cards.filter((card) => card.suit === 'fortune');
 
         const playersNum = parseInt(html.find('[name=num-players]')[0].value) || 1;
         const issueCardsNum = issueSelected.length;
