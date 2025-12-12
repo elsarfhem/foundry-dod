@@ -1,20 +1,6 @@
 import {getCardsToDraw} from "./sheets/actor-sheet/cards.mjs";
 import { createDrawChat } from './helpers/chat.mjs';
 
-Hooks.once('init', () => {
-  console.log('Deck of Destiny | Macros module initialized');
-
-  game.dod.macros = {
-    aggiungiAlMazzo,
-    componiIlMazzoEPesca,
-    divisioneCarteFortuna,
-    pesca,
-    rischia,
-    svuotaMazzo,
-    tiroDifesa
-  };
-});
-
 const suitToName = (suit) => {
   switch (suit) {
     case 'white':
@@ -85,32 +71,31 @@ export async function aggiungiAlMazzo() {
     close: async (html) => {
       if (confirmed) {
         const successCards = deck.cards.filter(
-          (card) => card.suit == 'success' && !card.drawn
+          (card) => card.suit === 'success' && !card.drawn
         );
         const issueCards = deck.cards.filter(
-          (card) => card.suit == 'issue' && !card.drawn
+          (card) => card.suit === 'issue' && !card.drawn
         );
         const destinyCards = deck.cards.filter(
-          (card) => card.suit == 'destiny' && !card.drawn
+          (card) => card.suit === 'destiny' && !card.drawn
         );
         const failureCards = deck.cards.filter(
-          (card) => card.suit == 'failure' && !card.drawn
+          (card) => card.suit === 'failure' && !card.drawn
         );
         const fortuneCards = deck.cards.filter(
-          (card) => card.suit == 'fortune' && !card.drawn
+          (card) => card.suit === 'fortune' && !card.drawn
         );
 
-        const issueCardsNum = parseInt(html.find('[name=issue-cards]')[0].value) || 0;
-        const successCardsNum =
-          parseInt(html.find('[name=success-cards]')[0].value) || 0;
-        const destinyCardsNum =
-          parseInt(html.find('[name=destiny-cards]')[0].value) || 0;
-        const failureCardsNum =
-          parseInt(html.find('[name=failure-cards]')[0].value) || 0;
-        const fortuneCardsNum =
-          parseInt(html.find('[name=fortune-cards]')[0].value) || 0;
+          const {
+              issueCardsNum,
+              successCardsNum,
+              destinyCardsNum,
+              failureCardsNum,
+              fortuneCardsNum,
+          } = getCardCountsFromDialog(html);
 
-        const successSelected = successCards.slice(0, successCardsNum);
+
+          const successSelected = successCards.slice(0, successCardsNum);
         const issueSelected = issueCards.slice(0, issueCardsNum);
         const destinySelected = destinyCards.slice(0, destinyCardsNum);
         const failureSelected = failureCards.slice(0, failureCardsNum);
@@ -154,6 +139,16 @@ export async function aggiungiAlMazzo() {
   }).render(true);
 }
 
+function getCardCountsFromDialog(html) {
+    return {
+        issueCardsNum: parseInt(html.find('[name=issue-cards]')[0].value) || 0,
+        successCardsNum: parseInt(html.find('[name=success-cards]')[0].value) || 0,
+        destinyCardsNum: parseInt(html.find('[name=destiny-cards]')[0].value) || 0,
+        failureCardsNum: parseInt(html.find('[name=failure-cards]')[0].value) || 0,
+        fortuneCardsNum: parseInt(html.find('[name=fortune-cards]')[0].value) || 0,
+    };
+}
+
 /**
  * Composes the deck and draws cards based on user configuration.
  * Opens a dialog to configure deck composition and number of players, then draws cards.
@@ -166,12 +161,12 @@ export async function componiIlMazzoEPesca() {
   const pile = game.cards.getName('Mazzo');
   const hand = game.cards.getName('Mano');
 
-  const whiteCards = deck.cards.filter((card) => card.suit == 'white');
-  const successCards = deck.cards.filter((card) => card.suit == 'success');
-  const issueCards = deck.cards.filter((card) => card.suit == 'issue');
-  const destinyCards = deck.cards.filter((card) => card.suit == 'destiny');
-  const failureCards = deck.cards.filter((card) => card.suit == 'failure');
-  const fortuneCards = deck.cards.filter((card) => card.suit == 'fortune');
+  const whiteCards = deck.cards.filter((card) => card.suit === 'white');
+  const successCards = deck.cards.filter((card) => card.suit === 'success');
+  const issueCards = deck.cards.filter((card) => card.suit === 'issue');
+  const destinyCards = deck.cards.filter((card) => card.suit === 'destiny');
+  const failureCards = deck.cards.filter((card) => card.suit === 'failure');
+  const fortuneCards = deck.cards.filter((card) => card.suit === 'fortune');
 
   let confirmed = false;
 
@@ -221,17 +216,15 @@ export async function componiIlMazzoEPesca() {
     close: async (html) => {
       if (confirmed) {
         const playersNum = parseInt(html.find('[name=num-players]')[0].value) || 1;
-        const issueCardsNum = parseInt(html.find('[name=issue-cards]')[0].value) || 0;
-        const successCardsNum =
-          parseInt(html.find('[name=success-cards]')[0].value) || 0;
-        const destinyCardsNum =
-          parseInt(html.find('[name=destiny-cards]')[0].value) || 0;
-        const failureCardsNum =
-          parseInt(html.find('[name=failure-cards]')[0].value) || 0;
-        const fortuneCardsNum =
-          parseInt(html.find('[name=fortune-cards]')[0].value) || 0;
+          const {
+              issueCardsNum,
+              successCardsNum,
+              destinyCardsNum,
+              failureCardsNum,
+              fortuneCardsNum,
+          } = getCardCountsFromDialog(html);
 
-        ChatMessage.create({
+          ChatMessage.create({
           user: game.user._id,
           content: `<p>Il mazzo é composto da: </p>
           <ul>
@@ -336,12 +329,12 @@ export async function pesca() {
         let pile = game.cards.getName('Mazzo');
         const hand = game.cards.getName('Mano');
 
-        const whiteCards = deck.cards.filter((card) => card.suit == 'white');
-        const successSelected = pile.cards.filter((card) => card.suit == 'success');
-        const issueSelected = pile.cards.filter((card) => card.suit == 'issue');
-        const destinySelected = pile.cards.filter((card) => card.suit == 'destiny');
-        const failureSelected = pile.cards.filter((card) => card.suit == 'failure');
-        const fortuneSelected = pile.cards.filter((card) => card.suit == 'fortune');
+        const whiteCards = deck.cards.filter((card) => card.suit === 'white');
+        const successSelected = pile.cards.filter((card) => card.suit === 'success');
+        const issueSelected = pile.cards.filter((card) => card.suit === 'issue');
+        const destinySelected = pile.cards.filter((card) => card.suit === 'destiny');
+        const failureSelected = pile.cards.filter((card) => card.suit === 'failure');
+        const fortuneSelected = pile.cards.filter((card) => card.suit === 'fortune');
 
         const playersNum = parseInt(html.find('[name=num-players]')[0].value) || 1;
         const issueCardsNum = issueSelected.length;
@@ -434,7 +427,7 @@ export async function rischia() {
     return;
   }
 
-  if (numSuccess !== numFailure) {
+  if (numSuccess !== numFailure || numSuccess === 0) {
     msg =
       'Attenzione: il numero di successi e di fallimenti nella mano non sono uguali. Successi: ' +
       numSuccess +
@@ -776,9 +769,49 @@ export async function svuotaMazzo() {
  */
 export async function tiroDifesa() {
   let confirmed = false;
+
+  // Dialog content HTML
+  const dialogContent = `
+    <form>
+      <div class="form-group">
+        <label>Danni subiti:</label>
+        <input 
+          id="dmg" 
+          name="dmg" 
+          value="1" 
+          autofocus 
+          onFocus="select()" 
+          tabindex="1" 
+          type="number" 
+          min="1"
+        />
+      </div>
+      <div class="form-group">
+        <label>Dadi aggiuntivi:</label>
+        <input 
+          id="additional" 
+          name="additional" 
+          value="0" 
+          tabindex="2" 
+          type="number" 
+          min="0"
+        />
+      </div>
+      <div class="form-group">
+        <label>Coeff. di Assorbimento:</label>
+        <select name="defense" id="defense" tabindex="3">
+          <option value="1">Base</option>
+          <option value="2">Leggero</option>
+          <option value="3">Medio</option>
+          <option value="4">Alto</option>
+        </select>
+      </div>
+    </form>
+  `;
+
   new Dialog({
     title: 'Tiro Difesa',
-    content: `      <form> \t    <div class="form-group">        <label>Danni subiti:</label>        <input id="dmg" name="dmg" value="1" autofocus onFocus="select()" tabindex="1" type="number" min="1"></input>       </div>       <div class="form-group">        <label>Dadi aggiuntivi:</label>        <input id="additional" name="additional" value="0" tabindex="2"  type="number" min="0"></input>       </div>       <div class="form-group">        <label>Coeff. di Assorbimento:</label>        <select name="defense" id="defense" tabindex="3">          <option value="1">Base</option>          <option value="2">Leggero</option>          <option value="3">Medio</option>          <option value="4">Alto</option>        </select>       </div>      </form>      `,
+    content: dialogContent,
     buttons: {
       one: {
         icon: '<i class="fas fa-check"></i>',
@@ -797,7 +830,6 @@ export async function tiroDifesa() {
         const dmg = parseInt(html.find('[name=dmg]')[0].value) || 0;
         const additionalDice = parseInt(html.find('[name=additional]')[0].value) || 0;
         const select = document.getElementById('defense');
-        console.log(select);
         const defenseLevel = parseInt(select.options[select.selectedIndex].value);
         console.log(`${dmg + additionalDice}d6cs<=${defenseLevel}`);
         const r = new Roll(`${dmg + additionalDice}d6cs<=${defenseLevel}`); // Execute the roll
@@ -805,54 +837,37 @@ export async function tiroDifesa() {
         await r.toMessage({}, { create: false });
         const rollsAsString = r.terms[0].results
           .map((d) => {
-            return `<li class="roll die d6 ${d.success ? 'success' : ''}">${
-              d.result
-            }</li>`;
+            const successClass = d.success ? 'success' : '';
+            return `<li class="roll die d6 ${successClass}">${d.result}</li>`;
           })
           .join('');
+
+        // Build chat message HTML
+        const absorbed = r.result;
+        const damageWord = dmg > 1 ? 'danni' : 'danno';
+        const chatContent = `
+          <h2>Tiro Difesa</h2>
+          <p>
+            Hai assorbito 
+            <span style="font-size: large; font-weight: bold;">${absorbed}</span> 
+            su ${dmg} ${damageWord}
+          </p>
+          <div class="dice-tooltip expanded" style="display: block;">
+            <section class="tooltip-part">
+              <div class="dice">
+                <ol class="dice-rolls">
+                  ${rollsAsString}
+                </ol>
+              </div>
+            </section>
+          </div>
+        `;
+
         await ChatMessage.create({
           user: game.user.id,
-          content: `             <h2>Tiro Difesa</h2>             <p>Hai assorbito <span style="font-size: large; font-weight: bold;">${
-            r.result
-          }</span> su ${dmg} dann${
-            dmg > 1 ? 'i' : 'o'
-          }</p>              <div class="dice-tooltip expanded" style="display: block;">                 <section class="tooltip-part">                       <div class="dice">                         <ol class="dice-rolls">                           ${rollsAsString}                         </ol>                       </div>                 </section>             </div>           `
+          content: chatContent
         });
       }
     }
   }).render(true);
-}
-
-/**
- * Helper to show a chat message with interactive buttons (Foundry v13+)
- * @param {Object} opts - { description, img, title, buttonData }
- */
-function showChatRequest({ description, img, title, buttonData }) {
-  const htmlContent = `
-    <h2>${title ?? ''}</h2>
-    ${
-      img
-        ? `<img src="${img}" style="width:2em;height:2em;vertical-align:middle;">`
-        : ''
-    }
-    <div>${description ?? ''}</div>
-    <div class="dod-macro-buttons">
-      ${(buttonData || [])
-        .map((b, i) => `<button data-dod-macro-btn="${i}">${b.label}</button>`)
-        .join('')}
-    </div>
-  `;
-  ChatMessage.create({
-    user: game.user.id,
-    content: htmlContent
-  }).then((msg) => {
-    Hooks.once('renderChatMessage', (message, html, data) => {
-      if (message.id !== msg.id) return;
-      html.find('button[data-dod-macro-btn]').each((i, btn) => {
-        btn.addEventListener('click', (ev) => {
-          buttonData[i]?.action?.();
-        });
-      });
-    });
-  });
 }
