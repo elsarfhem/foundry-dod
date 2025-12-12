@@ -1,0 +1,100 @@
+name: Pre-Release Creation
+
+on:
+  push:
+    tags:
+      - '*.*.*-rc.*'
+
+jobs:
+  pre-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Set Environment Variables
+        run: |
+          echo "ZIP_NAME=dod.zip" >> $GITHUB_ENV
+
+      - name: Build System
+        run: npm run build
+
+      - name: Create System Archive
+        run: zip -r ${{ env.ZIP_NAME }} assets packs src/lang src/module src/templates styles LICENSE README.md system.json
+
+      - name: Extract Version from Tag
+        id: tag_version
+        run: |
+          TAG=${GITHUB_REF/refs\/tags\//}
+          VERSION=$(echo $TAG | sed 's/-rc.*//')
+          RC_NUMBER=$(echo $TAG | grep -oE 'rc\.[0-9]+' || echo 'rc.0')
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "RC_NUMBER=$RC_NUMBER" >> $GITHUB_ENV
+          echo "MANIFEST_URL=https://github.com/${{ github.repository }}/releases/download/$TAG/system.json" >> $GITHUB_ENV
+          echo "DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/$TAG/${{ env.ZIP_NAME }}" >> $GITHUB_ENV
+
+      - name: Validate Version Match
+        run: |
+          PACKAGE_VERSION=$(grep '"version"' system.json | head -1 | sed -E 's/.*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/')
+          if [[ ! "$VERSION" == "$PACKAGE_VERSION" ]]; then
+            echo "Version mismatch!"
+            echo "Tag version: $VERSION"
+            echo "system.json version: $PACKAGE_VERSION"
+            exit 1
+          fi
+          echo "✓ Version validated: $VERSION"
+
+      - name: Update system.json with Download URL
+        run: |
+          jq --arg url "${{ env.DOWNLOAD_URL }}" '.download = $url' system.json > tmp.json && mv tmp.json system.json
+
+      - name: Create Pre-Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.TAG }}
+          draft: false
+          prerelease: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: './system.json,./${{ env.ZIP_NAME }}'
+          name: 'Pre-Release ${{ env.TAG }}'
+          body: |
+            # Pre-Release ${{ env.TAG }}
+            
+            **Base Version:** v${{ env.VERSION }}
+            **RC Number:** ${{ env.RC_NUMBER }}
+            
+            ## Installation
+            
+            To manually install this pre-release, use this manifest URL:
+            ```
+            ${{ env.MANIFEST_URL }}
+            ```
+            
+            ## What's New
+            
+            This is a pre-release candidate. Test thoroughly before promoting to stable release.
+            
+            To promote this to a stable release:
+            ```bash
+            git tag v${{ env.VERSION }}
+            git push origin v${{ env.VERSION }}
+            ```
+            
+            This will trigger the semantic-release workflow to create a stable release.

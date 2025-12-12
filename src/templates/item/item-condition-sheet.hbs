@@ -1,0 +1,37 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <div class="header-fields">
+      <h1 class="charname"><input name="system.name" type="text" value="{{item.system.name}}" placeholder="{{localize 'DECK_OF_DESTINY.labels.name'}}"/></h1>
+    </div>
+  </header>
+
+  {{!-- Sheet Tab Navigation --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="description">{{localize 'DECK_OF_DESTINY.labels.description'}}</a>
+    <a class="item" data-tab="attributes">{{localize 'DECK_OF_DESTINY.labels.attributes'}}</a>
+  </nav>
+
+  {{!-- Sheet Body --}}
+  <section class="sheet-body">
+
+    {{!-- Description Tab --}}
+    <div class="tab" data-group="primary" data-tab="description">
+      {{!-- Editors must receive enriched text data from getData to properly handle rolls --}}
+      {{editor enrichedDescription target="system.description" engine="prosemirror" button=true editable=editable}}
+    </div>
+
+    {{!-- Attributes Tab --}}
+    <div class="tab attributes" data-group="primary" data-tab="attributes">
+      {{!-- As you add new fields, add them in here! --}}
+      <div class='resource'>
+        <div class='grid grid-2col'>
+          <label class='resource-label grid-span-1'>{{localize 'DECK_OF_DESTINY.labels.value'}}</label>
+          <input class='grid-span-1' type='text' name='system.value' value='{{system.value}}' data-dtype='Number' />
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</form>

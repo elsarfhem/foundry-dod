@@ -1,2 +1,16 @@
+# OS Files
+.DS_Store
+
+# IDE files
 .idea
+.vscode
+
+# Node Modules
 node_modules
+
+# System "Styles" generated via build
+/styles
+
+# System "Packs" generated via build
+/packs
+foundry-dev.yaml

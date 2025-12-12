@@ -1,0 +1,31 @@
+{
+  "name": "Richiedi prova",
+  "type": "script",
+  "scope": "global",
+  "author": "r8RTNiMjzdQbTh3C",
+  "img": "icons/svg/dice-target.svg",
+  "command": "game.dod.macros.richiediProva();",
+  "folder": null,
+  "ownership": {
+    "default": 0,
+    "r8RTNiMjzdQbTh3C": 3
+  },
+  "flags": {
+    "advanced-macros": {
+      "runForSpecificUser": ""
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "dod",
+    "systemVersion": "0.1.0",
+    "createdTime": 1719951077273,
+    "modifiedTime": 1748279503653,
+    "lastModifiedBy": "z3oC1uNtDP0TX1os"
+  },
+  "_id": "oeL56MLuh36pRwEA",
+  "sort": 600000,
+  "_key": "!macros!oeL56MLuh36pRwEA"
+}

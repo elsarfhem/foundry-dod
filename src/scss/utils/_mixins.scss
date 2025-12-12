@@ -1,0 +1,31 @@
+@mixin element-invisible {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+@mixin hide {
+  display: none;
+}
+
+@mixin show($opacity: 0.8, $duration: 300ms, $delay: 300ms) {
+  display: block;
+  $name: $opacity * 100;
+  animation: fadeInMixin#{$name} ease-in $duration $delay forwards;
+
+  @keyframes fadeInMixin#{$name} {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: $opacity;
+    }
+  }
+}

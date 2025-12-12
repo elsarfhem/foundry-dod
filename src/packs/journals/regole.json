@@ -1,0 +1,67 @@
+{
+  "name": "Regole",
+  "pages": [
+    {
+      "name": "Riassunto Giocatori",
+      "type": "text",
+      "_id": "o8rluTr5APyuaU95",
+      "title": {
+        "show": false,
+        "level": 1
+      },
+      "image": {},
+      "text": {
+        "format": 1,
+        "content": "<h2>Quando effettui una prova</h2><p>Affronti una <strong>prova</strong> quando quello che stai cercando di fare puó avere conseguenze negative.</p><ol><li><p>Descrivi la tua azione</p></li><li><p>Identifica la <strong>Caratteristica</strong> e l'<strong>Abilitá</strong> che vuoi mettere in campo per la prova</p></li><li><p>Metti quel numero di <strong>Carte Successo</strong> nel mazzo. Aggiungine altri se utilizzi <strong>Poteri</strong> o <strong>Risorse</strong>, come concordato col Narratore.</p></li><li><p>Metti nel Mazzo del Destino il numero di <strong>Carte Fallimento</strong> e <strong>Carte Imprevisto</strong> comunicate dal Narratore</p></li><li><p>Aggiungi <strong>Carte Fortuna</strong> e/o <strong>Carta del Destino</strong></p></li><li><p>Decidi se affrontare la prova <strong>Ad Ogni Costo </strong>(aggiungi al mazzo Carte Successo pari al tuo punteggio di Spirito)</p></li><li><p>Effettua la pescata</p></li><li><p>Assegna le <strong>Carte Fortuna </strong>e decidete come usarle</p></li><li><p>Se la prova ha successo, aggiungi eventuali Successi derivanti da <strong>Talenti</strong></p></li></ol><h2>Quando subisci danni</h2><ol><li><p>Sottrai il valore di Riduzione al Danno del tuo personaggio al totale dei danni</p></li><li><p>Effettua una <strong>Prova di Difesa </strong>assorbire i rimanenti danni sulla base del tuo Coefficiente di <strong>Assorbimento</strong></p></li></ol><table><tbody><tr><td><p style=\"text-align:center\"><strong>Coeff. Assorbimento</strong></p></td><td><p style=\"text-align:center\"><strong>Valore</strong></p></td></tr><tr><td><p style=\"text-align:center\">Base</p></td><td><p style=\"text-align:center\">1</p></td></tr><tr><td><p style=\"text-align:center\">Leggero</p></td><td><p style=\"text-align:center\">2</p></td></tr><tr><td><p style=\"text-align:center\">Medio</p></td><td><p style=\"text-align:center\">3</p></td></tr><tr><td><p style=\"text-align:center\">Alto</p></td><td><p style=\"text-align:center\">4</p></td></tr></tbody></table><p>Tira 1d6 per ogni danno rimanente. Ogni risultato inferiore o uguale al <strong>Valore</strong> riportato nella tabella riduce il danno subito rimanente di 1.</p>",
+        "markdown": ""
+      },
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "system": {},
+      "sort": 0,
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.330",
+        "systemId": "dod",
+        "systemVersion": "0.1.0",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      },
+      "_key": "!journal.pages!w7eitkpD7QQTB6j1.o8rluTr5APyuaU95"
+    }
+  ],
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "core": {
+      "viewMode": 2
+    },
+    "dnd5e": {
+      "type": "appendix",
+      "position": 1
+    }
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.330",
+    "systemId": "dod",
+    "systemVersion": "0.1.0",
+    "createdTime": 1704789905703,
+    "modifiedTime": 1730113614944,
+    "lastModifiedBy": "r8RTNiMjzdQbTh3C"
+  },
+  "folder": null,
+  "sort": 0,
+  "_id": "w7eitkpD7QQTB6j1",
+  "_key": "!journal!w7eitkpD7QQTB6j1"
+}

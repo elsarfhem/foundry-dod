@@ -1,0 +1,13 @@
+<div class="trauma-buttons">
+  {{#each traumas as |item id|}}
+  <div class="trauma-button trauma" data-item-id="{{item._id}}">
+    {{#if item.system.optional}}
+    <input type="checkbox" id="trauma-optional-{{id}}" class="trauma-optional-input" title="{{localize 'DECK_OF_DESTINY.tooltips.optionalTrauma'}}"
+      data-modifier="{{item.system.enabled}}" {{#if item.system.enabled}}checked{{/if}} />
+    {{/if}}
+    <input type="radio" {{#if item.system.enabled}}{{else}}disabled{{/if}} id="trauma-{{id}}" name="trauma"
+      class="trauma-input" data-modifier="{{item.system.value}}" {{#if item.system.selected}}checked{{/if}} />
+    <label for="trauma-{{id}}">{{localize item.system.label}}</label>
+  </div>
+  {{/each}}
+</div>

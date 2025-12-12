@@ -1,0 +1,257 @@
+// Section Header
+.items-header {
+  height: 28px;
+  margin: 2px 0;
+  padding: 0;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05);
+  border: $border-groove;
+  font-weight: bold;
+  > * {
+    font-size: 14px;
+    text-align: center;
+  }
+  .item-name {
+    font-weight: bold;
+    padding-left: 5px;
+    text-align: left;
+    display: flex;
+    // font-size: 16px;
+  }
+}
+
+// -----------------------------------------
+// Items Lists
+// -----------------------------------------
+
+.items-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+
+  // Child lists
+  .item-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  // Item Name
+  .item-name {
+    flex: 2;
+    margin: 0;
+    overflow: hidden;
+    font-size: 13px;
+    text-align: left;
+    align-items: center;
+    display: flex;
+    h3,
+    h4 {
+      margin: 0;
+      white-space: nowrap;
+      overflow-x: hidden;
+    }
+  }
+
+  .item-fixed-name {
+    flex: 0 0 150px;
+    margin: 0 5px;
+    overflow: hidden;
+    text-align: left;
+    align-items: center;
+    display: flex;
+
+    .item-image {
+      flex: 0 0 30px;
+      background-size: 30px;
+      border: none;
+      margin-right: 5px;
+      a {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+
+  // Control Buttons
+  .item-controls {
+    display: flex;
+    flex: 0 0 110px;
+    justify-content: flex-end;
+    align-items: center;
+    a {
+      font-size: 12px;
+      text-align: center;
+      margin: 0 6px;
+    }
+
+    .item-core-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      width: 25px;
+      height: 25px;
+      border: none;
+      transition: background-color 0.3s ease;
+
+      &:focus {
+        outline: none;
+      }
+
+      &:hover {
+        box-shadow: none;
+      }
+
+      &:active {
+        box-shadow: none;
+      }
+    }
+  }
+
+  // Individual Item
+  .item {
+    align-items: center;
+    padding: 0 2px; // to align with the header border
+    border-bottom: 1px solid $c-faint;
+    &:last-child {
+      border-bottom: none;
+    }
+    &:hover {
+      .item-tooltip {
+        @include show(0.8, 300ms, 1000ms);
+      }
+    }
+
+    .item-tooltip {
+      @include hide;
+      position: absolute;
+      z-index: 1000;
+      bottom: 0;
+      left: 30%;
+      opacity: 0;
+      background-color: $c-dark;
+      color: $c-light;
+      border-radius: 8px;
+      overflow-y: scroll;
+      padding: 5px 10px;
+      max-width: 400px;
+      max-height: 300px;
+      pointer-events: none; // Prevent tooltip from interfering with clicks
+    }
+
+    .item-name {
+      color: $c-dark;
+      .item-image {
+        flex: 0 0 30px;
+        background-size: 30px;
+        border: none;
+        margin-right: 5px;
+        a {
+          display: flex;
+          align-items: center;
+        }
+      }
+      .item-label {
+        flex: 0 0 15px;
+        align-self: flex-start;
+      }
+      .item-condition-input {
+        width: 100%;
+      }
+      .item-sub-label {
+        font-size: xx-small;
+        margin-top: 3px;
+        width: 100%;
+      }
+    }
+    .item-condition-control {
+      display: flex;
+      flex: 0 0 50px;
+      justify-content: flex-end;
+      align-items: flex-start;
+      align-self: flex-start;
+    }
+  }
+
+  // Item Condition disabling logic
+  .item.condition.disabled {
+    opacity: 0.5; // to make it appear faded
+    pointer-events: none; // to prevent interactions
+  }
+  .item.condition.disabled .item-condition-input {
+    pointer-events: auto; // to allow interactions with the input
+    background-color: #f0f0f0; // to make it appear disabled
+  }
+  .item-condition-deadly {
+    opacity: 1;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 1px;
+  }
+  .item-condition-deadly.faded {
+    opacity: 0.5;
+  }
+
+  .item-prop {
+    text-align: center;
+    border-left: 1px solid #c9c7b8;
+    border-right: 1px solid #c9c7b8;
+    font-size: 12px;
+  }
+
+  .item-description {
+    border-left: 1px solid #c9c7b8;
+    border-right: 1px solid #c9c7b8;
+    text-align: left;
+    padding: 0 5px;
+    font-size: 10px;
+    text-align: left;
+    align-items: center;
+    display: flex;
+    color: $c-tan;
+  }
+
+  .items-header .item-description {
+    color: $c-dark;
+  }
+
+  .item-quantity {
+    flex: 0 0 50px;
+    text-align: center;
+  }
+
+  // Section Header
+  .items-header {
+    height: 28px;
+    margin: 2px 0;
+    padding: 0;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    border: $border-groove;
+    font-weight: bold;
+    > * {
+      font-size: 12px;
+      text-align: center;
+    }
+    .item-name {
+      padding-left: 5px;
+      text-align: left;
+      // font-size: 16px;
+    }
+  }
+}
+
+// Example style for DeckOfDestiny (can be removed if not needed).
+.item-formula {
+  flex: 0 0 200px;
+  padding: 0 8px;
+}
+
+.item-controls-spaced {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}

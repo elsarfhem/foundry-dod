@@ -1,0 +1,32 @@
+{
+  "name": "Rischia",
+  "type": "script",
+  "author": "z3oC1uNtDP0TX1os",
+  "img": "icons/svg/card-joker.svg",
+  "scope": "global",
+  "command": "game.dod.macros.rischia();",
+  "folder": null,
+  "ownership": {
+    "default": 2,
+    "z3oC1uNtDP0TX1os": 3
+  },
+  "flags": {
+    "advanced-macros": {
+      "runAsGM": false,
+      "runForSpecificUser": ""
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "dod",
+    "systemVersion": "0.1.0",
+    "createdTime": 1749679477790,
+    "modifiedTime": 1749679477790,
+    "lastModifiedBy": "z3oC1uNtDP0TX1os"
+  },
+  "_id": "TTnzkPf1V6mRGJUh",
+  "sort": 0,
+  "_key": "!macros!TTnzkPf1V6mRGJUh"
+}

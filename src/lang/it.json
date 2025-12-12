@@ -1,0 +1,178 @@
+{
+  "DECK_OF_DESTINY": {
+    "actions": {
+      "add_to_deck": "Aggiungi al Mazzo",
+      "draw": "Pesca",
+      "reset": "Ripristina",
+      "increase": "Aumenta",
+      "decrease": "Diminuisci",
+      "defense_roll": "Tiro Difesa"
+    },
+    "attributes": {
+      "absorption": {
+        "0": {
+          "label": "Base"
+        },
+        "1": {
+          "label": "Leggero"
+        },
+        "2": {
+          "label": "Medio"
+        },
+        "3": {
+          "label": "Alto"
+        },
+        "label": "Assorbimento"
+      },
+      "fortune": "Fortuna",
+      "health": {
+        "label": "Punti Ferita",
+        "max": "Max",
+        "current": "Attuali"
+      },
+      "mitigation": {
+        "0": {
+          "label": "Senza armatura"
+        },
+        "1": {
+          "label": "Armatura leggera"
+        },
+        "2": {
+          "label": "Armatura media"
+        },
+        "3": {
+          "label": "Armatura pesante"
+        },
+        "label": "Riduzione"
+      },
+      "name": "Nome",
+      "player": "Giocatore",
+      "xp": {
+        "label": "Punti Esperienza",
+        "spent": "Spesi",
+        "total": "Totali",
+        "remaining": "Rimanenti",
+        "abilities": {
+          "0": "0 PE",
+          "1": "1 PE",
+          "2": "2 PE",
+          "3": "3 PE",
+          "4": "4 PE",
+          "5": "5 PE",
+          "6": "10 PE",
+          "7": "10 PE",
+          "8": "0 PE"
+        }
+      }
+    },
+    "cards": {
+      "white": "Bianca",
+      "destiny": "Destino",
+      "failure": "Fallimento",
+      "fortune": "Fortuna",
+      "issue": "Imprevisto",
+      "success": "Successo"
+    },
+    "chat": {
+      "buttons": {
+        "viewHand": "Vedi la mano",
+        "viewDeck": "Vedi il mazzo",
+        "emptyDeck": "Svuota il mazzo",
+        "divideFortune": "Dividi Fortuna",
+        "risk": "Rischia"
+      },
+      "titles": {
+        "drawResult": "Risultato della Prova",
+        "riskResult": "Rischia - Risultato"
+      }
+    },
+    "characteristics": {
+      "body": "Corpo",
+      "empathy": "Empatia",
+      "intuition": "Intuito",
+      "mind": "Mente",
+      "spirit": "Spirito"
+    },
+    "conditions": {
+      "1": {
+        "label": "+2 FALLIMENTI"
+      },
+      "2": {
+        "label": "+2 FALLIMENTI"
+      },
+      "3": {
+        "label": "MORTO/INCONSCIO"
+      }
+    },
+    "labels": {
+      "add": "Aggiungi {type}",
+      "attributes": "Attributi",
+      "deadly": "Mortale",
+      "description": "Descrizione",
+      "edit": "Modifica {type}",
+      "name": "Nome",
+      "quantity": "Quantità",
+      "remove": "Rimuovi {type}",
+      "value": "Valore",
+      "weight": "Peso",
+      "showCards": "Mostra Carte",
+      "hideCards": "Nascondi Carte"
+    },
+    "sheet": {
+      "labels": {
+        "actor": "Scheda Attore DeckOfDestiny",
+        "item": "Scheda Oggetto DeckOfDestiny"
+      },
+      "sections": {
+        "background": "Background",
+        "characteristics": "Caratteristiche",
+        "conditions": "Condizioni",
+        "core": "Principale",
+        "inventory": "Inventario",
+        "skills": "Abilità",
+        "talents": "Talenti",
+        "traumas": "Critici",
+        "attributes": "Attributi",
+        "powers": "Poteri"
+      }
+    },
+    "tooltips": {
+      "optionalTrauma": "Seleziona solo se hai il talento Duro a Morire"
+    },
+    "traumas": {
+      "1": {
+        "label": "Sano"
+      },
+      "2": {
+        "label": "-2 Successi"
+      },
+      "3": {
+        "label": "-2 Successi"
+      },
+      "4": {
+        "label": "-5 Successi"
+      },
+      "5": {
+        "label": "-5 Successi"
+      },
+      "6": {
+        "label": "Morente"
+      }
+    },
+    "types": {
+      "actor": {
+        "character": "Personaggio",
+        "npc": "PNG"
+      },
+      "item": {
+        "ability": "Abilità",
+        "condition": "Condizione",
+        "item": "Oggetto",
+        "talent": "Talento",
+        "trauma": "Critico",
+        "attribute": "Risorsa",
+        "power": "Potere"
+      }
+    }
+  }
+}

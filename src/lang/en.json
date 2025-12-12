@@ -1,0 +1,178 @@
+{
+  "DECK_OF_DESTINY": {
+    "actions": {
+      "add_to_deck": "Add to Deck",
+      "draw": "Draw",
+      "reset": "Reset",
+      "increase": "Increase",
+      "decrease": "Decrease",
+      "defense_roll": "Defense Roll"
+    },
+    "attributes": {
+      "absorption": {
+        "0": {
+          "label": "Base"
+        },
+        "1": {
+          "label": "Light"
+        },
+        "2": {
+          "label": "Medium"
+        },
+        "3": {
+          "label": "High"
+        },
+        "label": "Absorption"
+      },
+      "fortune": "Fortune",
+      "health": {
+        "label": "Health",
+        "max": "Max",
+        "current": "Current"
+      },
+      "mitigation": {
+        "0": {
+          "label": "No armor"
+        },
+        "1": {
+          "label": "Light armor"
+        },
+        "2": {
+          "label": "Medium armor"
+        },
+        "3": {
+          "label": "High armor"
+        },
+        "label": "Reduction"
+      },
+      "name": "Name",
+      "player": "Player",
+      "xp": {
+        "label": "XP",
+        "spent": "Spent",
+        "total": "Total",
+        "remaining": "Remaining",
+        "abilities": {
+          "0": "0 XP",
+          "1": "1 XP",
+          "2": "2 XP",
+          "3": "3 XP",
+          "4": "4 XP",
+          "5": "5 XP",
+          "6": "10 XP",
+          "7": "10 XP",
+          "8": "0 XP"
+        }
+      }
+    },
+    "cards": {
+      "white": "White",
+      "destiny": "Destiny",
+      "failure": "Failure",
+      "fortune": "Fortune",
+      "issue": "Issue",
+      "success": "Success"
+    },
+    "chat": {
+      "buttons": {
+        "viewHand": "View Hand",
+        "viewDeck": "View Deck",
+        "emptyDeck": "Empty Deck",
+        "divideFortune": "Divide Fortune",
+        "risk": "Risk"
+      },
+      "titles": {
+        "drawResult": "Draw Result",
+        "riskResult": "Risk - Result"
+      }
+    },
+    "characteristics": {
+      "body": "Body",
+      "mind": "Mind",
+      "intuition": "Intuition",
+      "spirit": "Spirit",
+      "empathy": "Empathy"
+    },
+    "conditions": {
+      "1": {
+        "label": "+2 FAILURES"
+      },
+      "2": {
+        "label": "+2 FAILURES"
+      },
+      "3": {
+        "label": "DEAD/UNCONSCIOUS"
+      }
+    },
+    "labels": {
+      "add": "Add {type}",
+      "attributes": "Attributes",
+      "deadly": "Deadly",
+      "description": "Description",
+      "edit": "Edit {type}",
+      "name": "Name",
+      "quantity": "Quantity",
+      "remove": "Remove {type}",
+      "value": "Value",
+      "weight": "Weight",
+      "showCards": "Show Cards",
+      "hideCards": "Hide Cards"
+    },
+    "sheet": {
+      "labels": {
+        "actor": "DeckOfDestiny Actor Sheet",
+        "item": "DeckOfDestiny Item Sheet"
+      },
+      "sections": {
+        "background": "Background",
+        "characteristics": "Characteristics",
+        "conditions": "Conditions",
+        "core": "Core",
+        "inventory": "Inventory",
+        "skills": "Abilities",
+        "talents": "Talents",
+        "traumas": "Traumas",
+        "attributes": "Attributes",
+        "powers": "Powers"
+      }
+    },
+    "tooltips": {
+      "optionalTrauma": "Check only if you have the Die Hard talent"
+    },
+    "traumas": {
+      "1": {
+        "label": "Healthy"
+      },
+      "2": {
+        "label": "-2 Successes"
+      },
+      "3": {
+        "label": "-2 Successes"
+      },
+      "4": {
+        "label": "-5 Successes"
+      },
+      "5": {
+        "label": "-5 Successes"
+      },
+      "6": {
+        "label": "Dying"
+      }
+    },
+    "types": {
+      "actor": {
+        "character": "Character",
+        "npc": "NPC"
+      },
+      "item": {
+        "ability": "Ability",
+        "condition": "Condition",
+        "item": "Item",
+        "talent": "Talent",
+        "trauma": "Trauma",
+        "attribute": "Resource",
+        "power": "Power"
+      }
+    }
+  }
+}

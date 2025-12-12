@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Check if running on Windows
+if [ -n "$WINDIR" ] || [ -n "$windir" ]; then
+  # Use Windows PowerShell script
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(dirname -- "$0")/../.hooks/pre-push.ps1"
+else
+  # Use bash script for Unix-like systems
+  . "$(dirname -- "$0")/../.hooks/pre-push"
+fi
+

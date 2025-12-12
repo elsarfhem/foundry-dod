@@ -1,0 +1,434 @@
+.item-form {
+  font-family: $font-primary;
+}
+
+.sheet-header {
+  flex: 0 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+
+  .header-fields {
+    flex: 1;
+  }
+
+  .header-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 20px;
+
+    input {
+      width: 50px;
+      border-radius: 5px;
+      text-align: center;
+    }
+  }
+
+  .header-cards {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-bottom: 0.5em;
+    padding: 0.25em 0.5em;
+    background: rgba(240, 240, 240, 0.7);
+    border-radius: 6px;
+    position: relative;
+    min-height: 0;
+
+    width: 100%;
+    transition: max-height 0.3s ease, opacity 0.3s;
+    overflow: hidden;
+    max-height: 500px;
+    opacity: 1;
+
+    &.collapsed {
+      max-height: 0;
+      opacity: 0.2;
+      pointer-events: none;
+      padding: 0;
+    }
+
+    .toggle-header-cards {
+      position: absolute;
+      top: 0.2em;
+      right: 0.5em;
+      background: none;
+      border: none;
+      color: #444;
+      font-size: 0.9em;
+      cursor: pointer;
+      z-index: 2;
+      padding: 0.1em 0.5em;
+      border-radius: 4px;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #e0e0e0;
+      }
+    }
+
+    .profile-img {
+      height: 180px;
+      object-fit: cover;
+      margin: 5px;
+      border-radius: 6px;
+    }
+
+    .card-img {
+      height: 80px;
+      width: auto;
+      margin-bottom: 3px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .card-img {
+        height: 180px;
+        width: auto;
+        margin-bottom: 5px;
+      }
+
+      .manage-sheet-card {
+        cursor: pointer;
+      }
+
+      .card-input-container {
+        display: flex;
+        align-items: center;
+
+        .card-input {
+          width: 25px;
+          margin: 5px 0;
+          border: 1px solid $c-faint;
+          border-radius: 5px;
+        }
+
+        .modifier {
+          margin-left: 5px;
+        }
+      }
+    }
+
+    .card-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+
+      .card-button {
+        border-radius: 5px;
+        padding: 10px 10px;
+        border: none;
+        transition: background-color 0.3s ease;
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .reset-sheet-cards {
+        &:hover {
+          background-color: $c-light-red;
+          box-shadow: none;
+        }
+
+        &:active {
+          background-color: $c-red;
+          box-shadow: none;
+        }
+      }
+
+      .add-sheet-cards-to-pile {
+        &:hover {
+          background-color: $c-light-green;
+          box-shadow: none;
+        }
+
+        &:active {
+          background-color: $c-green;
+          box-shadow: none;
+        }
+      }
+
+      .draw-cards-from-pile {
+        &:hover {
+          background-color: $c-light-blue;
+          box-shadow: none;
+        }
+
+        &:active {
+          background-color: $c-blue;
+          box-shadow: none;
+        }
+      }
+    }
+
+    .health-inputs {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .health-input {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        input {
+          border-radius: 0;
+          padding: 5px 10px;
+          margin-bottom: 5px;
+          text-align: center;
+          width: 50px;
+        }
+
+        label {
+          font-size: x-small;
+          margin-top: 3px;
+        }
+      }
+
+      .health-current {
+        input {
+          border-top-left-radius: 10px;
+          border-bottom-left-radius: 10px;
+        }
+      }
+
+      .health-max {
+        input {
+          border-top-right-radius: 10px;
+          border-bottom-right-radius: 10px;
+          font-weight: bold;
+          font-size: large;
+        }
+      }
+    }
+  }
+
+  h3 {
+    height: 25px;
+    padding: 0px;
+    margin: 2px 0;
+    border-bottom: 0;
+
+    input {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+  }
+
+  .xp-inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 25px;
+    margin-top: 2px;
+
+    .xp-input {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      label {
+        font-size: x-small;
+        margin-top: 3px;
+      }
+
+      input {
+        &:disabled {
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  .xp-labels {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    height: 0px;
+    margin-top: -5px;
+    min-width: 40px;
+
+    .xp-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 40px;
+
+      label {
+        font-size: x-small;
+      }
+    }
+  }
+
+  .attribute-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    label {
+      color: #333;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .attribute-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      border: none;
+      transition: background-color 0.3s ease;
+      font-size: x-large;
+
+      &:focus {
+        outline: none;
+      }
+
+      &:hover {
+        box-shadow: none;
+      }
+
+      &:active {
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.sheet-tabs {
+  flex: 0;
+}
+
+.sheet-body,
+.sheet-body .tab,
+.sheet-body .tab .editor {
+  height: 100%;
+  min-height: 50px;
+
+  .abilities {
+    h3 {
+      text-align: center;
+    }
+  }
+
+  .conditions {
+    h3 {
+      text-align: center;
+    }
+  }
+
+  .traumas {
+    h3 {
+      text-align: right;
+    }
+
+    .trauma-buttons {
+      display: flex;
+      flex-direction: column;
+
+      .trauma-button {
+        display: flex;
+        align-items: center;
+
+        input[type='radio'] {
+          display: none;
+        }
+
+        label {
+          border: 1px solid #888;
+          //color: #666;
+          padding: 5px 10px;
+          cursor: pointer;
+          width: 100%;
+          text-align: right;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          border: 1px solid #ccc;
+          border-bottom-color: #aaa;
+          transition: background-color 0.3s, box-shadow 0.3s;
+          opacity: 0.4;
+        }
+
+        label:hover {
+          box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+          border: 1px solid #999;
+          border-bottom-color: #777;
+          opacity: 1;
+        }
+
+        label:active,
+        input:focus + label {
+          background: rgba(0, 0, 0, 0.05);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          border: 1px solid #666;
+          border-bottom-color: #444;
+          opacity: 1;
+        }
+
+        input:checked + label {
+          background: rgba(0, 0, 0, 0.05);
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+          border: 1px solid #333;
+          border-bottom-color: #111;
+          opacity: 1;
+        }
+
+        &:first-child label {
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
+        }
+
+        &:last-child label {
+          border-bottom-left-radius: 5px;
+          border-bottom-right-radius: 5px;
+        }
+      }
+    }
+  }
+}
+
+.tox {
+  .tox-editor-container {
+    background: $c-white;
+  }
+
+  .tox-edit-area {
+    padding: 0 8px;
+  }
+}
+
+.plus-attribute {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1.5rem;
+  background-color: $c-light;
+  border: 2px dashed $c-tan;
+  border-radius: 8px;
+  color: #333;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: $c-faint;
+    cursor: pointer;
+  }
+
+  i {
+    margin-right: 0.5rem;
+  }
+}

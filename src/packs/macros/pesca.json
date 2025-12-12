@@ -1,0 +1,32 @@
+{
+  "name": "Pesca",
+  "type": "script",
+  "author": "z3oC1uNtDP0TX1os",
+  "img": "icons/svg/clockwork.svg",
+  "scope": "global",
+  "command": "game.dod.macros.pesca();",
+  "folder": null,
+  "ownership": {
+    "default": 2,
+    "z3oC1uNtDP0TX1os": 3
+  },
+  "flags": {
+    "advanced-macros": {
+      "runAsGM": false,
+      "runForSpecificUser": ""
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "dod",
+    "systemVersion": "0.1.0",
+    "createdTime": 1748626419339,
+    "modifiedTime": 1749679747693,
+    "lastModifiedBy": "z3oC1uNtDP0TX1os"
+  },
+  "_id": "hkN38SULH3fhtVaQ",
+  "sort": 0,
+  "_key": "!macros!hkN38SULH3fhtVaQ"
+}

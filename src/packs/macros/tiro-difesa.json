@@ -1,0 +1,32 @@
+{
+  "name": "Tiro Difesa",
+  "type": "script",
+  "author": "z3oC1uNtDP0TX1os",
+  "img": "icons/svg/combat.svg",
+  "scope": "global",
+  "command": "game.dod.macros.tiroDifesa();",
+  "folder": null,
+  "ownership": {
+    "default": 2,
+    "z3oC1uNtDP0TX1os": 3
+  },
+  "flags": {
+    "advanced-macros": {
+      "runAsGM": false,
+      "runForSpecificUser": ""
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "dod",
+    "systemVersion": "0.1.0",
+    "createdTime": 1748279502635,
+    "modifiedTime": 1748279503653,
+    "lastModifiedBy": "z3oC1uNtDP0TX1os"
+  },
+  "_id": "jeNqFUII5E4Mswul",
+  "sort": 200000,
+  "_key": "!macros!jeNqFUII5E4Mswul"
+}

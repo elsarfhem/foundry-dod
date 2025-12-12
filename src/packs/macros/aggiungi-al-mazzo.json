@@ -1,0 +1,32 @@
+{
+  "name": "Aggiungi al mazzo",
+  "type": "script",
+  "author": "r8RTNiMjzdQbTh3C",
+  "img": "icons/svg/upgrade.svg",
+  "scope": "global",
+  "command": "game.dod.macros.aggiungiAlMazzo();",
+  "folder": null,
+  "ownership": {
+    "default": 2,
+    "r8RTNiMjzdQbTh3C": 3
+  },
+  "flags": {
+    "advanced-macros": {
+      "runAsGM": false,
+      "runForSpecificUser": ""
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "dod",
+    "systemVersion": "0.1.0",
+    "createdTime": 1719951073526,
+    "modifiedTime": 1749679569991,
+    "lastModifiedBy": "z3oC1uNtDP0TX1os"
+  },
+  "_id": "EM8S1MN56gGXha5h",
+  "sort": 700000,
+  "_key": "!macros!EM8S1MN56gGXha5h"
+}

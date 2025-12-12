@@ -1,0 +1,25 @@
+#!/bin/sh
+# Pre-push hook to run linting checks before pushing
+
+# Store the current directory
+CURRENT_DIR=$(pwd)
+
+echo "Running lint checks before pushing..."
+
+# Run the npm lint script
+npm run lint
+
+# Capture the exit code of the lint command
+RESULT=$?
+
+# If the lint check failed (exit code not 0), prevent the push
+if [ $RESULT -ne 0 ]; then
+  echo "Error: Lint check failed. Your push has been cancelled."
+  echo "Please run 'npm run lint:fix' to fix the issues and try again."
+  exit 1
+fi
+
+# Otherwise, allow the push to proceed
+echo "Lint check passed. Proceeding with push..."
+exit 0
+

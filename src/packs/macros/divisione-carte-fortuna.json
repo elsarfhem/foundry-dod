@@ -1,0 +1,32 @@
+{
+  "name": "Divisione Carte Fortuna",
+  "type": "script",
+  "author": "z3oC1uNtDP0TX1os",
+  "img": "icons/svg/coins.svg",
+  "scope": "global",
+  "command": "game.dod.macros.divisioneCarteFortuna();",
+  "folder": null,
+  "ownership": {
+    "default": 2,
+    "z3oC1uNtDP0TX1os": 3
+  },
+  "flags": {
+    "advanced-macros": {
+      "runAsGM": false,
+      "runForSpecificUser": ""
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "dod",
+    "systemVersion": "0.1.0",
+    "createdTime": 1748279492635,
+    "modifiedTime": 1748279503653,
+    "lastModifiedBy": "z3oC1uNtDP0TX1os"
+  },
+  "_id": "shOOfO3TSAnMO264",
+  "sort": 300000,
+  "_key": "!macros!shOOfO3TSAnMO264"
+}

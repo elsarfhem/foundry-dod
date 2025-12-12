@@ -1,10 +1,74 @@
 {
   "scripts": {
-    "build": "npm run build:db",
-    "build:packs:src": "fvtt workon dod --type System $$ fvtt package unpack --inputDirectory Data/systems/dod/packs --outputDirectory Data/systems/dod/packs_src/dod -n dod && fvtt  package unpack --inputDirectory Data/systems/dod/packs --outputDirectory Data/systems/dod/packs_src/dod-macros -n dod-macros",
-    "build:packs:db": "fvtt workon dod --type System && fvtt package pack --inputDirectory Data/systems/dod/packs_src/dod --outputDirectory Data/systems/dod/packs -n dod && fvtt package pack --inputDirectory Data/systems/dod/packs_src/dod-macros --outputDirectory Data/systems/dod/packs -n dod-macros"
+    "build": "npm run build:scss && npm run build:packs:db",
+    "build:scss": "sass src/scss/dod.scss styles/dod.css --style=expanded --no-source-map",
+    "build:packs:src": "fvtt package workon dod --type System && fvtt package unpack --inputDirectory packs --outputDirectory src/packs/cards -n cards && fvtt package unpack --inputDirectory packs --outputDirectory src/packs/macros -n macros",
+    "build:packs:db": "fvtt package workon dod --type System && fvtt package pack --inputDirectory src/packs/cards --outputDirectory packs -n cards -t Cards && fvtt package pack --inputDirectory src/packs/macros --outputDirectory packs -n macros -t Macro && fvtt package pack --inputDirectory src/packs/journals --outputDirectory packs -n journals -t JournalEntry",
+    "lint": "prettier --check src/scss && eslint --ext .mjs --ignore-path .gitignore ./src/module",
+    "lint:fix": "prettier --write src/scss && eslint --ext .mjs --ignore-path .gitignore ./src/module --fix",
+    "watch": "sass src/scss/dod.scss styles/dod.css --style=expanded --source-map --watch",
+    "prepare": "husky install",
+    "postinstall": "node -e \"try { require('husky').install() } catch (e) { console.log('Skipped husky installation') }\""
   },
   "devDependencies": {
-    "@foundryvtt/foundryvtt-cli": "^1.0.3"
+    "@foundryvtt/foundryvtt-cli": "^1.0.3",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "eslint": "^8.29.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
+    "prettier": "^2.8.1",
+    "sass": "^1.53.0",
+    "semantic-release": "^23.1.1"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json",
+            "package-lock.json",
+            "CHANGELOG.md",
+            "system.json"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            {
+              "path": "dod.zip",
+              "label": "System Archive"
+            },
+            {
+              "path": "system.json",
+              "label": "System Manifest"
+            }
+          ]
+        }
+      ]
+    ]
   }
 }

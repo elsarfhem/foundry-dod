@@ -1,0 +1,32 @@
+{
+  "name": "Componi il mazzo e pesca",
+  "type": "script",
+  "author": "z3oC1uNtDP0TX1os",
+  "img": "icons/svg/book.svg",
+  "scope": "global",
+  "command": "game.dod.macros.componiIlMazzoEPesca();",
+  "folder": null,
+  "ownership": {
+    "default": 0,
+    "z3oC1uNtDP0TX1os": 3
+  },
+  "flags": {
+    "advanced-macros": {
+      "runAsGM": false,
+      "runForSpecificUser": ""
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "dod",
+    "systemVersion": "0.1.0",
+    "createdTime": 1748626286556,
+    "modifiedTime": 1749679650373,
+    "lastModifiedBy": "z3oC1uNtDP0TX1os"
+  },
+  "_id": "2mGAg60fqFZLUWMp",
+  "sort": 0,
+  "_key": "!macros!2mGAg60fqFZLUWMp"
+}
