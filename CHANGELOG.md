@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/elsarfhem/foundry-dod/compare/v0.1.0...v0.2.0) (2025-12-12)
+
+
+### Features
+
+* update version to 1.0.0 and add release configuration ([298d754](https://github.com/elsarfhem/foundry-dod/commit/298d75423a26955708bbf44f85949bde39f8f23e))
+
 # [0.1.0](https://github.com/elsarfhem/foundry-dod/compare/v0.0.1...v0.1.0) (2025-12-12)
 
 
