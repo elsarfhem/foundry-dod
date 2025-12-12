@@ -27,10 +27,12 @@ module.exports = {
         "assets": [
           {
             "path": "dod.zip",
+            "name": "dod.zip",
             "label": "System Archive"
           },
           {
             "path": "system.json",
+            "name": "system.json",
             "label": "System Manifest"
           }
         ]
