@@ -1,3 +1,11 @@
+## [2.0.1](https://github.com/elsarfhem/foundry-dod/compare/v2.0.0...v2.0.1) (2025-12-12)
+
+
+### Bug Fixes
+
+* restore git plugin for proper tag creation ([df93872](https://github.com/elsarfhem/foundry-dod/commit/df938724aa5a590c8ffe687a0be1c63089f7f0b2))
+* restore git plugin for proper tag creation ([63c0ea3](https://github.com/elsarfhem/foundry-dod/commit/63c0ea3ea75027e960510cbfc290244e1618de13))
+
 # [0.2.0](https://github.com/elsarfhem/foundry-dod/compare/v0.1.0...v0.2.0) (2025-12-12)
 
 
