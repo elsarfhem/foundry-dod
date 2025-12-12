@@ -1,4 +1,10 @@
 {
+  "name": "foundry-dod",
+  "version": "0.1.0",
+  "description": "A Foundry VTT system for the Deck of Destiny RPG.",
+  "main": "src/module/dod.mjs",
+  "author": "elsarfhem, W1zZo",
+  "license": "Commercial",
   "scripts": {
     "build": "npm run build:scss && npm run build:packs:db",
     "build:scss": "sass src/scss/dod.scss styles/dod.css --style=expanded --no-source-map",
@@ -14,7 +20,7 @@
     "@foundryvtt/foundryvtt-cli": "^1.0.3",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "eslint": "^8.29.0",
+    "eslint": "^9.39.1",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
