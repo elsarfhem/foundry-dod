@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run as dry run (no actual release)'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   release:
@@ -38,5 +45,12 @@ jobs:
       - name: Run Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: |
+          if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then
+            echo "Running in DRY RUN mode"
+            npx semantic-release --dry-run
+          else
+            echo "Running in LIVE mode"
+            npx semantic-release
+          fi
 
