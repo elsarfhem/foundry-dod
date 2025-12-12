@@ -22,6 +22,18 @@ module.exports = {
       "./scripts/update-system-json.js"
     ],
     [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "package.json",
+          "package-lock.json",
+          "CHANGELOG.md",
+          "system.json"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]"
+      }
+    ],
+    [
       "@semantic-release/github",
       {
         "assets": [
@@ -34,7 +46,7 @@ module.exports = {
             "label": "System Manifest"
           }
         ],
-        "successComment": false,
+        "successCommentCondition": false,
         "releasedLabels": false
       }
     ]
