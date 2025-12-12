@@ -1,8 +1,9 @@
-{
-  "branches": [
+module.exports = {
+  branches: [
     "main"
   ],
-  "plugins": [
+  tagFormat: "v${version}",
+  plugins: [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     [
@@ -44,9 +45,11 @@
             "path": "system.json",
             "label": "System Manifest"
           }
-        ]
+        ],
+        "successComment": false,
+        "releasedLabels": false
       }
     ]
   ]
-}
+};
 
