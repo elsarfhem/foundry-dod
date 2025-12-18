@@ -1,5 +1,16 @@
 .window-app {
   font-family: $font-primary;
+
+  .window-content {
+    background-image: none;
+  }
+}
+
+.window-app.dod.sheet.item {
+  .window-content {
+    background-image: url('../ui/parchment.jpg'),
+    linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8));
+  }
 }
 
 .rollable {
@@ -23,6 +34,27 @@
 .window-app.dod.sheet.actor {
   min-width: 1000px;
   min-height: 820px;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url('../assets/background.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: local;
+  background-repeat: no-repeat;
+
+  // Ensure content sits on top of background
+  .sheet-body,
+  .sheet-header {
+    position: relative;
+    z-index: 1;
+  }
+
+  .info-background {
+    background-color: rgba(240, 240, 240, 0.55);
+    padding: 0 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .card-face {
