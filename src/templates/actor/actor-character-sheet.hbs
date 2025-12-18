@@ -46,7 +46,7 @@
             </div>
         </div>
       </div>
-      <button type="button" class="toggle-header-cards" aria-expanded="true" data-label-show="{{localize 'DECK_OF_DESTINY.labels.showCards'}}" data-label-hide="{{localize 'DECK_OF_DESTINY.labels.hideCards'}}">
+      <button type="button" class="toggle-header-cards rollable light-bordered-section" aria-expanded="true" data-label-show="{{localize 'DECK_OF_DESTINY.labels.showCards'}}" data-label-hide="{{localize 'DECK_OF_DESTINY.labels.hideCards'}}">
           {{localize 'DECK_OF_DESTINY.labels.hideCards'}}
       </button>
       <div class="header-cards">
@@ -54,7 +54,7 @@
       </div>
       <hr>
       
-      <a class="item-create plus-attribute flex-group-center" title="{{localize 'DECK_OF_DESTINY.labels.add' type=(localize 'DECK_OF_DESTINY.types.item.attribute' )}}" data-type="attribute">
+      <a class="item-create plus-attribute flex-group-center light-bordered-section" title="{{localize 'DECK_OF_DESTINY.labels.add' type=(localize 'DECK_OF_DESTINY.types.item.attribute' )}}" data-type="attribute">
         <i class="fas fa-plus"></i>
         {{localize 'DECK_OF_DESTINY.types.item.attribute'}}
       </a>
@@ -100,7 +100,7 @@
     <section class="info-background">
 
       {{!-- Sheet Tab Navigation --}}
-      <nav class="sheet-tabs tabs" data-group="primary">
+      <nav class="sheet-tabs tabs light-bordered-section" data-group="primary">
         {{!-- Default tab is specified in actor-sheet.mjs --}}
         <a class="item" data-tab="core">{{localize 'DECK_OF_DESTINY.sheet.sections.core'}}</a>
         <a class="item" data-tab="talents">{{localize 'DECK_OF_DESTINY.sheet.sections.talents'}}</a>

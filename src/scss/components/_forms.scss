@@ -13,6 +13,12 @@
 
   .header-fields {
     flex: 1;
+
+    .toggle-header-cards {
+      font-size: medium;
+      font-family: $font-primary;
+      cursor: pointer;
+    }
   }
 
   .header-profile {
@@ -23,7 +29,7 @@
 
     input {
       width: 50px;
-      border-radius: 5px;
+      border-radius: $border-radius-sm;
       text-align: center;
     }
   }
@@ -49,30 +55,11 @@
       padding: 0;
     }
 
-    .toggle-header-cards {
-      position: absolute;
-      top: 0.2em;
-      right: 0.5em;
-      background: none;
-      border: none;
-      color: #444;
-      font-size: 0.9em;
-      cursor: pointer;
-      z-index: 2;
-      padding: 0.1em 0.5em;
-      border-radius: 4px;
-      transition: background 0.2s;
-
-      &:hover {
-        background: #e0e0e0;
-      }
-    }
-
     .profile-img {
       height: 180px;
       object-fit: cover;
       margin: 5px;
-      border-radius: 6px;
+      border-radius: $border-radius-sm;
     }
 
     .card-img {
@@ -104,7 +91,7 @@
           width: 25px;
           margin: 5px 0;
           border: 1px solid $c-faint;
-          border-radius: 5px;
+          border-radius: $border-radius-sm;
         }
 
         .modifier {
@@ -120,7 +107,7 @@
       justify-content: space-evenly;
 
       .card-button {
-        border-radius: 5px;
+        border-radius: $border-radius-sm;
         padding: 10px 10px;
         border: none;
         transition: background-color 0.3s ease;
@@ -193,15 +180,15 @@
 
       .health-current {
         input {
-          border-top-left-radius: 10px;
-          border-bottom-left-radius: 10px;
+          border-top-left-radius: $border-radius-md;
+          border-bottom-left-radius: $border-radius-md;
         }
       }
 
       .health-max {
         input {
-          border-top-right-radius: 10px;
-          border-bottom-right-radius: 10px;
+          border-top-right-radius: $border-radius-md;
+          border-bottom-right-radius: $border-radius-md;
           font-weight: bold;
           font-size: large;
         }
@@ -312,8 +299,7 @@
 .sheet-body,
 .sheet-body .tab,
 .sheet-body .tab .editor {
-  height: 100%;
-  min-height: 50px;
+  min-height: 100px;
 
   .abilities {
     h3 {
@@ -383,13 +369,13 @@
         }
 
         &:first-child label {
-          border-top-left-radius: 5px;
-          border-top-right-radius: 5px;
+          border-top-left-radius: $border-radius-sm;
+          border-top-right-radius: $border-radius-sm;
         }
 
         &:last-child label {
-          border-bottom-left-radius: 5px;
-          border-bottom-right-radius: 5px;
+          border-bottom-left-radius: $border-radius-sm;
+          border-bottom-right-radius: $border-radius-sm;
         }
       }
     }
@@ -413,18 +399,9 @@
   text-align: center;
   width: 100%;
   height: 100%;
-  font-family: $font-primary;
-  font-size: large;
-  border: 2px groove $c-light;
-  border-radius: 4px;
-  color: #333;
-  background: rgba(0, 0, 0,0.1);
+  font-size: medium;
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s ease, text-shadow 0.2s ease;
-
-  &:hover {
-    box-shadow: 0 0 5px $c-red;
-  }
+  padding: 6px;
 
   i {
     margin-right: 0.5rem;
