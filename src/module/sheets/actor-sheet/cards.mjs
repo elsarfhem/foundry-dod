@@ -40,19 +40,22 @@ export async function subtractSheetCard(sheet, event) {
  * @param {*} sheet
  */
 export async function resetActorCards(sheet) {
-  await sheet.actor.update({
-    'system.cards.success.value': 0,
-    'system.cards.failure.value': 0,
-    'system.cards.issue.value': 0,
-    'system.cards.destiny.value': 0,
-    'system.cards.fortune.value': 0
-  }, { render: false });
+  await sheet.actor.update(
+    {
+      'system.cards.success.value': 0,
+      'system.cards.failure.value': 0,
+      'system.cards.issue.value': 0,
+      'system.cards.destiny.value': 0,
+      'system.cards.fortune.value': 0
+    },
+    { render: false }
+  );
 
   // Update only the card inputs in the DOM
   try {
     const root = sheet.element[0];
     const cardTypes = ['success', 'failure', 'issue', 'destiny', 'fortune'];
-    cardTypes.forEach(cardType => {
+    cardTypes.forEach((cardType) => {
       const input = root.querySelector(`input[name="system.cards.${cardType}.value"]`);
       if (input) {
         input.value = 0;
@@ -95,7 +98,10 @@ export async function addCards(sheet, event) {
     return; // Unhandled type
   }
   const newVal = actorSystem.cards[cardType].value + value;
-  await sheet.actor.update({ [`system.cards.${cardType}.value`]: newVal }, { render: false });
+  await sheet.actor.update(
+    { [`system.cards.${cardType}.value`]: newVal },
+    { render: false }
+  );
 
   // Update only the specific input element, no fragment rerender
   try {
@@ -165,7 +171,7 @@ export async function addCardsToPile(sheet) {
  * @returns {number} The number of cards to draw.
  */
 export function getCardsToDraw(pileSize, players) {
-    return Math.max(1, Math.floor(pileSize / (4 + players)));
+  return Math.max(1, Math.floor(pileSize / (4 + players)));
 }
 
 /**
@@ -173,7 +179,7 @@ export function getCardsToDraw(pileSize, players) {
  * @param {Object} sheet
  * @return {Promise<void>}
  */
-export async function drawCardsFromPile(sheet) {
+export async function drawCardsFromPile() {
   const deck = game.cards.getName('DoD - lista carte');
   if (!deck)
     return ui.notifications.error(

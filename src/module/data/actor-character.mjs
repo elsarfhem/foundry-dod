@@ -78,7 +78,6 @@ export default class DeckOfDestinyCharacter extends DeckOfDestinyActorBase {
    * This method calculates characteristic modifiers and localizes characteristic labels.
    */
   prepareDerivedData() {
-    // eslint-disable-next-line guard-for-in
     for (const key in this.characteristics) {
       // Handle characteristic label localization.
       this.characteristics[key].label =

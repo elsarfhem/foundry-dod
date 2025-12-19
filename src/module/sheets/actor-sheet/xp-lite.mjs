@@ -32,11 +32,14 @@ Hooks.on('renderDeckOfDestinyActorSheet', (app, html) => {
     if (spent > total) spent = total; // clamp
     const remaining = Math.max(0, total - spent);
     try {
-      await app.actor.update({
-        'system.xp.total': total,
-        'system.xp.spent': spent,
-        'system.xp.remaining': remaining
-      }, { render: false });
+      await app.actor.update(
+        {
+          'system.xp.total': total,
+          'system.xp.spent': spent,
+          'system.xp.remaining': remaining
+        },
+        { render: false }
+      );
     } catch (e) {
       console.warn('XP silent update failed; fallback render', e);
       await app.actor.update({
@@ -72,4 +75,3 @@ Hooks.on('renderDeckOfDestinyActorSheet', (app, html) => {
     }
   });
 });
-

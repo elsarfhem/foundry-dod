@@ -36,23 +36,29 @@ Hooks.on('renderDeckOfDestinyActorSheet', (app, html) => {
 
   // Remove from form to prevent Foundry's automatic handling
   if (nameInput) {
-    // Store original form reference
-    const originalForm = nameInput.form;
     // Remove from form (this prevents Foundry's _onSubmit from processing it)
     nameInput.removeAttribute('form');
 
     // Add our handlers
-    nameInput.addEventListener('change', async (ev) => {
-      ev.stopImmediatePropagation();
-      ev.preventDefault();
-      await updateNameField(ev.currentTarget);
-    }, true);
+    nameInput.addEventListener(
+      'change',
+      async (ev) => {
+        ev.stopImmediatePropagation();
+        ev.preventDefault();
+        await updateNameField(ev.currentTarget);
+      },
+      true
+    );
 
-    nameInput.addEventListener('blur', async (ev) => {
-      ev.stopImmediatePropagation();
-      ev.preventDefault();
-      await updateNameField(ev.currentTarget);
-    }, true);
+    nameInput.addEventListener(
+      'blur',
+      async (ev) => {
+        ev.stopImmediatePropagation();
+        ev.preventDefault();
+        await updateNameField(ev.currentTarget);
+      },
+      true
+    );
   }
 
   if (playerInput) {
@@ -60,17 +66,25 @@ Hooks.on('renderDeckOfDestinyActorSheet', (app, html) => {
     playerInput.removeAttribute('form');
 
     // Add our handlers
-    playerInput.addEventListener('change', async (ev) => {
-      ev.stopImmediatePropagation();
-      ev.preventDefault();
-      await updateNameField(ev.currentTarget);
-    }, true);
+    playerInput.addEventListener(
+      'change',
+      async (ev) => {
+        ev.stopImmediatePropagation();
+        ev.preventDefault();
+        await updateNameField(ev.currentTarget);
+      },
+      true
+    );
 
-    playerInput.addEventListener('blur', async (ev) => {
-      ev.stopImmediatePropagation();
-      ev.preventDefault();
-      await updateNameField(ev.currentTarget);
-    }, true);
+    playerInput.addEventListener(
+      'blur',
+      async (ev) => {
+        ev.stopImmediatePropagation();
+        ev.preventDefault();
+        await updateNameField(ev.currentTarget);
+      },
+      true
+    );
   }
 
   // Prevent enter key from submitting form
@@ -81,4 +95,3 @@ Hooks.on('renderDeckOfDestinyActorSheet', (app, html) => {
     }
   });
 });
-

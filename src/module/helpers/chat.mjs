@@ -9,16 +9,32 @@ export function suitToName(suit) {
  * @param {string} opts.description - HTML description body.
  * @param {string} opts.img - Optional icon image.
  * @param {string} opts.title - Title of the message.
- * @param {Array<{label:string,action:function}>} opts.buttonData - Buttons array.
+ * @param {Array<{label:string,action:function,icon?:string,color?:string}>} opts.buttonData - Buttons array.
  */
 export function showChatRequest({ description, img, title, buttonData }) {
   const htmlContent = `
     <h2>${title ?? ''}</h2>
-    ${img ? `<img src="${img}" alt="ico" style="width:2em;height:2em;vertical-align:middle;">` : ''}
+    ${
+      img
+        ? `<img src="${img}" alt="ico" style="width:2em;height:2em;vertical-align:middle;">`
+        : ''
+    }
     <div>${description ?? ''}</div>
     <div class="dod-macro-buttons">
       ${(buttonData || [])
-        .map((b, i) => `<button data-dod-macro-btn="${i}">${b.label}</button>`)
+        .map((b, i) => {
+          const icon = b.icon ? `<i class="${b.icon}"></i> ` : '';
+          const bgColor = b.color || '#f0f0e0';
+          const borderColor = b.borderColor || '#7a7971';
+          return `
+            <button 
+              data-dod-macro-btn="${i}" 
+              style="background: linear-gradient(180deg, ${bgColor} 50%, ${borderColor} 100%); border-color: ${borderColor};"
+            >
+              ${icon}${b.label}
+            </button>
+          `;
+        })
         .join('')}
     </div>
   `;
@@ -63,26 +79,41 @@ export function createDrawChat(drawCards, playersNum) {
   const buttons = [
     {
       label: game.i18n.localize('DECK_OF_DESTINY.chat.buttons.viewHand'),
+      icon: 'fas fa-hand-paper',
+      color: '#d9d7c8',
+      borderColor: '#b5b3a4',
       action: () => hand?.sheet.render(true)
     },
     {
       label: game.i18n.localize('DECK_OF_DESTINY.chat.buttons.viewDeck'),
+      icon: 'fas fa-eye',
+      color: '#aaaaff',
+      borderColor: '#0000cc',
       action: () => pile?.sheet.render(true)
     },
     {
       label: game.i18n.localize('DECK_OF_DESTINY.chat.buttons.emptyDeck'),
+      icon: 'fas fa-trash',
+      color: '#ffaaaa',
+      borderColor: '#cc0000',
       action: () => game.dod?.macros?.svuotaMazzo?.()
     }
   ];
   if (playersNum > 1 && fortuneCount > 0) {
     buttons.push({
       label: game.i18n.localize('DECK_OF_DESTINY.chat.buttons.divideFortune'),
+      icon: 'fas fa-share-alt',
+      color: '#b7ffaa',
+      borderColor: '#00ff3c',
       action: () => game.dod?.macros?.divisioneCarteFortuna?.()
     });
   }
   if (successCount <= failureCount && failureCount <= successCount + fortuneCount) {
     buttons.push({
       label: game.i18n.localize('DECK_OF_DESTINY.chat.buttons.risk'),
+      icon: 'fas fa-dice',
+      color: '#ffccaa',
+      borderColor: '#ff9900',
       action: () => game.dod?.macros?.rischia?.()
     });
   }

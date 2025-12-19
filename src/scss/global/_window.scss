@@ -89,10 +89,10 @@ ol.items-list {
   gap: 0.5rem;
   margin-top: 0.75rem;
   justify-content: flex-start;
-  align-items: center;
+  align-items: start;
 
   button {
-    flex: 0 0 auto;
+    flex-basis: 48%;
     min-width: 100px;
     height: 35px;
     padding: 0.5rem 0.75rem;
