@@ -1,5 +1,16 @@
 .window-app {
   font-family: $font-primary;
+
+  .window-content {
+    background-image: none;
+  }
+}
+
+.window-app.dod.sheet.item {
+  .window-content {
+    background-image: url('../ui/parchment.jpg'),
+    linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8));
+  }
 }
 
 .rollable {
@@ -23,6 +34,27 @@
 .window-app.dod.sheet.actor {
   min-width: 1000px;
   min-height: 820px;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url('../assets/background.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: local;
+  background-repeat: no-repeat;
+
+  // Ensure content sits on top of background
+  .sheet-body,
+  .sheet-header {
+    position: relative;
+    z-index: 1;
+  }
+
+  .info-background {
+    background-color: rgba(240, 240, 240, 0.55);
+    padding: 0 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .card-face {
@@ -66,7 +98,7 @@ ol.items-list {
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
     line-height: 1.5;
-    border-radius: 4px;
+    border-radius: $border-radius-sm;
     border: 1px solid #7a7971;
     background: linear-gradient(180deg, #f0f0e0 0%, #d5d5c5 100%);
     color: #191813;
@@ -104,7 +136,7 @@ ol.items-list {
   margin-bottom: 0.5rem;
   padding: 0.5rem;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  border-radius: $border-radius-sm;
   text-align: center;
 }
 
@@ -123,4 +155,14 @@ ol.items-list {
 
 .dod-pulse {
   animation: dod-pulse 0.4s ease-out;
+}
+
+.light-bordered-section {
+  border: $border-groove;
+  border-radius: $border-radius-sm;
+  transition: background 0.2s, box-shadow 0.2s ease, text-shadow 0.2s ease;
+  background: rgba(0, 0, 0, 0.1);
+  &:hover {
+    box-shadow: 0 0 5px $c-red;
+  }
 }
