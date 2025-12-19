@@ -1,6 +1,6 @@
 {
   "name": "foundry-dod",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "description": "A Foundry VTT system for the Deck of Destiny RPG.",
   "main": "src/module/dod.mjs",
   "author": "elsarfhem, W1zZo",
