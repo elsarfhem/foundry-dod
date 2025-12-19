@@ -91,7 +91,7 @@ export async function deleteItemRow(sheet, event) {
   if (!itemId) return;
   const item = sheet.actor.items.get(itemId);
   if (!item) return;
-  if (!['item', 'ability', 'talent', 'power'].includes(item.type)) return;
+  if (!['item', 'ability', 'talent', 'power', 'attribute'].includes(item.type)) return;
   btn.disabled = true;
   try {
     await sheet.actor.deleteEmbeddedDocuments('Item', [itemId], { render: false });
