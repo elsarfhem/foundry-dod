@@ -173,6 +173,85 @@
         "attribute": "Risorsa",
         "power": "Potere"
       }
+    },
+    "dialogs": {
+      "createDeck": {
+        "title": "Crea il mazzo",
+        "numSuccess": "Num. Carte Successo:",
+        "numFailure": "Num. Carte Fallimento:",
+        "numIssue": "Num. Carte Imprevisto:",
+        "numDestiny": "Num. Carte del Destino:",
+        "numFortune": "Num. Carte Fortuna:"
+      },
+      "composeDeck": {
+        "title": "Componi il mazzo e pesca",
+        "numPlayers": "Num. giocatori nella prova:"
+      },
+      "draw": {
+        "title": "Pesca dal mazzo",
+        "numPlayers": "Num. giocatori nella prova:"
+      },
+      "divideFortune": {
+        "title": "Dividi Carte Fortuna",
+        "card": "carta/e"
+      },
+      "requestTest": {
+        "title": "Richiedi una prova",
+        "reason": "Motivo:"
+      },
+      "defenseRoll": {
+        "damageTaken": "Danni subiti:",
+        "additionalDice": "Dadi aggiuntivi:",
+        "absorptionCoeff": "Coeff. di Assorbimento:"
+      },
+      "buttons": {
+        "addToDeck": "Aggiungi al Mazzo",
+        "composeAndDraw": "Componi & Pesca",
+        "draw": "Pesca",
+        "divide": "Dividi",
+        "request": "Richiedi",
+        "roll": "Tira",
+        "cancel": "Annulla"
+      }
+    },
+    "messages": {
+      "addedToDeck": "ha aggiunto al mazzo:",
+      "deckComposedOf": "Il mazzo è composto da:",
+      "errors": {
+        "noDeckCards": "Errore: non puoi rischiare se non ci sono carte nel mazzo.",
+        "noCardsForRisk": "Nessuna carta successo o fallimento trovata nel mazzo! L'azione di rischio non può essere completata.",
+        "noSuccessOrFailure": "Nessun successo o fallimento trovato nel mazzo! La prova non ha avuto successo né fallimento.",
+        "noFortuneCardsInHand": "Non ci sono Carte Fortuna nella mano.",
+        "noFortuneCards": "Non ci sono carte fortuna nella mano attuale."
+      },
+      "warnings": {
+        "unequalCards": "Attenzione: il numero di successi e di fallimenti nella mano non sono uguali.",
+        "onlyGMEmpty": "Solo il GM può svuotare il mazzo."
+      },
+      "info": {
+        "success": "Successi",
+        "failure": "Fallimenti",
+        "drewCard": "Hai pescato una carta",
+        "deckEmptiedTitle": "Mazzo svuotato:",
+        "deckEmptied": "tutte le carte sono state richiamate.",
+        "deckEmptiedToast": "Il mazzo è stato svuotato.",
+        "fortuneDivisionTitle": "Divisione Carte Fortuna"
+      },
+      "success": {
+        "riskSuccess": "La prova ha avuto successo!"
+      },
+      "failure": {
+        "riskFailure": "La prova è fallita!"
+      },
+      "requestTest": {
+        "title": "Il Narratore sta richiedendo una prova!",
+        "addCards": "Aggiungi Carte"
+      },
+      "defenseRoll": {
+        "damageSingular": "danno",
+        "damagePlural": "danni",
+        "summary": "<p>Hai assorbito <span style=\"font-size: large; font-weight: bold;\">{absorbed}</span> su {damage} {damageLabel}</p>"
+      }
     }
   }
 }

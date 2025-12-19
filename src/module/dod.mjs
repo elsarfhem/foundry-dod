@@ -15,14 +15,15 @@ import { DECK_OF_DESTINY } from './helpers/config.mjs';
 // Import DataModel classes
 import * as models from './data/_module.mjs';
 import {
-    aggiungiAlMazzo,
-    componiIlMazzoEPesca,
-    divisioneCarteFortuna,
-    pesca,
-    rischia,
-    svuotaMazzo,
-    tiroDifesa
-} from "./globals.mjs";
+  aggiungiAlMazzo,
+  componiIlMazzoEPesca,
+  divisioneCarteFortuna,
+  richiediProva,
+  pesca,
+  rischia,
+  svuotaMazzo,
+  tiroDifesa
+} from './globals.mjs';
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -35,15 +36,16 @@ Hooks.once('init', function () {
     DeckOfDestinyActor,
     DeckOfDestinyItem,
     rollItemMacro,
-      macros: {
-          aggiungiAlMazzo,
-          componiIlMazzoEPesca,
-          divisioneCarteFortuna,
-          pesca,
-          rischia,
-          svuotaMazzo,
-          tiroDifesa
-      }
+    macros: {
+      aggiungiAlMazzo,
+      componiIlMazzoEPesca,
+      divisioneCarteFortuna,
+      pesca,
+      richiediProva,
+      rischia,
+      svuotaMazzo,
+      tiroDifesa
+    }
   };
 
   // Add custom constants for configuration.

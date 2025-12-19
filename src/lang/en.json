@@ -173,6 +173,85 @@
         "attribute": "Resource",
         "power": "Power"
       }
+    },
+    "dialogs": {
+      "createDeck": {
+        "title": "Create Deck",
+        "numSuccess": "# Success Cards:",
+        "numFailure": "# Failure Cards:",
+        "numIssue": "# Issue Cards:",
+        "numDestiny": "# Destiny Cards:",
+        "numFortune": "# Fortune Cards:"
+      },
+      "composeDeck": {
+        "title": "Compose Deck & Draw",
+        "numPlayers": "# Players in the test:"
+      },
+      "draw": {
+        "title": "Draw from Deck",
+        "numPlayers": "# Players in the test:"
+      },
+      "divideFortune": {
+        "title": "Divide Fortune Cards",
+        "card": "card(s)"
+      },
+      "requestTest": {
+        "title": "Request a Test",
+        "reason": "Reason:"
+      },
+      "defenseRoll": {
+        "damageTaken": "Damage Taken:",
+        "additionalDice": "Additional Dice:",
+        "absorptionCoeff": "Absorption Coefficient:"
+      },
+      "buttons": {
+        "addToDeck": "Add to Deck",
+        "composeAndDraw": "Compose & Draw",
+        "draw": "Draw",
+        "divide": "Divide",
+        "request": "Request",
+        "roll": "Roll",
+        "cancel": "Cancel"
+      }
+    },
+    "messages": {
+      "addedToDeck": "has added to the deck:",
+      "deckComposedOf": "The deck is composed of:",
+      "errors": {
+        "noDeckCards": "Error: you cannot risk if there are no cards in the deck.",
+        "noCardsForRisk": "No success or failure cards found in the deck! The risk action cannot be completed.",
+        "noSuccessOrFailure": "No success or failure found in the deck! The test had neither success nor failure.",
+        "noFortuneCardsInHand": "There are no Fortune cards in hand.",
+        "noFortuneCards": "There are no Fortune cards in the current hand."
+      },
+      "warnings": {
+        "unequalCards": "Warning: the number of successes and failures in hand is not equal.",
+        "onlyGMEmpty": "Only the GM can empty the deck."
+      },
+      "info": {
+        "success": "Successes",
+        "failure": "Failures",
+        "drewCard": "You drew card",
+        "deckEmptiedTitle": "Deck Emptied:",
+        "deckEmptied": "all cards have been recalled.",
+        "deckEmptiedToast": "The deck has been emptied.",
+        "fortuneDivisionTitle": "Fortune Cards Distribution"
+      },
+      "success": {
+        "riskSuccess": "The test was successful!"
+      },
+      "failure": {
+        "riskFailure": "The test has failed!"
+      },
+      "requestTest": {
+        "title": "The Narrator is requesting a test!",
+        "addCards": "Add Cards"
+      },
+      "defenseRoll": {
+        "damageSingular": "damage",
+        "damagePlural": "damage",
+        "summary": "<p>You absorbed <span style=\"font-size: large; font-weight: bold;\">{absorbed}</span> over {damage} {damageLabel}</p>"
+      }
     }
   }
 }

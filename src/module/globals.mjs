@@ -1,21 +1,9 @@
-import {getCardsToDraw} from "./sheets/actor-sheet/cards.mjs";
+import { getCardsToDraw } from './sheets/actor-sheet/cards.mjs';
 import { createDrawChat } from './helpers/chat.mjs';
 
 const suitToName = (suit) => {
-  switch (suit) {
-    case 'white':
-      return 'Carta Bianca';
-    case 'success':
-      return 'Carta Successo';
-    case 'issue':
-      return 'Carta Imprevisto';
-    case 'destiny':
-      return 'Carta del Destino';
-    case 'failure':
-      return 'Carta Fallimento';
-    case 'fortune':
-      return 'Carta Fortuna';
-  }
+  const key = `DECK_OF_DESTINY.cards.${suit}`;
+  return game.i18n.localize(key) || suit;
 };
 
 /**
@@ -23,34 +11,33 @@ const suitToName = (suit) => {
  * Opens a dialog to select the number of each card type to add.
  */
 export async function aggiungiAlMazzo() {
-  // ...code from "aggiungi-al-mazzo.json" command property...
   const deck = game.cards.getName('DoD - lista carte');
   const pile = game.cards.getName('Mazzo');
 
   let confirmed = false;
 
   new Dialog({
-    title: 'Crea il mazzo',
+    title: game.i18n.localize('DECK_OF_DESTINY.dialogs.createDeck.title'),
     content: `
        <form>
           <div class="form-group">
-           <label>Num. Carte Successo:</label>
+           <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.createDeck.numSuccess')}</label>
            <input id="success-cards" name="success-cards" value="0" autofocus onFocus="select()" tabindex="1" type="number" min="0"></input>
           </div>
           <div class="form-group">
-           <label>Num. Carte Fallimento:</label>
+           <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.createDeck.numFailure')}</label>
            <input id="failure-cards" name="failure-cards" value="0" tabindex="2" type="number" min="0"></input>
           </div>
           <div class="form-group">
-           <label>Num. Carte Imprevisto:</label>
+           <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.createDeck.numIssue')}</label>
            <input id="issue-cards" name="issue-cards" value="0" tabindex="3" type="number" min="0"></input>
           </div>
           <div class="form-group">
-           <label>Num. Carte del Destino:</label>
+           <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.createDeck.numDestiny')}</label>
            <input id="destiny-cards" name="destiny-cards" value="0" tabindex="4" type="number" min="0"></input>
           </div>
           <div class="form-group">
-           <label>Num. Carte Fortuna:</label>
+           <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.createDeck.numFortune')}</label>
            <input id="fortune-cards" name="fortune-cards" value="0" tabindex="5" type="number" min="0"></input>
           </div>
          </form>
@@ -58,12 +45,12 @@ export async function aggiungiAlMazzo() {
     buttons: {
       one: {
         icon: '<i class="fas fa-check"></i>',
-        label: 'Aggiungi al Mazzo',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.addToDeck'),
         callback: () => (confirmed = true)
       },
       two: {
         icon: '<i class="fas fa-times"></i>',
-        label: 'Annulla',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.cancel'),
         callback: () => (confirmed = false)
       }
     },
@@ -86,16 +73,15 @@ export async function aggiungiAlMazzo() {
           (card) => card.suit === 'fortune' && !card.drawn
         );
 
-          const {
-              issueCardsNum,
-              successCardsNum,
-              destinyCardsNum,
-              failureCardsNum,
-              fortuneCardsNum,
-          } = getCardCountsFromDialog(html);
+        const {
+          issueCardsNum,
+          successCardsNum,
+          destinyCardsNum,
+          failureCardsNum,
+          fortuneCardsNum
+        } = getCardCountsFromDialog(html);
 
-
-          const successSelected = successCards.slice(0, successCardsNum);
+        const successSelected = successCards.slice(0, successCardsNum);
         const issueSelected = issueCards.slice(0, issueCardsNum);
         const destinySelected = destinyCards.slice(0, destinyCardsNum);
         const failureSelected = failureCards.slice(0, failureCardsNum);
@@ -124,13 +110,13 @@ export async function aggiungiAlMazzo() {
 
           ChatMessage.create({
             user: game.user._id,
-            content: `<p>${game.user.name} ha aggiunto al mazzo: </p>
+            content: `<p>${game.user.name} ${game.i18n.localize('DECK_OF_DESTINY.messages.addedToDeck')}</p>
           <ul>
-          <li>Carta Successo: ${successCardsNum}</li>
-          <li>Carta Fallimento: ${failureCardsNum}</li>
-              <li>Carta Imprevisto: ${issueCardsNum}</li>
-              <li>Carta Fortuna: ${fortuneCardsNum}</li>
-              <li>Carta del Destino: ${destinyCardsNum}</li>
+            <li>${game.i18n.localize('DECK_OF_DESTINY.cards.success')}: ${successCardsNum}</li>
+            <li>${game.i18n.localize('DECK_OF_DESTINY.cards.failure')}: ${failureCardsNum}</li>
+            <li>${game.i18n.localize('DECK_OF_DESTINY.cards.issue')}: ${issueCardsNum}</li>
+            <li>${game.i18n.localize('DECK_OF_DESTINY.cards.fortune')}: ${fortuneCardsNum}</li>
+            <li>${game.i18n.localize('DECK_OF_DESTINY.cards.destiny')}: ${destinyCardsNum}</li>
           </ul>`
           });
         }
@@ -140,13 +126,13 @@ export async function aggiungiAlMazzo() {
 }
 
 function getCardCountsFromDialog(html) {
-    return {
-        issueCardsNum: parseInt(html.find('[name=issue-cards]')[0].value) || 0,
-        successCardsNum: parseInt(html.find('[name=success-cards]')[0].value) || 0,
-        destinyCardsNum: parseInt(html.find('[name=destiny-cards]')[0].value) || 0,
-        failureCardsNum: parseInt(html.find('[name=failure-cards]')[0].value) || 0,
-        fortuneCardsNum: parseInt(html.find('[name=fortune-cards]')[0].value) || 0,
-    };
+  return {
+    issueCardsNum: parseInt(html.find('[name=issue-cards]')[0].value) || 0,
+    successCardsNum: parseInt(html.find('[name=success-cards]')[0].value) || 0,
+    destinyCardsNum: parseInt(html.find('[name=destiny-cards]')[0].value) || 0,
+    failureCardsNum: parseInt(html.find('[name=failure-cards]')[0].value) || 0,
+    fortuneCardsNum: parseInt(html.find('[name=fortune-cards]')[0].value) || 0
+  };
 }
 
 /**
@@ -171,31 +157,31 @@ export async function componiIlMazzoEPesca() {
   let confirmed = false;
 
   new Dialog({
-    title: 'Crea il mazzo',
+    title: game.i18n.localize('DECK_OF_DESTINY.dialogs.composeDeck.title'),
     content: `
        <form>
        <div class="form-group">
-         <label>Num. giocatori nella prova:</label>
+         <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.composeDeck.numPlayers')}</label>
          <input id="num-players" name="num-players" value="1" autofocus onFocus="select()" tabindex="1" type="number" min="1"></input>
         </div>
         <div class="form-group">
-         <label>Num. Carte Successo:</label>
+         <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.createDeck.numSuccess')}</label>
          <input id="success-cards" name="success-cards" value="0" tabindex="2" type="number" min="0"></input>
         </div>
         <div class="form-group">
-         <label>Num. Carte Fallimento:</label>
+         <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.createDeck.numFailure')}</label>
          <input id="failure-cards" name="failure-cards" value="0" tabindex="3" type="number" min="0"></input>
         </div>
         <div class="form-group">
-         <label>Num. Carte Imprevisto:</label>
+         <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.createDeck.numIssue')}</label>
          <input id="issue-cards" name="issue-cards" value="0" tabindex="4" type="number" min="0"></input>
         </div>
         <div class="form-group">
-         <label>Num. Carte del Destino:</label>
+         <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.createDeck.numDestiny')}</label>
          <input id="destiny-cards" name="destiny-cards" value="0" tabindex="5" type="number" min="0"></input>
         </div>
         <div class="form-group">
-         <label>Num. Carte Fortuna:</label>
+         <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.createDeck.numFortune')}</label>
          <input id="fortune-cards" name="fortune-cards" value="0" tabindex="6" type="number" min="0"></input>
         </div>
        </form>
@@ -203,12 +189,12 @@ export async function componiIlMazzoEPesca() {
     buttons: {
       one: {
         icon: '<i class="fas fa-check"></i>',
-        label: 'Componi & Pesca',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.composeAndDraw'),
         callback: () => (confirmed = true)
       },
       two: {
         icon: '<i class="fas fa-times"></i>',
-        label: 'Annulla',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.cancel'),
         callback: () => (confirmed = false)
       }
     },
@@ -216,15 +202,15 @@ export async function componiIlMazzoEPesca() {
     close: async (html) => {
       if (confirmed) {
         const playersNum = parseInt(html.find('[name=num-players]')[0].value) || 1;
-          const {
-              issueCardsNum,
-              successCardsNum,
-              destinyCardsNum,
-              failureCardsNum,
-              fortuneCardsNum,
-          } = getCardCountsFromDialog(html);
+        const {
+          issueCardsNum,
+          successCardsNum,
+          destinyCardsNum,
+          failureCardsNum,
+          fortuneCardsNum
+        } = getCardCountsFromDialog(html);
 
-          ChatMessage.create({
+        ChatMessage.create({
           user: game.user._id,
           content: `<p>Il mazzo é composto da: </p>
           <ul>
@@ -252,8 +238,6 @@ export async function componiIlMazzoEPesca() {
         const destinySelected = destinyCards.slice(0, destinyCardsNum);
         const failureSelected = failureCards.slice(0, failureCardsNum);
         const fortuneSelected = fortuneCards.slice(0, fortuneCardsNum);
-
-        let cardsHtml = ``;
 
         if (
           issueCardsNum +
@@ -301,11 +285,11 @@ export async function pesca() {
   let confirmed = false;
 
   new Dialog({
-    title: 'Pesca dal mazzo',
+    title: game.i18n.localize('DECK_OF_DESTINY.dialogs.draw.title'),
     content: `
        <form>
          <div class="form-group">
-           <label>Num. giocatori nella prova:</label>
+           <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.draw.numPlayers')}</label>
            <input id="num-players" name="num-players" value="1" autofocus onFocus="select()" tabindex="1" type="number" min="1"></input>
          </div>
        </form>
@@ -313,12 +297,12 @@ export async function pesca() {
     buttons: {
       one: {
         icon: '<i class="fas fa-check"></i>',
-        label: 'Pesca',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.draw'),
         callback: () => (confirmed = true)
       },
       two: {
         icon: '<i class="fas fa-times"></i>',
-        label: 'Annulla',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.cancel'),
         callback: () => (confirmed = false)
       }
     },
@@ -365,8 +349,6 @@ export async function pesca() {
         });
 
         const whiteSelected = whiteCards.slice(0, whiteCardsNum);
-
-        let cardsHtml = ``;
 
         if (
           issueCardsNum +
@@ -418,7 +400,7 @@ export async function rischia() {
   let msg = '';
 
   if (pile.cards.size === 0) {
-    msg = 'Errore: non puoi rischiare se non ci sono carte nel mazzo';
+    msg = game.i18n.localize('DECK_OF_DESTINY.messages.errors.noDeckCards');
     ui.notifications.error(msg);
     await ChatMessage.create({
       user: game.user._id,
@@ -427,11 +409,12 @@ export async function rischia() {
     return;
   }
 
-  if (numSuccess !== numFailure || numSuccess === 0) {
+  if (numSuccess !== numFailure) {
     msg =
-      'Attenzione: il numero di successi e di fallimenti nella mano non sono uguali. Successi: ' +
+      game.i18n.localize('DECK_OF_DESTINY.messages.warnings.unequalCards') +
+      ` ${game.i18n.localize('DECK_OF_DESTINY.cards.success')}: ` +
       numSuccess +
-      ' - Fallimenti: ' +
+      ` - ${game.i18n.localize('DECK_OF_DESTINY.cards.failure')}: ` +
       numFailure;
     ui.notifications.warn(msg);
     ChatMessage.create({
@@ -445,10 +428,12 @@ export async function rischia() {
   const drawCards = [];
   let cardsHtml = '';
   do {
-      if(pile.cards.size === 0) {
-          ui.notifications.error('No success or failure cards found in the deck! The risk action cannot be completed.');
-          return
-      }
+    if (pile.cards.size === 0) {
+      ui.notifications.error(
+        game.i18n.localize('DECK_OF_DESTINY.messages.errors.noCardsForRisk')
+      );
+      return;
+    }
     [drawCard] =
       (await hand.draw(pile, 1, {
         how: CONST.CARD_DRAW_MODES.RANDOM,
@@ -474,16 +459,16 @@ export async function rischia() {
       .map(([suit, num]) => `<li>${suitToName(suit)}: ${num}</li>`)
       .join('');
 
-    msg = `<h1>Hai pescato una carta ${drawCard.name} ${
+    const outcomeText =
       drawCard.suit === 'success'
-        ? 'La prova ha avuto successo!'
-        : 'La prova é fallita!'
-    }</h1>
+        ? game.i18n.localize('DECK_OF_DESTINY.messages.success.riskSuccess')
+        : game.i18n.localize('DECK_OF_DESTINY.messages.failure.riskFailure');
+
+    msg = `<h1>${game.i18n.localize('DECK_OF_DESTINY.messages.info.drewCard')} ${drawCard.name} ${outcomeText}</h1>
             <ul>${summary}</ul>
-           <div class=\"card-draw flexrow\">${cardsHtml}</div>`;
+           <div class="card-draw flexrow">${cardsHtml}</div>`;
   } else {
-    msg =
-      'Nessun successo o fallimento trovato nel mazzo! La prova non ha avuto successo né fallimento.';
+    msg = game.i18n.localize('DECK_OF_DESTINY.messages.errors.noSuccessOrFailure');
   }
   await ChatMessage.create({
     user: game.user._id,
@@ -531,7 +516,7 @@ export async function divisioneCarteFortuna() {
   if (fortuneCards.length === 0) {
     ChatMessage.create({
       user: game.user._id,
-      content: 'Non ci sono Carte Fortuna nella mano'
+      content: game.i18n.localize('DECK_OF_DESTINY.messages.errors.noFortuneCardsInHand')
     });
     return;
   }
@@ -551,7 +536,7 @@ export async function divisioneCarteFortuna() {
     .join('');
 
   new Dialog({
-    title: `Dividi Carte Fortuna (${fortuneCards.length} carta/e)`,
+    title: `${game.i18n.localize('DECK_OF_DESTINY.dialogs.divideFortune.title')} (${fortuneCards.length} ${game.i18n.localize('DECK_OF_DESTINY.dialogs.divideFortune.card')})`,
     content: `
       <form>
         <div class="form-group">
@@ -564,17 +549,17 @@ export async function divisioneCarteFortuna() {
     buttons: {
       one: {
         icon: '<i class="fas fa-check"></i>',
-        label: 'Dividi',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.divide'),
         callback: () => (confirmed = true)
       },
       two: {
         icon: '<i class="fas fa-times"></i>',
-        label: 'Annulla',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.cancel'),
         callback: () => (confirmed = false)
       }
     },
     default: 'one',
-    close: async (html) => {
+    close: async () => {
       if (confirmed) {
         const selectedUserIds = Array.from(
           document.querySelectorAll('input[type=checkbox]:checked')
@@ -685,11 +670,11 @@ export async function richiediProva() {
   let confirmed = false;
 
   new Dialog({
-    title: 'Richiedi una prova',
+    title: game.i18n.localize('DECK_OF_DESTINY.dialogs.requestTest.title'),
     content: `
       <form>
         <div class="form-group">
-          <label>Motivo:</label>
+          <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.requestTest.reason')}</label>
           <input id="reason" name="reason" autofocus onFocus="select()" tabindex="1" type="text"></input>
         </div>
       </form>
@@ -697,12 +682,12 @@ export async function richiediProva() {
     buttons: {
       one: {
         icon: '<i class="fas fa-check"></i>',
-        label: 'Richiedi',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.request'),
         callback: () => (confirmed = true)
       },
       two: {
         icon: '<i class="fas fa-times"></i>',
-        label: 'Annulla',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.cancel'),
         callback: () => (confirmed = false)
       }
     },
@@ -710,34 +695,51 @@ export async function richiediProva() {
     close: async (html) => {
       if (confirmed) {
         const reason = html.find('[name=reason]')[0].value ?? '';
-        Requestor.request({
-          description: `
-            <h3>Il Narratore sta richiedendo una prova!</h3>
+
+        const messageContent = `
+          <div>
+            <h1>${game.i18n.localize('DECK_OF_DESTINY.messages.requestTest.title')}</h1>
             <p>${reason}</p>
-          `,
-          img: 'icons/svg/card-hand.svg',
-          title: 'Componi il mazzo!',
-          buttonData: [
-            {
-              label: 'Aggiungi Carte',
-              command: async () => {
-                game.macros.find((k, v) => k.name === 'Aggiungi al mazzo').execute();
-              }
-            },
-            {
-              label: 'Vedi il Mazzo',
-              command: async () => {
-                pile.sheet.render(true);
-              }
-            },
-            {
-              label: 'Pesca',
-              command: async () => {
-                game.macros.find((k, v) => k.name === 'Pesca').execute();
-                hand.sheet.render(true);
-              }
-            }
-          ]
+            <div class="dod-macro-buttons">
+              <button class="dod-prova-btn" data-action="add-cards" style="background: linear-gradient(180deg, #aaffaa 50%, #009900 100%); border: 1px solid #009900;"">
+                <i class="fas fa-plus"></i> ${game.i18n.localize('DECK_OF_DESTINY.messages.requestTest.addCards')}
+              </button>
+              <button class="dod-prova-btn" data-action="view-deck" style="background: linear-gradient(180deg, #8c4aff 50%, #4a0099 100%); border: 1px solid #4a0099;"">
+                <i class="fas fa-eye"></i> ${game.i18n.localize('DECK_OF_DESTINY.chat.buttons.viewDeck')}
+              </button>
+              <button class="dod-prova-btn" data-action="draw" style="background: linear-gradient(180deg, #aac8ff 50%, #003699 100%); border: 1px solid #003699;"">
+                <i class="fas fa-draw-polygon"></i> ${game.i18n.localize('DECK_OF_DESTINY.actions.draw')}
+              </button>
+            </div>
+          </div>
+        `;
+
+        const message = await ChatMessage.create({
+          user: game.user._id,
+          content: messageContent,
+          speaker: {
+            actor: null,
+            token: null,
+            alias: game.user.name
+          }
+        });
+
+        // Handle button clicks using jQuery event delegation on the chat log
+        $(document).on('click', `li[data-message-id="${message.id}"] .dod-prova-btn`, async (event) => {
+          event.preventDefault();
+          const action = $(event.currentTarget).data('action');
+
+          switch (action) {
+            case 'add-cards':
+              await game.dod.macros.aggiungiAlMazzo();
+              break;
+            case 'view-deck':
+              pile.sheet.render(true);
+              break;
+            case 'draw':
+              await game.dod.macros.pesca();
+              break;
+          }
         });
       }
     }
@@ -749,18 +751,17 @@ export async function richiediProva() {
  * Returns all cards to the main deck.
  */
 export async function svuotaMazzo() {
-  // GM-only safeguard
   if (!game.user?.isGM) {
-    ui.notifications.warn('Only the GM can empty the deck.');
+    ui.notifications.warn(game.i18n.localize('DECK_OF_DESTINY.messages.warnings.onlyGMEmpty'));
     return;
   }
   const deck = game.cards.getName('DoD - lista carte');
   await deck.recall({ chatNotification: false });
   ChatMessage.create({
     user: game.user.id,
-    content: `<p><strong>Mazzo svuotato:</strong> tutte le carte sono state richiamate</p>`
+    content: `<p><strong>${game.i18n.localize('DECK_OF_DESTINY.messages.info.deckEmptiedTitle')}</strong> ${game.i18n.localize('DECK_OF_DESTINY.messages.info.deckEmptied')}</p>`
   });
-  ui.notifications.info('Il mazzo è stato svuotato.');
+  ui.notifications.info(game.i18n.localize('DECK_OF_DESTINY.messages.info.deckEmptiedToast'));
 }
 
 /**
@@ -770,11 +771,10 @@ export async function svuotaMazzo() {
 export async function tiroDifesa() {
   let confirmed = false;
 
-  // Dialog content HTML
   const dialogContent = `
     <form>
       <div class="form-group">
-        <label>Danni subiti:</label>
+        <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.defenseRoll.damageTaken')}</label>
         <input 
           id="dmg" 
           name="dmg" 
@@ -787,7 +787,7 @@ export async function tiroDifesa() {
         />
       </div>
       <div class="form-group">
-        <label>Dadi aggiuntivi:</label>
+        <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.defenseRoll.additionalDice')}</label>
         <input 
           id="additional" 
           name="additional" 
@@ -798,29 +798,29 @@ export async function tiroDifesa() {
         />
       </div>
       <div class="form-group">
-        <label>Coeff. di Assorbimento:</label>
+        <label>${game.i18n.localize('DECK_OF_DESTINY.dialogs.defenseRoll.absorptionCoeff')}</label>
         <select name="defense" id="defense" tabindex="3">
-          <option value="1">Base</option>
-          <option value="2">Leggero</option>
-          <option value="3">Medio</option>
-          <option value="4">Alto</option>
+          <option value="1">${game.i18n.localize('DECK_OF_DESTINY.attributes.absorption.0.label')}</option>
+          <option value="2">${game.i18n.localize('DECK_OF_DESTINY.attributes.absorption.1.label')}</option>
+          <option value="3">${game.i18n.localize('DECK_OF_DESTINY.attributes.absorption.2.label')}</option>
+          <option value="4">${game.i18n.localize('DECK_OF_DESTINY.attributes.absorption.3.label')}</option>
         </select>
       </div>
     </form>
   `;
 
   new Dialog({
-    title: 'Tiro Difesa',
+    title: game.i18n.localize('DECK_OF_DESTINY.actions.defense_roll'),
     content: dialogContent,
     buttons: {
       one: {
         icon: '<i class="fas fa-check"></i>',
-        label: 'Tira',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.roll'),
         callback: () => (confirmed = true)
       },
       two: {
         icon: '<i class="fas fa-times"></i>',
-        label: 'Annulla',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.cancel'),
         callback: () => (confirmed = false)
       }
     },
@@ -842,16 +842,21 @@ export async function tiroDifesa() {
           })
           .join('');
 
-        // Build chat message HTML
         const absorbed = r.result;
-        const damageWord = dmg > 1 ? 'danni' : 'danno';
+        const damageKey = dmg > 1
+          ? 'DECK_OF_DESTINY.messages.defenseRoll.damagePlural'
+          : 'DECK_OF_DESTINY.messages.defenseRoll.damageSingular';
+
+        const damageLabel = game.i18n.localize(damageKey);
+        const summaryHtml = game.i18n.format('DECK_OF_DESTINY.messages.defenseRoll.summary', {
+          absorbed,
+          damage: dmg,
+          damageLabel
+        });
+
         const chatContent = `
-          <h2>Tiro Difesa</h2>
-          <p>
-            Hai assorbito 
-            <span style="font-size: large; font-weight: bold;">${absorbed}</span> 
-            su ${dmg} ${damageWord}
-          </p>
+          <h2>${game.i18n.localize('DECK_OF_DESTINY.actions.defense_roll')}</h2>
+          ${summaryHtml}
           <div class="dice-tooltip expanded" style="display: block;">
             <section class="tooltip-part">
               <div class="dice">

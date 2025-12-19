@@ -185,25 +185,25 @@ export async function decreaseItemValue(sheet, event) {
 }
 
 export function editOnRightClick(sheet, ev) {
-    ev.preventDefault();
-    ev.stopPropagation();
+  ev.preventDefault();
+  ev.stopPropagation();
 
-    const nameDiv = $(ev.currentTarget);
-    const li = nameDiv.closest('li.item');
+  const nameDiv = $(ev.currentTarget);
+  const li = nameDiv.closest('li.item');
 
-    // ignore header rows and special condition rows
-    if (
-        li.hasClass('inventory-header') ||
-        li.hasClass('items-header') ||
-        li.hasClass('condition')
-    )
-        return;
+  // ignore header rows and special condition rows
+  if (
+    li.hasClass('inventory-header') ||
+    li.hasClass('items-header') ||
+    li.hasClass('condition')
+  )
+    return;
 
-    const item = sheet.actor.items.get(li.data('itemId'));
-    if (!item) return;
+  const item = sheet.actor.items.get(li.data('itemId'));
+  if (!item) return;
 
-    // Only open sheets for inventory ('item'), abilities and talents
-    if (['item', 'ability', 'talent', 'power'].includes(item.type)) {
-        item.sheet.render(true);
-    }
+  // Only open sheets for inventory ('item'), abilities and talents
+  if (['item', 'ability', 'talent', 'power'].includes(item.type)) {
+    item.sheet.render(true);
+  }
 }

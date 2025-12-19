@@ -30,31 +30,47 @@ Hooks.on('renderDeckOfDestinyActorSheet', (app, html) => {
   const healthMaxInput = html[0].querySelector('input[name="system.health.max"]');
 
   if (healthValueInput) {
-    healthValueInput.addEventListener('change', async (ev) => {
-      ev.stopImmediatePropagation();
-      ev.preventDefault();
-      await updateHealthField(ev.currentTarget);
-    }, true); // Capture phase
+    healthValueInput.addEventListener(
+      'change',
+      async (ev) => {
+        ev.stopImmediatePropagation();
+        ev.preventDefault();
+        await updateHealthField(ev.currentTarget);
+      },
+      true
+    ); // Capture phase
 
-    healthValueInput.addEventListener('blur', async (ev) => {
-      ev.stopImmediatePropagation();
-      ev.preventDefault();
-      await updateHealthField(ev.currentTarget);
-    }, true); // Capture phase
+    healthValueInput.addEventListener(
+      'blur',
+      async (ev) => {
+        ev.stopImmediatePropagation();
+        ev.preventDefault();
+        await updateHealthField(ev.currentTarget);
+      },
+      true
+    ); // Capture phase
   }
 
   if (healthMaxInput) {
-    healthMaxInput.addEventListener('change', async (ev) => {
-      ev.stopImmediatePropagation();
-      ev.preventDefault();
-      await updateHealthField(ev.currentTarget);
-    }, true); // Capture phase
+    healthMaxInput.addEventListener(
+      'change',
+      async (ev) => {
+        ev.stopImmediatePropagation();
+        ev.preventDefault();
+        await updateHealthField(ev.currentTarget);
+      },
+      true
+    ); // Capture phase
 
-    healthMaxInput.addEventListener('blur', async (ev) => {
-      ev.stopImmediatePropagation();
-      ev.preventDefault();
-      await updateHealthField(ev.currentTarget);
-    }, true); // Capture phase
+    healthMaxInput.addEventListener(
+      'blur',
+      async (ev) => {
+        ev.stopImmediatePropagation();
+        ev.preventDefault();
+        await updateHealthField(ev.currentTarget);
+      },
+      true
+    ); // Capture phase
   }
 
   // Prevent enter key from submitting form
@@ -65,4 +81,3 @@ Hooks.on('renderDeckOfDestinyActorSheet', (app, html) => {
     }
   });
 });
-
