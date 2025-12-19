@@ -1,5 +1,6 @@
 {
   "id": "dod",
+  "version": "1.0.2",
   "title": "Deck of Destiny",
   "description": "The Deck of Destiny system for FoundryVTT!",
   "authors": [
@@ -25,7 +26,6 @@
       "thumbnail": "systems/dod/assets/anvil-impact.png"
     }
   ],
-  "version": "1.0.0",
   "compatibility": {
     "minimum": 12,
     "verified": 13
