@@ -9,7 +9,7 @@
 .window-app.dod.sheet.item {
   .window-content {
     background-image: url('../ui/parchment.jpg'),
-    linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8));
+      linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8));
   }
 }
 
@@ -34,8 +34,7 @@
 .window-app.dod.sheet.actor {
   min-width: 1000px;
   min-height: 820px;
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
     url('../assets/background.png');
   background-size: cover;
   background-position: center;
