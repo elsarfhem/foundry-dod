@@ -754,7 +754,7 @@ export async function richiediProva() {
                   'DECK_OF_DESTINY.chat.buttons.viewDeck'
                 )}
               </button>
-              <button class="dod-prova-btn" data-action="draw" style="background: linear-gradient(180deg, #aac8ff 50%, #003699 100%); border: 1px solid #003699;"">
+              <button class="dod-prova-btn" data-action="draw" style="background: linear-gradient(180deg, #aac8ff 50%, #16448e 100%); border: 1px solid #16448e;"">
                 <i class="fas fa-draw-polygon"></i> ${game.i18n.localize(
                   'DECK_OF_DESTINY.actions.draw'
                 )}

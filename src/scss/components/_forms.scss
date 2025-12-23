@@ -25,7 +25,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 10px 20px;
 
     input {
       width: 50px;
@@ -36,9 +35,7 @@
 
   .header-cards {
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    margin-bottom: 0.5em;
+    align-items: baseline;
     position: relative;
     min-height: 0;
 
@@ -62,21 +59,17 @@
       border-radius: $border-radius-sm;
     }
 
-    .card-img {
-      height: 80px;
-      width: auto;
-      margin-bottom: 3px;
-    }
-
     .card {
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin: 0 14px;
 
       .card-img {
         height: 180px;
         width: auto;
         margin-bottom: 5px;
+        border-radius: $border-radius-md;
       }
 
       .manage-sheet-card {
@@ -104,52 +97,87 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-evenly;
+      justify-content: space-between;
 
       .card-button {
         border-radius: $border-radius-sm;
         padding: 10px 10px;
         border: none;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
 
         &:focus {
           outline: none;
         }
       }
 
-      .reset-sheet-cards {
+      .card-button.defense-roll {
+        background: linear-gradient(
+          180deg,
+          $c-button1-bg-light 50%,
+          $c-button1-bg 100%
+        );
+        border: 1px solid $c-button1-bg;
+
         &:hover {
-          background-color: $c-light-red;
-          box-shadow: none;
+          box-shadow: 0 0 5px $c-button1-bg;
         }
 
         &:active {
-          background-color: $c-red;
-          box-shadow: none;
+          box-shadow: 0 0 5px $c-button1-bg;
         }
       }
 
-      .add-sheet-cards-to-pile {
+      .card-button.draw-cards-from-pile {
+        background: linear-gradient(
+          180deg,
+          $c-button2-bg-light 50%,
+          $c-button2-bg 100%
+        );
+        border: 1px solid $c-button2-bg;
+
         &:hover {
-          background-color: $c-light-green;
-          box-shadow: none;
+          box-shadow: 0 0 5px $c-button2-bg;
         }
 
         &:active {
-          background-color: $c-green;
-          box-shadow: none;
+          box-shadow: 0 0 5px $c-button2-bg;
         }
       }
 
-      .draw-cards-from-pile {
+      .card-button.add-sheet-cards-to-pile {
+        background: linear-gradient(
+          180deg,
+          $c-button3-bg-light 50%,
+          $c-button3-bg 100%
+        );
+        border: 1px solid $c-button3-bg;
+
         &:hover {
-          background-color: $c-light-blue;
-          box-shadow: none;
+          box-shadow: 0 0 5px $c-button3-bg;
         }
 
         &:active {
-          background-color: $c-blue;
-          box-shadow: none;
+          box-shadow: 0 0 5px $c-button3-bg;
+        }
+      }
+
+      .card-button.reset-sheet-cards {
+        background: linear-gradient(
+          180deg,
+          $c-button5-bg-light 50%,
+          $c-button5-bg 100%
+        );
+        border: 1px solid $c-button5-bg;
+
+        &:hover {
+          box-shadow: 0 0 5px $c-button5-bg;
+        }
+
+        &:active {
+          box-shadow: 0 0 5px $c-button5-bg;
         }
       }
     }
@@ -238,9 +266,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    height: 0px;
     margin-top: -5px;
-    min-width: 40px;
 
     .xp-label {
       display: flex;
@@ -402,6 +428,7 @@
   font-size: medium;
   cursor: pointer;
   padding: 6px;
+  margin: 7px 0px;
 
   i {
     margin-right: 0.5rem;
