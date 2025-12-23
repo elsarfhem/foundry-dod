@@ -79,7 +79,8 @@
         "viewDeck": "Vedi il mazzo",
         "emptyDeck": "Svuota il mazzo",
         "divideFortune": "Dividi Fortuna",
-        "risk": "Rischia"
+        "risk": "Rischia",
+        "showItem": "Mostra in chat"
       },
       "titles": {
         "drawResult": "Risultato della Prova",

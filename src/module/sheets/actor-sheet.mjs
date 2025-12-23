@@ -161,6 +161,34 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     html.on('click', '.toggle-header-cards', (ev) => toggleHeaderCards(html, ev));
 
+    // Handle chat sharing for items, talents, abilities, and powers.
+    html.on('click', '.item-chat', async (ev) => {
+      ev.preventDefault();
+      const li = $(ev.currentTarget).closest('.item');
+      const item = this.actor.items.get(li.data('itemId'));
+      if (!item) return;
+
+      const safeName = foundry.utils.escapeHTML(item.name ?? '');
+      const img = item.img || Item.DEFAULT_ICON;
+      const description = await foundry.applications.ux.TextEditor.enrichHTML(item.system.description || '', {
+        async: false
+      });
+
+      const content = `
+        <div class="item-header">
+          <img src="${img}" alt="${safeName}" title="${safeName}" style="width:1.5em;height:1.5em;" />
+          <h2 style="margin:0;">${safeName}</h2>
+        </div>
+        <div>${description}</div>
+      `;
+
+      await ChatMessage.create({
+        user: game.user.id,
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content
+      });
+    });
+
     // -------------------------------------------------------------
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;

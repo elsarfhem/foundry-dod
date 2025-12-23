@@ -79,7 +79,8 @@
         "viewDeck": "View Deck",
         "emptyDeck": "Empty Deck",
         "divideFortune": "Divide Fortune",
-        "risk": "Risk"
+        "risk": "Risk",
+        "showItem": "Show in Chat"
       },
       "titles": {
         "drawResult": "Draw Result",

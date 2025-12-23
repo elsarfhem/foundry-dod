@@ -49,6 +49,10 @@
   }
 }
 
+.window-app.dod.sheet.item {
+  min-height: 480px;
+}
+
 .card-face {
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -73,6 +77,24 @@
 .card-draw,
 ol.items-list {
   overflow: visible !important;
+}
+
+.chat-message {
+  .item-header {
+    display:flex;
+    align-items: flex-start;
+    gap:0.3em;
+    margin-bottom: 5px;
+
+    img {
+      height: 2em;
+    }
+
+    h2 {
+        margin: 0;
+        font-size: 2.5em;
+    }
+  }
 }
 
 // Chat message buttons styling
