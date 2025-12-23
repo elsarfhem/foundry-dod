@@ -107,6 +107,39 @@ export async function deleteItemRow(sheet, event) {
   }
 }
 
+export async function confirmAndDeleteItem(sheet, event) {
+  event.preventDefault();
+  const li = $(event.currentTarget).closest('.item');
+  const item = sheet.actor.items.get(li.data('itemId'));
+  if (!item) return;
+
+  const itemName = item.name ?? '';
+
+  new Dialog({
+    title:
+      game.i18n.localize('DECK_OF_DESTINY.dialogs.confirmDeleteTitle') ||
+      'Confirm Deletion',
+    content: `<p>${game.i18n.format(
+      `DECK_OF_DESTINY.dialogs.confirmDeleteBody.${item.type}`,
+      { name: foundry.utils.escapeHTML(itemName) }
+    )}</p>`,
+    buttons: {
+      yes: {
+        icon: '<i class="fas fa-check"></i>',
+        label: game.i18n.localize('yes') || 'Yes',
+        callback: async () => {
+          await deleteItemRow(sheet, event);
+        }
+      },
+      no: {
+        icon: '<i class="fas fa-times"></i>',
+        label: game.i18n.localize('no') || 'No'
+      }
+    },
+    default: 'no'
+  }).render(true);
+}
+
 /**
  * @param {*} sheet
  * @param {Event} event
@@ -206,4 +239,34 @@ export function editOnRightClick(sheet, ev) {
   if (['item', 'ability', 'talent', 'power'].includes(item.type)) {
     item.sheet.render(true);
   }
+}
+
+export async function sendItemToChat(sheet, ev) {
+  ev.preventDefault();
+  const li = $(ev.currentTarget).closest('.item');
+  const item = sheet.actor.items.get(li.data('itemId'));
+  if (!item) return;
+
+  const safeName = foundry.utils.escapeHTML(item.name ?? '');
+  const img = item.img || Item.DEFAULT_ICON;
+  const description = await foundry.applications.ux.TextEditor.enrichHTML(
+    item.system.description || '',
+    {
+      async: false
+    }
+  );
+
+  const content = `
+        <div class="item-header">
+          <img src="${img}" alt="${safeName}" title="${safeName}" style="width:1.5em;height:1.5em;" />
+          <h2 style="margin:0;">${safeName}</h2>
+        </div>
+        <div>${description}</div>
+      `;
+
+  await ChatMessage.create({
+    user: game.user.id,
+    speaker: ChatMessage.getSpeaker({ actor: sheet.actor }),
+    content
+  });
 }
