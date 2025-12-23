@@ -170,9 +170,12 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
 
       const safeName = foundry.utils.escapeHTML(item.name ?? '');
       const img = item.img || Item.DEFAULT_ICON;
-      const description = await foundry.applications.ux.TextEditor.enrichHTML(item.system.description || '', {
-        async: false
-      });
+      const description = await foundry.applications.ux.TextEditor.enrichHTML(
+        item.system.description || '',
+        {
+          async: false
+        }
+      );
 
       const content = `
         <div class="item-header">
