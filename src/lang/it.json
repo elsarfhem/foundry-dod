@@ -79,7 +79,8 @@
         "viewDeck": "Vedi il mazzo",
         "emptyDeck": "Svuota il mazzo",
         "divideFortune": "Dividi Fortuna",
-        "risk": "Rischia"
+        "risk": "Rischia",
+        "showItem": "Mostra in chat"
       },
       "titles": {
         "drawResult": "Risultato della Prova",
@@ -211,7 +212,17 @@
         "divide": "Dividi",
         "request": "Richiedi",
         "roll": "Tira",
-        "cancel": "Annulla"
+        "cancel": "Annulla",
+        "yes": "Sì",
+        "no": "No"
+      },
+      "confirmDeleteTitle": "Conferma Eliminazione",
+      "confirmDeleteBody": {
+        "item": "Sei sicuro di voler eliminare l'oggetto \"{name}\"?",
+        "ability": "Sei sicuro di voler eliminare l'abilità \"{name}\"?",
+        "talent": "Sei sicuro di voler eliminare il talento \"{name}\"?",
+        "power": "Sei sicuro di voler eliminare il potere \"{name}\"?",
+        "attribute": "Sei sicuro di voler eliminare la risorsa \"{name}\"?"
       }
     },
     "messages": {

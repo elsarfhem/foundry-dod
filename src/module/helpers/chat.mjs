@@ -29,7 +29,7 @@ export function showChatRequest({ description, img, title, buttonData }) {
           return `
             <button 
               data-dod-macro-btn="${i}" 
-              style="background: linear-gradient(180deg, ${bgColor} 50%, ${borderColor} 100%); border-color: ${borderColor};"
+              style="background: linear-gradient(180deg, ${bgColor} 50%, ${borderColor} 100%); border: 1px solid ${borderColor};"
             >
               ${icon}${b.label}
             </button>

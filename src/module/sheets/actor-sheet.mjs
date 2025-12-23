@@ -1,9 +1,10 @@
 import {
   createItem,
   decreaseItemValue,
-  deleteItemRow,
   editOnRightClick,
-  increaseItemValue
+  increaseItemValue,
+  sendItemToChat,
+  confirmAndDeleteItem
 } from './actor-sheet/items.mjs';
 import {
   addCards,
@@ -161,6 +162,9 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     html.on('click', '.toggle-header-cards', (ev) => toggleHeaderCards(html, ev));
 
+    // Handle chat sharing for items, talents, abilities, and powers.
+    html.on('click', '.item-chat', async (ev) => sendItemToChat(this, ev));
+
     // -------------------------------------------------------------
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
@@ -185,7 +189,7 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
     html.on('click', '.item-create', (e) => createItem(this, e));
 
     // Delete Inventory Item
-    html.on('click', '.item-delete', async (e) => deleteItemRow(this, e));
+    html.on('click', '.item-delete', async (e) => confirmAndDeleteItem(this, e));
 
     // Add event listener to all input fields to handle keydown events
     html.find('input').on('keydown', this._onInputKeydown.bind(this));

@@ -79,7 +79,8 @@
         "viewDeck": "View Deck",
         "emptyDeck": "Empty Deck",
         "divideFortune": "Divide Fortune",
-        "risk": "Risk"
+        "risk": "Risk",
+        "showItem": "Show in Chat"
       },
       "titles": {
         "drawResult": "Draw Result",
@@ -211,7 +212,17 @@
         "divide": "Divide",
         "request": "Request",
         "roll": "Roll",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "yes": "Yes",
+        "no": "No"
+      },
+      "confirmDeleteTitle": "Confirm Deletion",
+      "confirmDeleteBody": {
+        "item": "Are you sure you want to delete the item \"{name}\"?",
+        "ability": "Are you sure you want to delete the ability \"{name}\"?",
+        "talent": "Are you sure you want to delete the talent \"{name}\"?",
+        "power": "Are you sure you want to delete the power \"{name}\"?",
+        "attribute": "Are you sure you want to delete the resource \"{name}\"?"
       }
     },
     "messages": {

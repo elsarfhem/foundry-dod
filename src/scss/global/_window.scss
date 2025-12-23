@@ -1,16 +1,5 @@
 .window-app {
   font-family: $font-primary;
-
-  .window-content {
-    background-image: none;
-  }
-}
-
-.window-app.dod.sheet.item {
-  .window-content {
-    background-image: url('../ui/parchment.jpg'),
-      linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8));
-  }
 }
 
 .rollable {
@@ -33,7 +22,7 @@
 
 .window-app.dod.sheet.actor {
   min-width: 1000px;
-  min-height: 820px;
+  min-height: 800px;
   background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
     url('../assets/background.png');
   background-size: cover;
@@ -48,12 +37,20 @@
     z-index: 1;
   }
 
+  .window-content {
+    background-image: none;
+  }
+
   .info-background {
     background-color: rgba(240, 240, 240, 0.55);
     padding: 0 0.5rem;
     border-radius: 0.5rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+}
+
+.window-app.dod.sheet.item {
+  min-height: 480px;
 }
 
 .card-face {
@@ -82,6 +79,24 @@ ol.items-list {
   overflow: visible !important;
 }
 
+.chat-message {
+  .item-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.3em;
+    margin-bottom: 5px;
+
+    img {
+      height: 2em;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+  }
+}
+
 // Chat message buttons styling
 .dod-macro-buttons {
   display: flex;
@@ -100,7 +115,6 @@ ol.items-list {
     line-height: 1.5;
     border-radius: $border-radius-sm;
     border: 1px solid #7a7971;
-    background: linear-gradient(180deg, #f0f0e0 0%, #d5d5c5 100%);
     color: #191813;
     font-weight: 500;
     cursor: pointer;
@@ -113,18 +127,8 @@ ol.items-list {
     &:hover {
       background: linear-gradient(180deg, #fafaf0 0%, #e0e0d0 100%);
       border-color: #5a5950;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-      transform: translateY(-1px);
-    }
-
-    &:active {
-      transform: translateY(0);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    }
-
-    &:focus {
-      outline: 2px solid #ff6400;
-      outline-offset: 2px;
+      box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.45);
+      transform: translateY(-2px);
     }
   }
 }
