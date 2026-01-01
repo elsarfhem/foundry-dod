@@ -93,7 +93,20 @@
   .item {
     align-items: center;
     padding: 1px 0;
+    border-radius: $border-radius-sm;
+
+    // Alternating row backgrounds for better readability
+    &:nth-child(odd) {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    &:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
     &:hover {
+      background-color: rgba(0, 0, 0, 0.09);
+
       .item-tooltip {
         @include show(0.8, 300ms, 1000ms);
       }
