@@ -49,6 +49,14 @@ export default class DeckOfDestinyCharacter extends DeckOfDestinyActorBase {
           min: 0,
           max: 3
         })
+      }),
+      dieHard: new fields.SchemaField({
+        value: new fields.NumberField({
+          ...requiredInteger,
+          initial: 0,
+          min: 0,
+          max: 3
+        })
       })
     });
 

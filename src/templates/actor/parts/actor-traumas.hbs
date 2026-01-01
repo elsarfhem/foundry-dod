@@ -1,13 +1,32 @@
+<div class="trauma-controls">
+  <label for="die-hard-level">{{localize 'DECK_OF_DESTINY.traumas.dieHard.label'}}</label>
+  <select
+    id="die-hard-level"
+    class="die-hard-select"
+    name="system.attributes.dieHard.value"
+  >
+    <option value="0" {{#if (eq system.attributes.dieHard.value 0)}}selected{{/if}}>
+      {{localize 'DECK_OF_DESTINY.traumas.dieHard.none'}}
+    </option>
+    <option value="1" {{#if (eq system.attributes.dieHard.value 1)}}selected{{/if}}>
+      {{localize 'DECK_OF_DESTINY.traumas.dieHard.one'}}
+    </option>
+    <option value="2" {{#if (eq system.attributes.dieHard.value 2)}}selected{{/if}}>
+      {{localize 'DECK_OF_DESTINY.traumas.dieHard.two'}}
+    </option>
+    <option value="3" {{#if (eq system.attributes.dieHard.value 3)}}selected{{/if}}>
+      {{localize 'DECK_OF_DESTINY.traumas.dieHard.three'}}
+    </option>
+  </select>
+</div>
 <div class="trauma-buttons">
   {{#each traumas as |item id|}}
   <div class="trauma-button trauma" data-item-id="{{item._id}}">
-    {{#if item.system.optional}}
-    <input type="checkbox" id="trauma-optional-{{id}}" class="trauma-optional-input" title="{{localize 'DECK_OF_DESTINY.tooltips.optionalTrauma'}}"
-      data-modifier="{{item.system.enabled}}" {{#if item.system.enabled}}checked{{/if}} />
-    {{/if}}
-    <input type="radio" {{#if item.system.enabled}}{{else}}disabled{{/if}} id="trauma-{{id}}" name="trauma"
-      class="trauma-input" data-modifier="{{item.system.value}}" {{#if item.system.selected}}checked{{/if}} />
+    {{#if item.system.enabled}}
+    <input type="radio" id="trauma-{{id}}" name="trauma"
+        class="trauma-input" data-modifier="{{item.system.value}}" {{#if item.system.selected}}checked{{/if}} />
     <label for="trauma-{{id}}">{{localize item.system.label}}</label>
+    {{/if}}
   </div>
   {{/each}}
 </div>

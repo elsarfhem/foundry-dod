@@ -25,16 +25,19 @@ export default class DeckOfDestinyTrauma extends DeckOfDestinyItemBase {
       min: -5
     });
 
+    // defines if the trauma is currently selected because the PC has a critical injury
     schema.selected = new fields.BooleanField({
       required: true,
       initial: false
     });
 
+    // defines if the trauma is optional (true) or mandatory (false). The Die Hard level only affects optional traumas
     schema.optional = new fields.BooleanField({
       required: true,
       initial: false
     });
 
+    // defines if the trauma is currently visible/enabled based on the Die Hard level
     schema.enabled = new fields.BooleanField({
       required: true,
       initial: false

@@ -24,7 +24,8 @@ import {
   changeConditionName,
   changeTrauma,
   toggleConditionDeadly,
-  toggleTraumaOptional
+  // toggleTraumaOptional,
+  applyDieHardLevel
 } from './actor-sheet/conditions-trauma.mjs';
 import { tiroDifesa } from '../globals.mjs';
 
@@ -124,6 +125,12 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
       } else if (i.type === 'condition') {
         conditions.push(i);
       } else if (i.type === 'trauma') {
+        //if die hard 0, disable optional traumas
+        if (this.actor.system.attributes.dieHard.value === 0) {
+          if (i.system.optional) {
+            i.system.enabled = false;
+          }
+        }
         traumas.push(i);
       } else if (i.type === 'attribute') {
         attributes.push(i);
@@ -265,8 +272,16 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
     // Handle trauma selection
     html.on('click', '.trauma-input', (e) => changeTrauma(this, e));
 
-    // Handle trauma optional toggle
-    html.on('click', '.trauma-optional-input', (e) => toggleTraumaOptional(this, e));
+    // Handle Die Hard level change
+    html.on('change', '.die-hard-select', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const level = Number(e.currentTarget.value) || 0;
+      // Apply effects to trauma items (enabled flags) to mimic old checkbox behavior
+      await applyDieHardLevel(this, level);
+      // Re-render just this fragment
+      this.render(false);
+    });
 
     // Drag events for macros.
     if (this.actor.isOwner) {
