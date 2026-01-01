@@ -158,6 +158,13 @@
       },
       "6": {
         "label": "Morente"
+      },
+      "dieHard": {
+        "label": "Duro a Morire",
+        "none": "Non selezionato",
+        "one": "Liv. 1",
+        "two": "Liv. 2",
+        "three": "Liv. 3"
       }
     },
     "types": {

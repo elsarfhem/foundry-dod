@@ -346,6 +346,24 @@
       text-align: right;
     }
 
+    .trauma-controls {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+
+      label {
+        white-space: nowrap;
+      }
+
+      .die-hard-select {
+        flex: 1;
+        max-width: 95px;
+        border-radius: $border-radius-sm;
+      }
+    }
+
     .trauma-buttons {
       display: flex;
       flex-direction: column;

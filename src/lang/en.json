@@ -158,6 +158,13 @@
       },
       "6": {
         "label": "Dying"
+      },
+      "dieHard": {
+        "label": "Die Hard",
+        "none": "Not selected",
+        "one": "Level 1",
+        "two": "Level 2",
+        "three": "Level 3"
       }
     },
     "types": {
