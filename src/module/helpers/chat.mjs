@@ -3,13 +3,41 @@ export function suitToName(suit) {
   return game.i18n.localize(key) || suit;
 }
 
+// Registry of available chat button actions
+const actionRegistry = {
+  viewHand: () => game.cards.getName('Mano')?.sheet.render(true),
+  viewDeck: () => game.cards.getName('Mazzo')?.sheet.render(true),
+  emptyDeck: () => game.dod?.macros?.svuotaMazzo?.(),
+  divideFortune: () => game.dod?.macros?.divisioneCarteFortuna?.(),
+  risk: () => game.dod?.macros?.rischia?.()
+};
+
+/**
+ * Initialize chat button click handler via event delegation.
+ * Call this once during system init.
+ */
+export function initChatListeners() {
+  Hooks.on('renderChatMessage', (message, html) => {
+    const buttons = html.find('button[data-dod-action]');
+    if (!buttons.length) return;
+
+    buttons.each((i, btn) => {
+      btn.addEventListener('click', () => {
+        const actionKey = btn.dataset.dodAction;
+        const action = actionRegistry[actionKey];
+        if (action) action();
+      });
+    });
+  });
+}
+
 /**
  * Generic chat message with interactive buttons.
  * @param {Object} opts
  * @param {string} opts.description - HTML description body.
  * @param {string} opts.img - Optional icon image.
  * @param {string} opts.title - Title of the message.
- * @param {Array<{label:string,action:function,icon?:string,color?:string}>} opts.buttonData - Buttons array.
+ * @param {Array<{label:string,actionKey:string,icon?:string,color?:string}>} opts.buttonData - Buttons array.
  */
 export function showChatRequest({ description, img, title, buttonData }) {
   const htmlContent = `
@@ -22,13 +50,13 @@ export function showChatRequest({ description, img, title, buttonData }) {
     <div>${description ?? ''}</div>
     <div class="dod-macro-buttons">
       ${(buttonData || [])
-        .map((b, i) => {
+        .map((b) => {
           const icon = b.icon ? `<i class="${b.icon}"></i> ` : '';
           const bgColor = b.color || '#f0f0e0';
           const borderColor = b.borderColor || '#7a7971';
           return `
             <button 
-              data-dod-macro-btn="${i}" 
+              data-dod-action="${b.actionKey}" 
               style="background: linear-gradient(180deg, ${bgColor} 50%, ${borderColor} 100%); border: 1px solid ${borderColor};"
             >
               ${icon}${b.label}
@@ -38,16 +66,7 @@ export function showChatRequest({ description, img, title, buttonData }) {
         .join('')}
     </div>
   `;
-  ChatMessage.create({ user: game.user.id, content: htmlContent }).then((msg) => {
-    Hooks.once('renderChatMessage', (message, html) => {
-      if (message.id !== msg.id) return;
-      html.find('button[data-dod-macro-btn]').each((i, btn) => {
-        btn.addEventListener('click', () => {
-          buttonData[i]?.action?.();
-        });
-      });
-    });
-  });
+  ChatMessage.create({ user: game.user.id, content: htmlContent });
 }
 
 /**
@@ -69,9 +88,6 @@ export function createDrawChat(drawCards, playersNum) {
     .map(([suit, num]) => `<li>${suitToName(suit)}: ${num}</li>`)
     .join('');
 
-  const hand = game.cards.getName('Mano');
-  const pile = game.cards.getName('Mazzo');
-
   const successCount = suitCounts.get('success') || 0;
   const failureCount = suitCounts.get('failure') || 0;
   const fortuneCount = suitCounts.get('fortune') || 0;
@@ -82,21 +98,21 @@ export function createDrawChat(drawCards, playersNum) {
       icon: 'fas fa-hand-paper',
       color: '#d9d7c8',
       borderColor: '#b5b3a4',
-      action: () => hand?.sheet.render(true)
+      actionKey: 'viewHand'
     },
     {
       label: game.i18n.localize('DECK_OF_DESTINY.chat.buttons.viewDeck'),
       icon: 'fas fa-eye',
       color: '#aaaaff',
       borderColor: '#0000cc',
-      action: () => pile?.sheet.render(true)
+      actionKey: 'viewDeck'
     },
     {
       label: game.i18n.localize('DECK_OF_DESTINY.chat.buttons.emptyDeck'),
       icon: 'fas fa-trash',
       color: '#ffaaaa',
       borderColor: '#cc0000',
-      action: () => game.dod?.macros?.svuotaMazzo?.()
+      actionKey: 'emptyDeck'
     }
   ];
   if (playersNum > 1 && fortuneCount > 0) {
@@ -105,7 +121,7 @@ export function createDrawChat(drawCards, playersNum) {
       icon: 'fas fa-share-alt',
       color: '#b7ffaa',
       borderColor: '#00ff3c',
-      action: () => game.dod?.macros?.divisioneCarteFortuna?.()
+      actionKey: 'divideFortune'
     });
   }
   if (successCount <= failureCount && failureCount <= successCount + fortuneCount) {
@@ -114,7 +130,7 @@ export function createDrawChat(drawCards, playersNum) {
       icon: 'fas fa-dice',
       color: '#ffccaa',
       borderColor: '#ff9900',
-      action: () => game.dod?.macros?.rischia?.()
+      actionKey: 'risk'
     });
   }
   showChatRequest({
