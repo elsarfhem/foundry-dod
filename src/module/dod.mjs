@@ -12,6 +12,7 @@ import './sheets/actor-sheet/name-player-lite.mjs';
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
 import { DECK_OF_DESTINY } from './helpers/config.mjs';
+import { initChatListeners } from './helpers/chat.mjs';
 // Import DataModel classes
 import * as models from './data/_module.mjs';
 import {
@@ -93,6 +94,9 @@ Hooks.once('init', function () {
     makeDefault: true,
     label: 'DECK_OF_DESTINY.sheet.labels.item'
   });
+
+  // Initialize chat button listeners for all players
+  initChatListeners();
 
   // Preload Handlebars templates.
   return preloadHandlebarsTemplates();
