@@ -6,7 +6,49 @@
       "reset": "Reset",
       "increase": "Increase",
       "decrease": "Decrease",
-      "defense_roll": "Defense Roll"
+      "defense_roll": "Defense Roll",
+      "delete": "Delete"
+    },
+    "NPC": {
+      "NamePlaceholder": "NPC Name",
+      "Progress": "Progress",
+      "Defeated": "DEFEATED",
+      "Depth": "Depth",
+      "Difficulty": "Difficulty",
+      "Dangerousness": "Dangerousness",
+      "LabelPlaceholder": "e.g., Easy, Medium, Hard",
+      "SuccessesRequired": "successes required",
+      "CurrentProgress": "Current Progress",
+      "Overview": "Overview",
+      "SpecialAttacks": "Special Attacks",
+      "AddAttack": "Add Attack",
+      "AttackName": "Attack Name",
+      "DamageBonus": "Damage Bonus",
+      "Description": "Description",
+      "Effect": "Effect",
+      "Damage": "damage",
+      "NoAttacks": "No special attacks yet. Click 'Add Attack' to create one.",
+      "StoryBackground": "Story, Background & Notes",
+      "Tabs": {
+        "Main": "Main",
+        "Attacks": "Attacks",
+        "Equipment": "Equipment",
+        "Notes": "Notes"
+      }
+    },
+    "difficulty": {
+      "facile": "Easy",
+      "normale": "Normal",
+      "difficile": "Hard",
+      "moltoDifficile": "Very Hard",
+      "estrema": "Extreme"
+    },
+    "dangerousness": {
+      "nessuno": "None",
+      "lieve": "Light",
+      "moderato": "Moderate",
+      "grave": "Serious",
+      "estremo": "Extreme"
     },
     "attributes": {
       "absorption": {

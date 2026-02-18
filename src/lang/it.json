@@ -6,7 +6,49 @@
       "reset": "Ripristina",
       "increase": "Aumenta",
       "decrease": "Diminuisci",
-      "defense_roll": "Tiro Difesa"
+      "defense_roll": "Tiro Difesa",
+      "delete": "Elimina"
+    },
+    "NPC": {
+      "NamePlaceholder": "Nome PNG",
+      "Progress": "Progresso",
+      "Defeated": "SCONFITTO",
+      "Depth": "Profondità",
+      "Difficulty": "Difficoltà",
+      "Dangerousness": "Pericolosità",
+      "LabelPlaceholder": "es., Facile, Medio, Difficile",
+      "SuccessesRequired": "successi richiesti",
+      "CurrentProgress": "Progresso Attuale",
+      "Overview": "Panoramica",
+      "SpecialAttacks": "Attacchi Speciali",
+      "AddAttack": "Aggiungi Attacco",
+      "AttackName": "Nome Attacco",
+      "DamageBonus": "Bonus Danno",
+      "Description": "Descrizione",
+      "Effect": "Effetto",
+      "Damage": "danno",
+      "NoAttacks": "Nessun attacco speciale. Clicca 'Aggiungi Attacco' per crearne uno.",
+      "StoryBackground": "Storia, Background e Note",
+      "Tabs": {
+        "Main": "Principale",
+        "Attacks": "Attacchi",
+        "Equipment": "Equipaggiamento",
+        "Notes": "Note"
+      }
+    },
+    "difficulty": {
+      "facile": "Facile",
+      "normale": "Normale",
+      "difficile": "Difficile",
+      "moltoDifficile": "Molto Difficile",
+      "estrema": "Estrema"
+    },
+    "dangerousness": {
+      "nessuno": "Nessuno",
+      "lieve": "Lieve",
+      "moderato": "Moderato",
+      "grave": "Grave",
+      "estremo": "Estremo"
     },
     "attributes": {
       "absorption": {

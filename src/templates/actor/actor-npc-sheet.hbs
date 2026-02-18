@@ -1,51 +1,183 @@
 <form class="{{cssClass}} {{actor.type}} flexcol" autocomplete="off">
 
   {{!-- Sheet Header --}}
-  <header class="sheet-header">
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
-    <div class="header-fields">
-      <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
-      {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
-      use both the "grid" and "grid-Ncol" class where "N" can be any number
-      from 1 to 12 and will create that number of columns.  --}}
-      <div class="resources grid grid-3col">
+  <header class="sheet-header npc-header">
+    <div class="profile-img-wrapper">
+      <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
+    </div>
 
-        {{!-- "flex-group-center" is also defined in the _grid.scss file
-        and it will add a small amount of padding, a border, and will
-        center all of its child elements content and text. --}}
-        <div class="resource flex-group-center">
-          <label for="system.health.value" class="resource-label">Health</label>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number"/>
-            <span> / </span>
-            <input type="text" name="system.health.max" value="{{system.health.max}}" data-dtype="Number"/>
+    <div class="header-fields info-background">
+      <h1 class="charname">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'DECK_OF_DESTINY.NPC.NamePlaceholder'}}"/>
+      </h1>
+
+      {{!-- Progress and Depth Row --}}
+      <div class="npc-row grid grid-2col">
+        {{!-- Progress Tracking --}}
+        <div class="npc-progress-section">
+          <div class="progress-controls flexrow">
+            <label class="progress-label">{{localize "DECK_OF_DESTINY.NPC.Progress"}}</label>
+            <div class="progress-buttons flexrow">
+              <button type="button" class="progress-decrement" data-action="decrement-success" title="{{localize 'DECK_OF_DESTINY.actions.decrease'}}">
+                <i class="fas fa-minus"></i>
+              </button>
+              <span class="progress-value">
+                {{system.currentSuccesses}} / {{system.depth}}
+              </span>
+              <button type="button" class="progress-increment" data-action="increment-success" title="{{localize 'DECK_OF_DESTINY.actions.increase'}}">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          {{!-- Progress Bar --}}
+          <div class="progress-bar-container">
+            <div class="progress-bar" style="width: {{system.progressPercent}}%">
+              {{#if system.isDefeated}}
+                <span class="progress-text defeated">{{localize "DECK_OF_DESTINY.NPC.Defeated"}}</span>
+              {{else}}
+                <span class="progress-text">{{system.progressPercent}}%</span>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+
+        {{!-- Depth --}}
+        <div class="stat-group flex-group-center">
+          <label for="system.depth">{{localize "DECK_OF_DESTINY.NPC.Depth"}}</label>
+          <input type="number" name="system.depth" value="{{system.depth}}" data-dtype="Number" min="1" max="20"/>
+        </div>
+      </div>
+
+      {{!-- Difficulty and Dangerousness Row --}}
+      <div class="npc-row grid grid-2col">
+        {{!-- Difficulty --}}
+        <div class="stat-group flex-group-center">
+          <label for="system.difficulty">{{localize "DECK_OF_DESTINY.NPC.Difficulty"}}</label>
+          <div class="stat-with-label flexcol">
+            <input type="number" name="system.difficulty" value="{{system.difficulty}}" data-dtype="Number" min="0"/>
+            <span class="stat-label-display">{{localize system.difficultyLabel}}</span>
+          </div>
+        </div>
+
+        {{!-- Dangerousness --}}
+        <div class="stat-group flex-group-center">
+          <label for="system.dangerousness">{{localize "DECK_OF_DESTINY.NPC.Dangerousness"}}</label>
+          <div class="stat-with-label flexcol">
+            <input type="number" name="system.dangerousness" value="{{system.dangerousness}}" data-dtype="Number" min="0"/>
+            <span class="stat-label-display">{{localize system.dangerousnessLabel}}</span>
           </div>
         </div>
       </div>
     </div>
   </header>
 
-  {{!-- Sheet Tab Navigation --}}
-  <nav class="sheet-tabs tabs" data-group="primary">
-    {{!-- Default tab is specified in actor-sheet.mjs --}}
-    <a class="item" data-tab="items">Inventory</a>
-    <a class="item" data-tab="description">Background</a>
-  </nav>
+  <section class="info-background">
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs light-bordered-section" data-group="primary">
+      <a class="item" data-tab="main">{{localize "DECK_OF_DESTINY.NPC.Tabs.Main"}}</a>
+      <a class="item" data-tab="attacks">{{localize "DECK_OF_DESTINY.NPC.Tabs.Attacks"}}</a>
+      <a class="item" data-tab="equipment">{{localize "DECK_OF_DESTINY.NPC.Tabs.Equipment"}}</a>
+      <a class="item" data-tab="notes">{{localize "DECK_OF_DESTINY.NPC.Tabs.Notes"}}</a>
+    </nav>
 
-  {{!-- Sheet Body --}}
-  <section class="sheet-body">
+    {{!-- Sheet Body --}}
+    <section class="sheet-body">
 
-    {{!-- Biography Tab --}}
-    <div class="tab biography" data-group="primary" data-tab="description">
-      {{!-- Editors must receive enriched text data from getData to properly handle rolls --}}
-      {{editor enrichedBiography target="system.biography" engine="prosemirror" button=true editable=editable}}
+    {{!-- Main Tab --}}
+    <div class="tab main-tab" data-group="primary" data-tab="main">
+      <div class="npc-main-content">
+        <h3>{{localize "DECK_OF_DESTINY.NPC.Overview"}}</h3>
+        <div class="overview-stats">
+          <p><strong>{{localize "DECK_OF_DESTINY.NPC.Depth"}}:</strong> {{system.depth}} {{localize "DECK_OF_DESTINY.NPC.SuccessesRequired"}}</p>
+          <p><strong>{{localize "DECK_OF_DESTINY.NPC.Difficulty"}}:</strong> {{system.difficulty}} ({{localize system.difficultyLabel}})</p>
+          <p><strong>{{localize "DECK_OF_DESTINY.NPC.Dangerousness"}}:</strong> {{system.dangerousness}} ({{localize system.dangerousnessLabel}})</p>
+          <p><strong>{{localize "DECK_OF_DESTINY.NPC.CurrentProgress"}}:</strong> {{system.currentSuccesses}} / {{system.depth}}</p>
+        </div>
+
+        {{#if system.specialAttacks.length}}
+        <div class="quick-attacks">
+          <h4>{{localize "DECK_OF_DESTINY.NPC.SpecialAttacks"}}</h4>
+          <ul class="attack-list">
+            {{#each system.specialAttacks as |attack index|}}
+            <li class="attack-item">
+              <div class="attack-header">
+                <strong class="attack-title">{{#if attack.name}}{{attack.name}}{{else}}{{localize "DECK_OF_DESTINY.NPC.AttackName"}}{{/if}}</strong>
+                {{#if (gt attack.damageBonus 0)}}
+                  <span class="damage-badge">+{{attack.damageBonus}} {{localize "DECK_OF_DESTINY.NPC.Damage"}}</span>
+                {{/if}}
+              </div>
+              {{#if attack.description}}
+                <div class="attack-description-preview">{{attack.description}}</div>
+              {{/if}}
+              {{#if attack.effect}}
+                <div class="attack-effect-preview"><em>{{localize "DECK_OF_DESTINY.NPC.Effect"}}:</em> {{attack.effect}}</div>
+              {{/if}}
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/if}}
+      </div>
     </div>
 
-    {{!-- Owned Items Tab --}}
-    <div class="tab items" data-group="primary" data-tab="items">
+    {{!-- Attacks Tab --}}
+    <div class="tab attacks-tab" data-group="primary" data-tab="attacks">
+      <div class="attacks-header flexrow">
+        <h3>{{localize "DECK_OF_DESTINY.NPC.SpecialAttacks"}}</h3>
+        <button type="button" class="add-attack light-bordered-section" data-action="add-attack">
+          <i class="fas fa-plus"></i> {{localize "DECK_OF_DESTINY.NPC.AddAttack"}}
+        </button>
+      </div>
+
+      <ol class="attacks-list">
+        {{#each system.specialAttacks as |attack index|}}
+        <li class="attack-entry" data-attack-index="{{index}}">
+          <div class="attack-controls">
+            <button type="button" class="attack-delete" data-action="delete-attack" data-index="{{index}}" title="{{localize 'DECK_OF_DESTINY.actions.delete'}}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+
+          <div class="attack-content">
+            <div class="attack-name-row flexrow">
+              <input type="text" name="system.specialAttacks.{{index}}.name" value="{{attack.name}}" placeholder="{{localize 'DECK_OF_DESTINY.NPC.AttackName'}}" class="attack-name-input"/>
+              <div class="attack-damage flexrow">
+                <label for="system.specialAttacks.{{index}}.damageBonus">{{localize "DECK_OF_DESTINY.NPC.DamageBonus"}}</label>
+                <input type="number" name="system.specialAttacks.{{index}}.damageBonus" value="{{attack.damageBonus}}" data-dtype="Number" min="0" class="damage-input"/>
+              </div>
+            </div>
+
+            <div class="attack-description">
+              <label for="system.specialAttacks.{{index}}.description">{{localize "DECK_OF_DESTINY.NPC.Description"}}</label>
+              <textarea name="system.specialAttacks.{{index}}.description" rows="2">{{attack.description}}</textarea>
+            </div>
+
+            <div class="attack-effect">
+              <label for="system.specialAttacks.{{index}}.effect">{{localize "DECK_OF_DESTINY.NPC.Effect"}}</label>
+              <textarea name="system.specialAttacks.{{index}}.effect" rows="2">{{attack.effect}}</textarea>
+            </div>
+          </div>
+        </li>
+        {{else}}
+        <li class="empty-list">
+          <p>{{localize "DECK_OF_DESTINY.NPC.NoAttacks"}}</p>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+
+    {{!-- Equipment Tab --}}
+    <div class="tab equipment-tab" data-group="primary" data-tab="equipment">
        {{> "systems/dod/src/templates/actor/parts/actor-items.hbs"}}
     </div>
 
+    {{!-- Notes Tab --}}
+    <div class="tab notes-tab" data-group="primary" data-tab="notes">
+      <h3>{{localize "DECK_OF_DESTINY.NPC.StoryBackground"}}</h3>
+      {{editor system.story target="system.story" engine="prosemirror" button=true editable=editable}}
+    </div>
+
+    </section>
   </section>
 </form>
-

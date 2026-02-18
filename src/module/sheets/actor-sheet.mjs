@@ -44,10 +44,15 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
         {
           navSelector: '.sheet-tabs',
           contentSelector: '.sheet-body',
-          initial: 'core'
+          initial: 'main'
         }
       ]
     });
+  }
+
+  /** @override */
+  get classes() {
+    return [...super.classes];
   }
 
   /** @override */
@@ -125,8 +130,11 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
       } else if (i.type === 'condition') {
         conditions.push(i);
       } else if (i.type === 'trauma') {
-        //if die hard 0, disable optional traumas
-        if (this.actor.system.attributes.dieHard.value === 0) {
+        //if die hard 0, disable optional traumas (character actors only)
+        if (
+          this.actor.type === 'character' &&
+          this.actor.system.attributes.dieHard.value === 0
+        ) {
           if (i.system.optional) {
             i.system.enabled = false;
           }
@@ -282,6 +290,49 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
       // Re-render just this fragment
       this.render(false);
     });
+
+    // NPC-specific event listeners
+    if (this.actor.type === 'npc') {
+      // Progress tracking increment/decrement
+      html.on('click', '.progress-increment', async (e) => {
+        e.preventDefault();
+        const current = this.actor.system.currentSuccesses;
+        const max = this.actor.system.depth;
+        if (current < max) {
+          await this.actor.update({ 'system.currentSuccesses': current + 1 });
+        }
+      });
+
+      html.on('click', '.progress-decrement', async (e) => {
+        e.preventDefault();
+        const current = this.actor.system.currentSuccesses;
+        if (current > 0) {
+          await this.actor.update({ 'system.currentSuccesses': current - 1 });
+        }
+      });
+
+      // Add special attack
+      html.on('click', '.add-attack', async (e) => {
+        e.preventDefault();
+        const attacks = [...this.actor.system.specialAttacks];
+        attacks.push({
+          name: '',
+          description: '',
+          effect: '',
+          damageBonus: 0
+        });
+        await this.actor.update({ 'system.specialAttacks': attacks });
+      });
+
+      // Delete special attack
+      html.on('click', '.attack-delete', async (e) => {
+        e.preventDefault();
+        const index = parseInt(e.currentTarget.dataset.index);
+        const attacks = [...this.actor.system.specialAttacks];
+        attacks.splice(index, 1);
+        await this.actor.update({ 'system.specialAttacks': attacks });
+      });
+    }
 
     // Drag events for macros.
     if (this.actor.isOwner) {
