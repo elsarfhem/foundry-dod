@@ -27,6 +27,7 @@ import {
   // toggleTraumaOptional,
   applyDieHardLevel
 } from './actor-sheet/conditions-trauma.mjs';
+import { activateNPCListeners } from './actor-sheet/npc.mjs';
 import { tiroDifesa } from '../globals.mjs';
 
 /**
@@ -293,45 +294,7 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     // NPC-specific event listeners
     if (this.actor.type === 'npc') {
-      // Progress tracking increment/decrement
-      html.on('click', '.progress-increment', async (e) => {
-        e.preventDefault();
-        const current = this.actor.system.currentSuccesses;
-        const max = this.actor.system.depth;
-        if (current < max) {
-          await this.actor.update({ 'system.currentSuccesses': current + 1 });
-        }
-      });
-
-      html.on('click', '.progress-decrement', async (e) => {
-        e.preventDefault();
-        const current = this.actor.system.currentSuccesses;
-        if (current > 0) {
-          await this.actor.update({ 'system.currentSuccesses': current - 1 });
-        }
-      });
-
-      // Add special attack
-      html.on('click', '.add-attack', async (e) => {
-        e.preventDefault();
-        const attacks = [...this.actor.system.specialAttacks];
-        attacks.push({
-          name: '',
-          description: '',
-          effect: '',
-          damageBonus: 0
-        });
-        await this.actor.update({ 'system.specialAttacks': attacks });
-      });
-
-      // Delete special attack
-      html.on('click', '.attack-delete', async (e) => {
-        e.preventDefault();
-        const index = parseInt(e.currentTarget.dataset.index);
-        const attacks = [...this.actor.system.specialAttacks];
-        attacks.splice(index, 1);
-        await this.actor.update({ 'system.specialAttacks': attacks });
-      });
+      activateNPCListeners(this, html);
     }
 
     // Drag events for macros.
