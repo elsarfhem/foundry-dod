@@ -27,6 +27,7 @@ import {
   // toggleTraumaOptional,
   applyDieHardLevel
 } from './actor-sheet/conditions-trauma.mjs';
+import { activateNPCListeners } from './actor-sheet/npc.mjs';
 import { tiroDifesa } from '../globals.mjs';
 
 /**
@@ -44,10 +45,15 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
         {
           navSelector: '.sheet-tabs',
           contentSelector: '.sheet-body',
-          initial: 'core'
+          initial: 'main'
         }
       ]
     });
+  }
+
+  /** @override */
+  get classes() {
+    return [...super.classes];
   }
 
   /** @override */
@@ -125,8 +131,11 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
       } else if (i.type === 'condition') {
         conditions.push(i);
       } else if (i.type === 'trauma') {
-        //if die hard 0, disable optional traumas
-        if (this.actor.system.attributes.dieHard.value === 0) {
+        //if die hard 0, disable optional traumas (character actors only)
+        if (
+          this.actor.type === 'character' &&
+          this.actor.system.attributes.dieHard.value === 0
+        ) {
           if (i.system.optional) {
             i.system.enabled = false;
           }
@@ -282,6 +291,11 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
       // Re-render just this fragment
       this.render(false);
     });
+
+    // NPC-specific event listeners
+    if (this.actor.type === 'npc') {
+      activateNPCListeners(this, html);
+    }
 
     // Drag events for macros.
     if (this.actor.isOwner) {
