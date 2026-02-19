@@ -286,7 +286,8 @@
       },
       "warnings": {
         "unequalCards": "Attenzione: il numero di successi e di fallimenti nella mano non sono uguali.",
-        "onlyGMEmpty": "Solo il GM può svuotare il mazzo."
+        "onlyGMEmpty": "Solo il GM può svuotare il mazzo.",
+        "operationInProgress": "Un'operazione con le carte è già in corso. Attendere."
       },
       "info": {
         "success": "Successi",

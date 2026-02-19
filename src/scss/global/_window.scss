@@ -130,6 +130,15 @@ ol.items-list {
       box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.45);
       transform: translateY(-2px);
     }
+
+    &:disabled,
+    &.dod-busy {
+      opacity: 0.5;
+      cursor: wait;
+      pointer-events: none;
+      transform: none;
+      box-shadow: none;
+    }
   }
 }
 

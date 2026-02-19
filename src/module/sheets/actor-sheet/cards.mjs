@@ -1,4 +1,9 @@
 import { createDrawChat } from '../../helpers/chat.mjs';
+import {
+  drawCards,
+  passCardsAndSync,
+  passCardsBySuitAndSync
+} from '../../helpers/card-utils.mjs';
 
 // Card management helpers
 /**
@@ -153,13 +158,15 @@ export async function addCardsToPile(sheet) {
     return ui.notifications.error(
       'The pile of cards is not available. Please make sure the pile is loaded.'
     );
-  const cards = getSheetCardsToAdd(deck, data);
-  if (!cards.length) return ui.notifications.warn('No available cards to add to pile.');
-  await deck.pass(
-    pile,
-    cards.map((c) => c.id),
-    { chatNotification: false }
-  );
+  // Build suit counts from actor card data for suit-based re-selection on retry
+  const suitCounts = {};
+  for (const [cardType, cardObj] of Object.entries(data)) {
+    const count = Math.max(0, cardObj.value + cardObj.modifier);
+    if (count > 0) suitCounts[cardType] = count;
+  }
+  if (!Object.keys(suitCounts).length)
+    return ui.notifications.warn('No available cards to add to pile.');
+  await passCardsBySuitAndSync(deck, pile, suitCounts, { chatNotification: false });
   notifyAddedCardsToChat(pile, data);
   await resetActorCards(sheet);
 }
@@ -208,12 +215,16 @@ export async function drawCardsFromPile() {
   if (confirmed) {
     const players = parseInt(document.querySelector('[name=num-players]').value) || 1;
     await passWhiteCardsToPile(deck, pile);
-    await hand.draw(pile, getCardsToDraw(pile.cards.size, players), {
-      how: CONST.CARD_DRAW_MODES.RANDOM,
-      chatNotification: false
-    });
-    const drawn = Array.from(hand.cards.values());
-    createDrawChat(drawn, players);
+    const drawnCards = await drawCards(
+      hand,
+      pile,
+      getCardsToDraw(pile.cards.size, players),
+      {
+        how: CONST.CARD_DRAW_MODES.RANDOM,
+        chatNotification: false
+      }
+    );
+    if (drawnCards.length) createDrawChat(drawnCards, players);
   }
 }
 
@@ -252,23 +263,6 @@ function isEmptyCardData(data) {
 /**
  *
  * @param {Object} deck
- * @param {Object} data
- * @return {Array}
- */
-function getSheetCardsToAdd(deck, data) {
-  const cards = [];
-  for (const [cardType, cardObj] of Object.entries(data)) {
-    cards.push(
-      ...deck.availableCards
-        .filter((c) => c.suit === cardType)
-        .slice(0, Math.max(0, cardObj.value + cardObj.modifier))
-    );
-  }
-  return cards;
-}
-/**
- *
- * @param {Object} deck
  * @param {Object} pile
  */
 async function passWhiteCardsToPile(deck, pile) {
@@ -276,7 +270,9 @@ async function passWhiteCardsToPile(deck, pile) {
   const whiteCards = deck.availableCards
     .filter((c) => c.suit === 'white')
     .slice(0, whiteCardsNum);
-  await deck.pass(
+  if (!whiteCards.length) return;
+  await passCardsAndSync(
+    deck,
     pile,
     whiteCards.map((c) => c.id),
     { chatNotification: false }
@@ -289,6 +285,21 @@ async function passWhiteCardsToPile(deck, pile) {
  * @param {*} data
  */
 function notifyAddedCardsToChat(pile, data) {
+  // Count cards by suit in the pile
+  const pileSuits = {
+    success: 0,
+    failure: 0,
+    issue: 0,
+    fortune: 0,
+    destiny: 0,
+    white: 0
+  };
+  for (const card of pile.cards) {
+    if (pileSuits[card.suit] !== undefined) {
+      pileSuits[card.suit]++;
+    }
+  }
+
   ChatMessage.create({
     user: game.user._id,
     content: `<p>I added to ${pile.link}: </p><ul><li>Success Cards: ${Math.max(
@@ -303,7 +314,11 @@ function notifyAddedCardsToChat(pile, data) {
       data.fortune.value + data.fortune.modifier
     )}</li><li>Destiny Cards: ${Math.max(
       data.destiny.value + data.destiny.modifier
-    )}</li></ul>`
+    )}</li></ul><p><strong>Pile totals - Success: ${pileSuits.success}, Failure: ${
+      pileSuits.failure
+    }, Issue: ${pileSuits.issue}, Fortune: ${pileSuits.fortune}, Destiny: ${
+      pileSuits.destiny
+    }, White: ${pileSuits.white}</strong></p>`
   });
 }
 
