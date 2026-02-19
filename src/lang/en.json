@@ -286,7 +286,8 @@
       },
       "warnings": {
         "unequalCards": "Warning: the number of successes and failures in hand is not equal.",
-        "onlyGMEmpty": "Only the GM can empty the deck."
+        "onlyGMEmpty": "Only the GM can empty the deck.",
+        "operationInProgress": "A card operation is already in progress. Please wait."
       },
       "info": {
         "success": "Successes",

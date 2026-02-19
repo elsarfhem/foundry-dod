@@ -9,7 +9,9 @@ const actionRegistry = {
   viewDeck: () => game.cards.getName('Mazzo')?.sheet.render(true),
   emptyDeck: () => game.dod?.macros?.svuotaMazzo?.(),
   divideFortune: () => game.dod?.macros?.divisioneCarteFortuna?.(),
-  risk: () => game.dod?.macros?.rischia?.()
+  risk: () => game.dod?.macros?.rischia?.(),
+  addCards: () => game.dod?.macros?.aggiungiAlMazzo?.(),
+  draw: () => game.dod?.macros?.pesca?.()
 };
 
 /**
@@ -22,10 +24,19 @@ export function initChatListeners() {
     if (!buttons.length) return;
 
     buttons.each((i, btn) => {
-      btn.addEventListener('click', () => {
-        const actionKey = btn.dataset.dodAction;
-        const action = actionRegistry[actionKey];
-        if (action) action();
+      btn.addEventListener('click', async (event) => {
+        const button = event.currentTarget;
+        if (button.disabled) return;
+        button.disabled = true;
+        button.classList.add('dod-busy');
+        try {
+          const actionKey = button.dataset.dodAction;
+          const action = actionRegistry[actionKey];
+          if (action) await action();
+        } finally {
+          button.disabled = false;
+          button.classList.remove('dod-busy');
+        }
       });
     });
   });

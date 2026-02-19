@@ -1,4 +1,9 @@
 import { createDrawChat } from '../../helpers/chat.mjs';
+import {
+  safeDraw,
+  safePassAndSync,
+  safePassBySuitAndSync
+} from '../../helpers/card-utils.mjs';
 
 // Card management helpers
 /**
@@ -153,13 +158,15 @@ export async function addCardsToPile(sheet) {
     return ui.notifications.error(
       'The pile of cards is not available. Please make sure the pile is loaded.'
     );
-  const cards = getSheetCardsToAdd(deck, data);
-  if (!cards.length) return ui.notifications.warn('No available cards to add to pile.');
-  await deck.pass(
-    pile,
-    cards.map((c) => c.id),
-    { chatNotification: false }
-  );
+  // Build suit counts from actor card data for suit-based re-selection on retry
+  const suitCounts = {};
+  for (const [cardType, cardObj] of Object.entries(data)) {
+    const count = Math.max(0, cardObj.value + cardObj.modifier);
+    if (count > 0) suitCounts[cardType] = count;
+  }
+  if (!Object.keys(suitCounts).length)
+    return ui.notifications.warn('No available cards to add to pile.');
+  await safePassBySuitAndSync(deck, pile, suitCounts, { chatNotification: false });
   notifyAddedCardsToChat(pile, data);
   await resetActorCards(sheet);
 }
@@ -208,12 +215,16 @@ export async function drawCardsFromPile() {
   if (confirmed) {
     const players = parseInt(document.querySelector('[name=num-players]').value) || 1;
     await passWhiteCardsToPile(deck, pile);
-    await hand.draw(pile, getCardsToDraw(pile.cards.size, players), {
-      how: CONST.CARD_DRAW_MODES.RANDOM,
-      chatNotification: false
-    });
-    const drawn = Array.from(hand.cards.values());
-    createDrawChat(drawn, players);
+    const drawCards = await safeDraw(
+      hand,
+      pile,
+      getCardsToDraw(pile.cards.size, players),
+      {
+        how: CONST.CARD_DRAW_MODES.RANDOM,
+        chatNotification: false
+      }
+    );
+    if (drawCards.length) createDrawChat(drawCards, players);
   }
 }
 
@@ -252,23 +263,6 @@ function isEmptyCardData(data) {
 /**
  *
  * @param {Object} deck
- * @param {Object} data
- * @return {Array}
- */
-function getSheetCardsToAdd(deck, data) {
-  const cards = [];
-  for (const [cardType, cardObj] of Object.entries(data)) {
-    cards.push(
-      ...deck.availableCards
-        .filter((c) => c.suit === cardType)
-        .slice(0, Math.max(0, cardObj.value + cardObj.modifier))
-    );
-  }
-  return cards;
-}
-/**
- *
- * @param {Object} deck
  * @param {Object} pile
  */
 async function passWhiteCardsToPile(deck, pile) {
@@ -276,7 +270,9 @@ async function passWhiteCardsToPile(deck, pile) {
   const whiteCards = deck.availableCards
     .filter((c) => c.suit === 'white')
     .slice(0, whiteCardsNum);
-  await deck.pass(
+  if (!whiteCards.length) return;
+  await safePassAndSync(
+    deck,
     pile,
     whiteCards.map((c) => c.id),
     { chatNotification: false }

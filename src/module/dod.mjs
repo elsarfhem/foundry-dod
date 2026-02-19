@@ -19,6 +19,7 @@ import {
   aggiungiAlMazzo,
   componiIlMazzoEPesca,
   divisioneCarteFortuna,
+  isCardOperationLocked,
   richiediProva,
   pesca,
   rischia,
@@ -36,6 +37,7 @@ Hooks.once('init', function () {
   game.dod = {
     DeckOfDestinyActor,
     DeckOfDestinyItem,
+    isCardOperationLocked,
     rollItemMacro,
     macros: {
       aggiungiAlMazzo,
