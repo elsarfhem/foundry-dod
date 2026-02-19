@@ -1,8 +1,8 @@
 import { createDrawChat } from '../../helpers/chat.mjs';
 import {
-  safeDraw,
-  safePassAndSync,
-  safePassBySuitAndSync
+  drawCards,
+  passCardsAndSync,
+  passCardsBySuitAndSync
 } from '../../helpers/card-utils.mjs';
 
 // Card management helpers
@@ -166,7 +166,7 @@ export async function addCardsToPile(sheet) {
   }
   if (!Object.keys(suitCounts).length)
     return ui.notifications.warn('No available cards to add to pile.');
-  await safePassBySuitAndSync(deck, pile, suitCounts, { chatNotification: false });
+  await passCardsBySuitAndSync(deck, pile, suitCounts, { chatNotification: false });
   notifyAddedCardsToChat(pile, data);
   await resetActorCards(sheet);
 }
@@ -215,7 +215,7 @@ export async function drawCardsFromPile() {
   if (confirmed) {
     const players = parseInt(document.querySelector('[name=num-players]').value) || 1;
     await passWhiteCardsToPile(deck, pile);
-    const drawCards = await safeDraw(
+    const drawnCards = await drawCards(
       hand,
       pile,
       getCardsToDraw(pile.cards.size, players),
@@ -224,7 +224,7 @@ export async function drawCardsFromPile() {
         chatNotification: false
       }
     );
-    if (drawCards.length) createDrawChat(drawCards, players);
+    if (drawnCards.length) createDrawChat(drawnCards, players);
   }
 }
 
@@ -271,7 +271,7 @@ async function passWhiteCardsToPile(deck, pile) {
     .filter((c) => c.suit === 'white')
     .slice(0, whiteCardsNum);
   if (!whiteCards.length) return;
-  await safePassAndSync(
+  await passCardsAndSync(
     deck,
     pile,
     whiteCards.map((c) => c.id),
@@ -285,6 +285,21 @@ async function passWhiteCardsToPile(deck, pile) {
  * @param {*} data
  */
 function notifyAddedCardsToChat(pile, data) {
+  // Count cards by suit in the pile
+  const pileSuits = {
+    success: 0,
+    failure: 0,
+    issue: 0,
+    fortune: 0,
+    destiny: 0,
+    white: 0
+  };
+  for (const card of pile.cards) {
+    if (pileSuits[card.suit] !== undefined) {
+      pileSuits[card.suit]++;
+    }
+  }
+
   ChatMessage.create({
     user: game.user._id,
     content: `<p>I added to ${pile.link}: </p><ul><li>Success Cards: ${Math.max(
@@ -299,7 +314,11 @@ function notifyAddedCardsToChat(pile, data) {
       data.fortune.value + data.fortune.modifier
     )}</li><li>Destiny Cards: ${Math.max(
       data.destiny.value + data.destiny.modifier
-    )}</li></ul>`
+    )}</li></ul><p><strong>Pile totals - Success: ${pileSuits.success}, Failure: ${
+      pileSuits.failure
+    }, Issue: ${pileSuits.issue}, Fortune: ${pileSuits.fortune}, Destiny: ${
+      pileSuits.destiny
+    }, White: ${pileSuits.white}</strong></p>`
   });
 }
 

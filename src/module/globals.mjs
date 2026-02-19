@@ -1,6 +1,6 @@
 import { getCardsToDraw } from './sheets/actor-sheet/cards.mjs';
 import { createDrawChat } from './helpers/chat.mjs';
-import { safePassBySuitAndSync, safeDraw } from './helpers/card-utils.mjs';
+import { passCardsBySuitAndSync, drawCards } from './helpers/card-utils.mjs';
 
 const suitToName = (suit) => {
   const key = `DECK_OF_DESTINY.cards.${suit}`;
@@ -123,7 +123,7 @@ export async function aggiungiAlMazzo() {
             fortuneCardsNum;
 
           if (totalCards > 0) {
-            await safePassBySuitAndSync(
+            await passCardsBySuitAndSync(
               deck,
               pile,
               {
@@ -287,7 +287,7 @@ export async function componiIlMazzoEPesca() {
             fortuneCardsNum;
 
           if (totalCards > 0) {
-            await safePassBySuitAndSync(
+            await passCardsBySuitAndSync(
               deck,
               pile,
               {
@@ -303,7 +303,7 @@ export async function componiIlMazzoEPesca() {
           }
 
           if (pile.cards.size > 0) {
-            const drawCards = await safeDraw(
+            const drawnCards = await drawCards(
               hand,
               pile,
               getCardsToDraw(pile.cards.size, playersNum),
@@ -312,7 +312,7 @@ export async function componiIlMazzoEPesca() {
                 chatNotification: false
               }
             );
-            createDrawChat(drawCards, playersNum);
+            createDrawChat(drawnCards, playersNum);
           }
         });
       }
@@ -407,7 +407,7 @@ export async function pesca() {
 
           if (totalCards === 0) return;
 
-          await safePassBySuitAndSync(
+          await passCardsBySuitAndSync(
             deck,
             pile,
             { white: whiteCardsNum },
@@ -415,7 +415,7 @@ export async function pesca() {
           );
 
           if (pile.cards.size > 0) {
-            const drawCards = await safeDraw(
+            const drawnCards = await drawCards(
               hand,
               pile,
               getCardsToDraw(pile.cards.size, playersNum),
@@ -424,7 +424,7 @@ export async function pesca() {
                 chatNotification: false
               }
             );
-            createDrawChat(drawCards, playersNum);
+            createDrawChat(drawnCards, playersNum);
           }
         });
       }
@@ -472,7 +472,7 @@ export async function rischia() {
     }
 
     let drawCard;
-    const drawCards = [];
+    const drawnCards = [];
     let cardsHtml = '';
     do {
       if (pile.cards.size === 0) {
@@ -481,19 +481,19 @@ export async function rischia() {
         );
         return;
       }
-      const drawn = await safeDraw(hand, pile, 1, {
+      const drawn = await drawCards(hand, pile, 1, {
         how: CONST.CARD_DRAW_MODES.RANDOM,
         chatNotification: false
       });
       [drawCard] = drawn || [];
       if (!drawCard) break;
-      drawCards.push(drawCard);
+      drawnCards.push(drawCard);
       console.log('you draw ' + drawCard);
     } while (drawCard.suit !== 'success' && drawCard.suit !== 'failure');
     if (drawCard) {
-      drawCards.sort((a, b) => a.suit.localeCompare(b.suit));
+      drawnCards.sort((a, b) => a.suit.localeCompare(b.suit));
       const map = new Map();
-      drawCards.forEach((card) => {
+      drawnCards.forEach((card) => {
         let cardTypeNum = map.get(card.suit);
         if (cardTypeNum > 0) {
           map.set(card.suit, ++cardTypeNum);
