@@ -252,7 +252,7 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
     // Defense roll button.
     html.on('click', '.defense-roll', async (event) => {
       event.target.blur(); // Remove focus from the button.
-      await tiroDifesa();
+      await tiroDifesa(this.actor);
     });
 
     // Characteristic value setting.
