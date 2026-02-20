@@ -1,7 +1,7 @@
 // Attribute and characteristic helpers
 
 /**
- *
+ * Increase an attribute value, respecting the maximum value defined in the schema
  * @param {*} sheet
  * @param {Event} event
  */
@@ -11,7 +11,16 @@ export async function increaseAttribute(sheet, event) {
   const attributeType = event.currentTarget.dataset.attributeType;
   const data = sheet.actor.toObject().system;
   const current = data.attributes[attributeType].value;
-  const newVal = current + 1;
+
+  // Get max value from schema (absorption and dieHard have max: 3)
+  const field = sheet.actor.system.schema.getField(`attributes.${attributeType}.value`);
+  const max = field?.max ?? Number.MAX_SAFE_INTEGER;
+
+  const newVal = Math.min(max, current + 1);
+
+  // Only update if value actually changed
+  if (newVal === current) return;
+
   await sheet.actor.update(
     { [`system.attributes.${attributeType}.value`]: newVal },
     { render: false }
@@ -20,7 +29,7 @@ export async function increaseAttribute(sheet, event) {
 }
 
 /**
- *
+ * Decrease an attribute value, respecting the minimum value defined in the schema
  * @param {*} sheet
  * @param {Event} event
  */
@@ -30,7 +39,16 @@ export async function decreaseAttribute(sheet, event) {
   const attributeType = event.currentTarget.dataset.attributeType;
   const data = sheet.actor.toObject().system;
   const current = data.attributes[attributeType].value;
-  const newVal = Math.max(0, current - 1);
+
+  // Get min value from schema (all attributes have min: 0)
+  const field = sheet.actor.system.schema.getField(`attributes.${attributeType}.value`);
+  const min = field?.min ?? 0;
+
+  const newVal = Math.max(min, current - 1);
+
+  // Only update if value actually changed
+  if (newVal === current) return;
+
   await sheet.actor.update(
     { [`system.attributes.${attributeType}.value`]: newVal },
     { render: false }
