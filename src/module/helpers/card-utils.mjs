@@ -147,3 +147,13 @@ export async function passCardsAndSync(source, target, cardIds, options = {}) {
   }
   return passed;
 }
+
+/**
+ * Calculate the number of cards to draw from the pile based on pile size and number of players.
+ * @param {number} pileSize - The number of cards in the pile.
+ * @param {number} players - The number of players.
+ * @returns {number} The number of cards to draw.
+ */
+export function getCardsToDraw(pileSize, players) {
+  return Math.max(1, Math.floor(pileSize / (4 + players)));
+}

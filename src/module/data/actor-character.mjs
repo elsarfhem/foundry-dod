@@ -40,7 +40,12 @@ export default class DeckOfDestinyCharacter extends DeckOfDestinyActorBase {
         value: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 })
       }),
       mitigation: new fields.SchemaField({
-        value: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 })
+        value: new fields.NumberField({
+          ...requiredInteger,
+          initial: 0,
+          min: 0,
+          max: 3
+        })
       }),
       absorption: new fields.SchemaField({
         value: new fields.NumberField({

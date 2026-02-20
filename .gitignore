@@ -14,3 +14,12 @@ node_modules
 # System "Packs" generated via build
 /packs
 foundry-dev.yaml
+
+# System "Docs" generated via build
+/docs
+
+# System "Claude" generated files
+/.claude/
+CLAUDE.md
+
+*.log

@@ -1,6 +1,10 @@
-import { getCardsToDraw } from './sheets/actor-sheet/cards.mjs';
+import {
+  getCardsToDraw,
+  passCardsBySuitAndSync,
+  drawCards
+} from './helpers/card-utils.mjs';
 import { createDrawChat } from './helpers/chat.mjs';
-import { passCardsBySuitAndSync, drawCards } from './helpers/card-utils.mjs';
+import { clearRoundState } from './helpers/draw-round.mjs';
 
 const suitToName = (suit) => {
   const key = `DECK_OF_DESTINY.cards.${suit}`;
@@ -30,7 +34,7 @@ export function isCardOperationLocked() {
  * @param {Function} fn - Async function to execute
  * @returns {Promise<*>} Result of fn, or undefined if locked
  */
-async function withCardLock(fn) {
+export async function withCardLock(fn) {
   if (_cardOperationInProgress) {
     ui.notifications.warn(
       game.i18n.localize('DECK_OF_DESTINY.messages.warnings.operationInProgress')
@@ -720,6 +724,9 @@ export async function richiediProva() {
     chatNotification: false
   });
 
+  // Clear the draw round state when starting a new test
+  await clearRoundState();
+
   let confirmed = false;
 
   new Dialog({
@@ -803,6 +810,10 @@ export async function svuotaMazzo() {
   return withCardLock(async () => {
     const deck = game.cards.getName('DoD - lista carte');
     await deck.recall({ chatNotification: false });
+
+    // Clear the draw round state
+    await clearRoundState();
+
     ChatMessage.create({
       user: game.user.id,
       content: `<p><strong>${game.i18n.localize(
@@ -820,9 +831,14 @@ export async function svuotaMazzo() {
 /**
  * Performs a defense roll with damage absorption.
  * Opens a dialog to configure damage, additional dice, and defense level.
+ * @param {Actor} actor - Optional actor to pre-select absorption coefficient
  */
-export async function tiroDifesa() {
+export async function tiroDifesa(actor = null) {
   let confirmed = false;
+
+  // Get actor's absorption value (0-3) and convert to select value (1-4)
+  const absorptionValue = actor?.system?.attributes?.absorption?.value ?? 0;
+  const selectedValue = absorptionValue + 1;
 
   const dialogContent = `
     <form>
@@ -830,14 +846,14 @@ export async function tiroDifesa() {
         <label>${game.i18n.localize(
           'DECK_OF_DESTINY.dialogs.defenseRoll.damageTaken'
         )}</label>
-        <input 
-          id="dmg" 
-          name="dmg" 
-          value="1" 
-          autofocus 
-          onFocus="select()" 
-          tabindex="1" 
-          type="number" 
+        <input
+          id="dmg"
+          name="dmg"
+          value="1"
+          autofocus
+          onFocus="select()"
+          tabindex="1"
+          type="number"
           min="1"
         />
       </div>
@@ -845,12 +861,12 @@ export async function tiroDifesa() {
         <label>${game.i18n.localize(
           'DECK_OF_DESTINY.dialogs.defenseRoll.additionalDice'
         )}</label>
-        <input 
-          id="additional" 
-          name="additional" 
-          value="0" 
-          tabindex="2" 
-          type="number" 
+        <input
+          id="additional"
+          name="additional"
+          value="0"
+          tabindex="2"
+          type="number"
           min="0"
         />
       </div>
@@ -859,18 +875,26 @@ export async function tiroDifesa() {
           'DECK_OF_DESTINY.dialogs.defenseRoll.absorptionCoeff'
         )}</label>
         <select name="defense" id="defense" tabindex="3">
-          <option value="1">${game.i18n.localize(
-            'DECK_OF_DESTINY.attributes.absorption.0.label'
-          )}</option>
-          <option value="2">${game.i18n.localize(
-            'DECK_OF_DESTINY.attributes.absorption.1.label'
-          )}</option>
-          <option value="3">${game.i18n.localize(
-            'DECK_OF_DESTINY.attributes.absorption.2.label'
-          )}</option>
-          <option value="4">${game.i18n.localize(
-            'DECK_OF_DESTINY.attributes.absorption.3.label'
-          )}</option>
+          <option value="1" ${
+            selectedValue === 1 ? 'selected' : ''
+          }>${game.i18n.localize(
+    'DECK_OF_DESTINY.attributes.absorption.0.label'
+  )}</option>
+          <option value="2" ${
+            selectedValue === 2 ? 'selected' : ''
+          }>${game.i18n.localize(
+    'DECK_OF_DESTINY.attributes.absorption.1.label'
+  )}</option>
+          <option value="3" ${
+            selectedValue === 3 ? 'selected' : ''
+          }>${game.i18n.localize(
+    'DECK_OF_DESTINY.attributes.absorption.2.label'
+  )}</option>
+          <option value="4" ${
+            selectedValue === 4 ? 'selected' : ''
+          }>${game.i18n.localize(
+    'DECK_OF_DESTINY.attributes.absorption.3.label'
+  )}</option>
         </select>
       </div>
     </form>
