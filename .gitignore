@@ -19,6 +19,7 @@ foundry-dev.yaml
 /docs
 
 # System "Claude" generated files
-.claude/
+/.claude/
+CLAUDE.md
 
 *.log
