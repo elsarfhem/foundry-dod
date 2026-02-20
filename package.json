@@ -13,6 +13,9 @@
     "lint": "prettier --check src/scss && eslint --ext .mjs --ignore-pattern .gitignore ./src/module",
     "lint:fix": "prettier --write src/scss && eslint --ext .mjs --ignore-pattern .gitignore ./src/module --fix",
     "watch": "sass src/scss/dod.scss styles/dod.css --style=expanded --source-map --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
     "prepare": "husky install",
     "postinstall": "node -e \"try { require('husky').install() } catch (e) { console.log('Skipped husky installation') }\""
   },
@@ -20,6 +23,7 @@
     "@foundryvtt/foundryvtt-cli": "^1.0.3",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
+    "@vitest/ui": "^4.0.18",
     "eslint": "^9.39.1",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.5.0",
@@ -28,6 +32,7 @@
     "husky": "^8.0.3",
     "prettier": "^2.8.1",
     "sass": "^1.53.0",
-    "semantic-release": "^23.1.1"
+    "semantic-release": "^23.1.1",
+    "vitest": "^4.0.18"
   }
 }

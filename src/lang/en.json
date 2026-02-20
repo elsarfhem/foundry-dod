@@ -312,6 +312,32 @@
         "damageSingular": "damage",
         "damagePlural": "damage",
         "summary": "<p>You absorbed <span style=\"font-size: large; font-weight: bold;\">{absorbed}</span> over {damage} {damageLabel}</p>"
+      },
+      "DrawRound": {
+        "Button": "Draw Cards",
+        "ButtonTooltip": "Draw your share of cards from the pile",
+        "YouDrew": "You drew {count} cards",
+        "PlayerDraw": "Player Draw",
+        "AddedCards": "Cards Added to Pile",
+        "Summary": {
+          "Title": "Draw Results",
+          "Speaker": "System",
+          "Cards": "cards",
+          "Total": "Total",
+          "Extracted": "cards drawn",
+          "TotalBySuit": "Total by suit",
+          "TestPassed": "✓ Test passed!",
+          "TestDeadlock": "⚡ Deadlock",
+          "TestFailed": "✗ Test failed!"
+        },
+        "Error": {
+          "PileNotFound": "The pile 'Mazzo' was not found",
+          "NotAdded": "You haven't added cards to the pile yet",
+          "AlreadyDrawn": "You've already drawn cards this round",
+          "NoCharacter": "You don't have a character assigned",
+          "NoHand": "Card hand 'Mano' not found in the game",
+          "DrawFailed": "Failed to draw cards from the pile"
+        }
       }
     }
   }

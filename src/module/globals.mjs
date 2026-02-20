@@ -1,6 +1,10 @@
-import { getCardsToDraw } from './sheets/actor-sheet/cards.mjs';
+import {
+  getCardsToDraw,
+  passCardsBySuitAndSync,
+  drawCards
+} from './helpers/card-utils.mjs';
 import { createDrawChat } from './helpers/chat.mjs';
-import { passCardsBySuitAndSync, drawCards } from './helpers/card-utils.mjs';
+import { clearRoundState } from './helpers/draw-round.mjs';
 
 const suitToName = (suit) => {
   const key = `DECK_OF_DESTINY.cards.${suit}`;
@@ -30,7 +34,7 @@ export function isCardOperationLocked() {
  * @param {Function} fn - Async function to execute
  * @returns {Promise<*>} Result of fn, or undefined if locked
  */
-async function withCardLock(fn) {
+export async function withCardLock(fn) {
   if (_cardOperationInProgress) {
     ui.notifications.warn(
       game.i18n.localize('DECK_OF_DESTINY.messages.warnings.operationInProgress')
@@ -720,6 +724,9 @@ export async function richiediProva() {
     chatNotification: false
   });
 
+  // Clear the draw round state when starting a new test
+  await clearRoundState();
+
   let confirmed = false;
 
   new Dialog({
@@ -803,6 +810,10 @@ export async function svuotaMazzo() {
   return withCardLock(async () => {
     const deck = game.cards.getName('DoD - lista carte');
     await deck.recall({ chatNotification: false });
+
+    // Clear the draw round state
+    await clearRoundState();
+
     ChatMessage.create({
       user: game.user.id,
       content: `<p><strong>${game.i18n.localize(

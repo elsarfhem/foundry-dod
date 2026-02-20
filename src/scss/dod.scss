@@ -22,3 +22,93 @@
   @import 'components/items';
   @import 'components/npc-sheet';
 }
+
+/* Draw round message styles - flex-based layout */
+.draw-message-content,
+.draw-summary-content,
+.add-cards-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.draw-info-row,
+.add-cards-header {
+  padding: 8px 10px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+
+  strong {
+    font-weight: bold;
+  }
+}
+
+.player-result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+  border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.player-result-row {
+  padding: 5px 0;
+
+  strong {
+    font-weight: bold;
+  }
+}
+
+/* Suit list styles with alternating row colors */
+ul.suit-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  width: 100%;
+
+  li {
+    padding: 5px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+    &:nth-child(odd) {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    &:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.test-result {
+  font-size: 1.2em;
+  text-align: center;
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 5px;
+
+  &.test-passed {
+    color: #2d7a2d;
+    background-color: rgba(45, 122, 45, 0.1);
+    border: 2px solid #2d7a2d;
+  }
+
+  &.test-deadlock {
+    color: #d97706;
+    background-color: rgba(217, 119, 6, 0.1);
+    border: 2px solid #d97706;
+  }
+
+  &.test-failed {
+    color: #b91c1c;
+    background-color: rgba(185, 28, 28, 0.1);
+    border: 2px solid #b91c1c;
+  }
+}

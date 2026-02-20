@@ -10,7 +10,7 @@ import {
   addCards,
   addCardsToPile,
   addSheetCard,
-  drawCardsFromPile,
+  drawCardsForPlayer,
   resetActorCards,
   subtractSheetCard,
   toggleHeaderCards
@@ -242,15 +242,11 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
       await addCardsToPile(this);
     });
 
-    // Draw cards from the pile.
-    html.on('mouseenter', '.draw-from-pile', () => {
-      if (document.activeElement && document.activeElement.tagName === 'INPUT') {
-        document.activeElement.blur(); // Remove focus from the active input element
-      }
-    });
-    html.on('click', '.draw-cards-from-pile', async (event) => {
+    // Draw cards for individual player (new draw round system).
+    html.on('click', '[data-action="draw-cards"]', async (event) => {
+      event.preventDefault();
       event.target.blur(); // Remove focus from the button.
-      await drawCardsFromPile(this);
+      await drawCardsForPlayer();
     });
 
     // Defense roll button.
