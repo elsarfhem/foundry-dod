@@ -317,10 +317,10 @@
         "Button": "Pesca Carte",
         "ButtonTooltip": "Pesca la tua parte di carte dal mazzo",
         "YouDrew": "Hai pescato {count} carte",
-        "PlayerDraw": "Pescaggio Giocatore",
+        "PlayerDraw": "Pescata Giocatore",
         "AddedCards": "Carte Aggiunte al Mazzo",
         "Summary": {
-          "Title": "Risultati Pescaggio",
+          "Title": "Risultati Pescata",
           "Speaker": "Sistema",
           "Cards": "carte",
           "Total": "Totale",
