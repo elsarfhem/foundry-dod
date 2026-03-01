@@ -192,8 +192,33 @@ export function isRoundComplete(state) {
  * @param {number} playerCount - Number of players
  * @returns {number} Cards to draw per player
  */
-export function calculateDrawCount(pileSize, playerCount) {
-  return getCardsToDraw(pileSize, playerCount);
+/**
+ * Calculate total cards to draw for all players combined
+ * Ensures at least one card per player while respecting the base formula
+ * @param {number} pileSize - Size of the pile
+ * @param {number} playerCount - Number of players
+ * @returns {number} Total cards to draw
+ */
+function getTotalCardsToDraw(pileSize, playerCount) {
+  const baseTotal = getCardsToDraw(pileSize, playerCount);
+  // Ensure at least 1 card per player
+  return Math.max(playerCount, baseTotal);
+}
+
+/**
+ * Calculate how many cards a specific player should draw
+ * @param {number} pileSize - Size of the pile
+ * @param {number} playerCount - Total number of players
+ * @param {number} playerIndex - Index of this player (0-based)
+ * @returns {number} Cards for this player to draw
+ */
+export function calculateDrawCount(pileSize, playerCount, playerIndex) {
+  const totalCards = getTotalCardsToDraw(pileSize, playerCount);
+  const baseCards = Math.floor(totalCards / playerCount);
+  const extraCards = totalCards % playerCount;
+
+  // First 'extraCards' players get one extra card
+  return playerIndex < extraCards ? baseCards + 1 : baseCards;
 }
 
 /**
@@ -308,11 +333,20 @@ export async function executePlayerDraw(userId) {
       };
     }
 
-    // Calculate draw count
-    const drawCount = calculateDrawCount(pile.cards.size, state.playersAdded.length);
+    // Calculate draw count for this player
+    // Find player index in the list to determine card distribution
+    const playerIndex = state.playersDrawn.length; // Current player is the Nth to draw
+    const drawCount = calculateDrawCount(
+      pile.cards.size,
+      state.playersAdded.length,
+      playerIndex
+    );
 
-    // Draw cards
-    const drawnCards = await drawCards(hand, pile, drawCount);
+    // Draw cards randomly
+    const drawnCards = await drawCards(hand, pile, drawCount, {
+      how: CONST.CARD_DRAW_MODES.RANDOM,
+      chatNotification: false
+    });
 
     if (!drawnCards || drawnCards.length === 0) {
       return {
