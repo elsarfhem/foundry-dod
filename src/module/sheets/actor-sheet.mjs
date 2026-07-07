@@ -91,7 +91,7 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
       ? getSpecialCardDefinitions(specialCardsDeck).map((d) => ({
           suit: d.suit,
           name: d.name,
-          img: d.img || 'icons/svg/card-hand.svg',
+          img: d.img,
           available: d.available
         }))
       : [];

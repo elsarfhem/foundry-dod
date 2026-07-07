@@ -1226,10 +1226,8 @@ export async function gestisciCarteSpeciali() {
         .map((d) => {
           const safeName = $('<div>').text(d.name).html();
           return `
-        <li data-suit="${
-          d.suit
-        }" style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
-          <img src="${d.img || 'icons/svg/card-hand.svg'}" width="32" height="32"/>
+        <li data-suit="${d.suit}" style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+          <img src="${d.img}" width="32" height="32"/>
           <span style="flex:1;">${safeName} (${d.available})</span>
           <button type="button" data-action="edit" data-suit="${d.suit}">
             <i class="fas fa-edit"></i>

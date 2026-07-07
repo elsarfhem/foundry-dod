@@ -14,6 +14,12 @@
 export const SPECIAL_SUIT_PREFIX = 'special:';
 
 /**
+ * Default card-front image used when the GM doesn't upload one.
+ * @type {string}
+ */
+export const DEFAULT_SPECIAL_CARD_IMG = 'cards/dark-gold/hearts-ace.webp';
+
+/**
  * Generate a new unique suit value for a special card definition.
  * @returns {string}
  */
@@ -48,7 +54,7 @@ export function getSpecialCardDefinitions(deck) {
         suit: card.suit,
         name: card.name,
         description: card.description,
-        img: card.faces?.[0]?.img ?? null,
+        img: card.faces?.[0]?.img || DEFAULT_SPECIAL_CARD_IMG,
         available: 0
       });
     }
@@ -72,7 +78,7 @@ export function buildSpecialCardData({ suit, name, description, img }) {
     suit,
     value: 0,
     back: { name: '', text: '', img: 'systems/dod/assets/cards/back.png' },
-    faces: [{ name, img: img || null, text: description }],
+    faces: [{ name, img: img || DEFAULT_SPECIAL_CARD_IMG, text: description }],
     face: 0,
     drawn: false
   };
@@ -118,7 +124,7 @@ export async function updateSpecialCardDefinition(
       _id: card.id,
       name,
       description,
-      faces: [{ name, img: img || null, text: description }]
+      faces: [{ name, img: img || DEFAULT_SPECIAL_CARD_IMG, text: description }]
     }));
     await doc.updateEmbeddedDocuments('Card', updates);
   }

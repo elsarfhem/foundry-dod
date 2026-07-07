@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { MockCard, MockCardsPile } from '../mocks/foundry.mjs';
 import {
   SPECIAL_SUIT_PREFIX,
+  DEFAULT_SPECIAL_CARD_IMG,
   generateSpecialSuit,
   isSpecialSuit,
   getSpecialCardDefinitions,
@@ -128,14 +129,14 @@ describe('special-cards: buildSpecialCardData', () => {
     expect(data.back.img).toBe('systems/dod/assets/cards/back.png');
   });
 
-  it('falls back to a null image when none is given', () => {
+  it('falls back to the default card image when none is given', () => {
     const data = buildSpecialCardData({
       suit: 'special:vento',
       name: 'Carta del Vento',
       description: 'Testo',
       img: ''
     });
-    expect(data.faces[0].img).toBe(null);
+    expect(data.faces[0].img).toBe(DEFAULT_SPECIAL_CARD_IMG);
   });
 });
 
