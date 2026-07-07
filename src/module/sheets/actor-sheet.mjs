@@ -192,6 +192,15 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
       toggleCollapsible(html, ev)
     );
 
+    // Always start the special-cards checklist collapsed on render, even if
+    // a previous render left it expanded (e.g. a non-forced re-render that
+    // preserves existing DOM state).
+    const $specialCardsList = html.find('.special-cards-list');
+    $specialCardsList.addClass('collapsed');
+    const $toggleSpecialCards = html.find('.toggle-special-cards');
+    $toggleSpecialCards.attr('aria-expanded', false);
+    $toggleSpecialCards.text($toggleSpecialCards.data('label-show'));
+
     // Handle chat sharing for items, talents, abilities, and powers.
     html.on('click', '.item-chat', async (ev) => sendItemToChat(this, ev));
 

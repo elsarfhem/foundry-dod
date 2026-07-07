@@ -350,9 +350,13 @@
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 8px;
-  // Match .header-cards' expand cap so both toggleable sections size
-  // consistently when fully expanded.
-  max-height: 500px;
+  // Match .header-cards' actual rendered height (measured, since its own
+  // max-height:500px is just an animation-friendly cap, not its real size)
+  // so both toggleable sections occupy the same visual space regardless of
+  // how many special cards are defined - short lists leave blank space,
+  // long lists scroll internally.
+  height: 241px;
+  max-height: 241px;
   overflow-y: auto;
   transition: max-height 0.3s ease, opacity 0.3s;
   opacity: 1;
