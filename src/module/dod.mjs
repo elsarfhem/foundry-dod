@@ -149,6 +149,20 @@ Handlebars.registerHelper('simplify', function (text, length) {
 Hooks.once('ready', function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on('hotbarDrop', (bar, data, slot) => createItemMacro(data, slot));
+
+  // Special cards move in and out of the master deck via macros
+  // (svuotaMazzo/aggiungiAlMazzo/etc.) and the "Gestisci carte speciali"
+  // dialog, none of which are the actor sheet itself. Re-render any open
+  // character sheet so its special-cards checklist (available copies,
+  // disabled state) reflects the master deck's current contents.
+  const refreshSpecialCardsChecklist = () => {
+    for (const app of Object.values(ui.windows)) {
+      if (app instanceof DeckOfDestinyActorSheet) app.render(false);
+    }
+  };
+  Hooks.on('createCard', refreshSpecialCardsChecklist);
+  Hooks.on('updateCard', refreshSpecialCardsChecklist);
+  Hooks.on('deleteCard', refreshSpecialCardsChecklist);
 });
 
 /* -------------------------------------------- */

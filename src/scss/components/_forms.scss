@@ -113,10 +113,19 @@
     }
 
     .card-buttons {
+      // Span every column of the parent .grid-6col row (was previously the
+      // 6th of 6 equal grid cells, stacking its buttons vertically in a
+      // narrow column; adding .special-cards-section above pushed it into
+      // the wrong position entirely). Now sits on its own full-width row
+      // below the special-cards section, with buttons laid out horizontally.
+      grid-column: 1 / -1;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      flex-wrap: wrap;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 0.5rem;
 
       .card-button {
         border-radius: $border-radius-sm;
@@ -339,6 +348,11 @@
 }
 
 .special-cards-section {
+  // Span every column of the parent .grid-6col row so this section sits on
+  // its own full-width row below the suit counters, instead of being
+  // squeezed into a single 1/6-width grid cell (which also pushed
+  // .card-buttons into the wrong position - see .card-buttons below).
+  grid-column: 1 / -1;
   width: 100%;
   margin-top: 0.5rem;
 
