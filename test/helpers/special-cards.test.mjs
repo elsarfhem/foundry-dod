@@ -117,6 +117,17 @@ describe('special-cards: buildSpecialCardData', () => {
     });
   });
 
+  it('always uses the default card-back image', () => {
+    const data = buildSpecialCardData({
+      suit: 'special:vento',
+      name: 'Carta del Vento',
+      description: 'Testo',
+      img: 'vento.png'
+    });
+
+    expect(data.back.img).toBe('systems/dod/assets/cards/back.png');
+  });
+
   it('falls back to a null image when none is given', () => {
     const data = buildSpecialCardData({
       suit: 'special:vento',

@@ -2,7 +2,7 @@
   "name": "Gestisci carte speciali",
   "type": "script",
   "author": "z3oC1uNtDP0TX1os",
-  "img": "icons/svg/mystery-man.svg",
+  "img": "icons/svg/card-hand.svg",
   "scope": "global",
   "command": "game.dod.macros.gestisciCarteSpeciali();",
   "folder": null,

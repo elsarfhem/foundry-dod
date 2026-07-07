@@ -71,7 +71,7 @@ export function buildSpecialCardData({ suit, name, description, img }) {
     description,
     suit,
     value: 0,
-    back: { name: '', text: '', img: null },
+    back: { name: '', text: '', img: 'systems/dod/assets/cards/back.png' },
     faces: [{ name, img: img || null, text: description }],
     face: 0,
     drawn: false

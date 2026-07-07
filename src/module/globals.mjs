@@ -1075,6 +1075,10 @@ function openSpecialCardForm({ deck, cardsDocuments, definition = null }) {
     const safeDescription = $('<div>')
       .text(definition?.description ?? '')
       .html();
+    const safeImg = $('<div>')
+      .text(definition?.img ?? '')
+      .html()
+      .replace(/"/g, '&quot;');
     new Dialog({
       title: isEdit
         ? game.i18n.localize('DECK_OF_DESTINY.dialogs.manageSpecialCards.editTitle')
@@ -1097,7 +1101,14 @@ function openSpecialCardForm({ deck, cardsDocuments, definition = null }) {
             <label>${game.i18n.localize(
               'DECK_OF_DESTINY.dialogs.manageSpecialCards.image'
             )}</label>
-            <input name="img" type="text" value="${definition?.img ?? ''}"/>
+            <div class="form-fields">
+              <input name="img" type="text" value="${safeImg}"/>
+              <button type="button" class="file-picker" data-type="image" data-target="img" title="${game.i18n.localize(
+                'DECK_OF_DESTINY.dialogs.manageSpecialCards.image'
+              )}">
+                <i class="fas fa-file-import fa-fw"></i>
+              </button>
+            </div>
           </div>
           <div class="form-group">
             <label>${game.i18n.localize(
@@ -1175,7 +1186,18 @@ function openSpecialCardForm({ deck, cardsDocuments, definition = null }) {
         }
       },
       default: 'save',
-      close: () => resolve()
+      close: () => resolve(),
+      render: (html) => {
+        html.find('.file-picker').on('click', (event) => {
+          const button = event.currentTarget;
+          const input = html.find(`[name="${button.dataset.target}"]`);
+          new FilePicker({
+            type: button.dataset.type,
+            current: input.val(),
+            callback: (path) => input.val(path)
+          }).browse();
+        });
+      }
     }).render(true);
   });
 }
