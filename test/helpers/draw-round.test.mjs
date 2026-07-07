@@ -16,17 +16,26 @@ import {
   countBySuit,
   recordPlayerAdded,
   executePlayerDraw,
-  generateSummary,
+  generateSummary
 } from '../../src/module/helpers/draw-round.mjs';
 import {
   createEmptyRoundState,
   createRoundWithPlayersAdded,
   createRoundWithSomeDrawn,
   createCompletedRoundState,
-  createInvalidRoundState,
+  createInvalidRoundState
 } from '../fixtures/round-states.mjs';
-import { createStandardTestCards, createLargePile, createCardsBySuit } from '../fixtures/card-data.mjs';
-import { MockCardsPile, MockActor, createCardsMap } from '../mocks/foundry.mjs';
+import {
+  createStandardTestCards,
+  createLargePile,
+  createCardsBySuit
+} from '../fixtures/card-data.mjs';
+import {
+  MockCardsPile,
+  MockActor,
+  createCardsMap,
+  createHandPile
+} from '../mocks/foundry.mjs';
 
 describe('draw-round: Pure Query Functions', () => {
   describe('canPlayerDraw', () => {
@@ -105,25 +114,42 @@ describe('draw-round: Pure Query Functions', () => {
   });
 
   describe('calculateDrawCount', () => {
-    it('should calculate correct draw count for standard 3-player game', () => {
-      expect(calculateDrawCount(21, 3)).toBe(3); // 21 / (4+3) = 3
+    // calculateDrawCount(pileSize, playerCount, playerIndex) returns ONE
+    // player's share of the round's total draw (see draw-round.mjs). Total
+    // for the round = max(playerCount, floor(pileSize / (4 + playerCount))),
+    // split evenly with the first `total % playerCount` players getting one
+    // extra card.
+    it('should split an evenly-divisible total equally for a 3-player game', () => {
+      // total = max(3, floor(21/7)) = 3; base = 1, extra = 0
+      expect(calculateDrawCount(21, 3, 0)).toBe(1);
+      expect(calculateDrawCount(21, 3, 1)).toBe(1);
+      expect(calculateDrawCount(21, 3, 2)).toBe(1);
     });
 
-    it('should calculate correct draw count for 4-player game', () => {
-      expect(calculateDrawCount(24, 4)).toBe(3); // 24 / (4+4) = 3
+    it('should split an evenly-divisible total equally for a 4-player game', () => {
+      // total = max(4, floor(24/8)) = 4; base = 1, extra = 0
+      expect(calculateDrawCount(24, 4, 0)).toBe(1);
+      expect(calculateDrawCount(24, 4, 3)).toBe(1);
     });
 
-    it('should return at least 1 card for small piles', () => {
-      expect(calculateDrawCount(5, 3)).toBe(1);
-      expect(calculateDrawCount(1, 5)).toBe(1);
+    it('should return at least 1 card per player for small piles', () => {
+      // total = max(3, floor(5/7)) = max(3, 1) = 3; base = 1, extra = 0
+      expect(calculateDrawCount(5, 3, 0)).toBe(1);
+      // total = max(5, floor(1/9)) = max(5, 1) = 5; base = 1, extra = 0
+      expect(calculateDrawCount(1, 5, 4)).toBe(1);
     });
 
-    it('should handle large piles', () => {
-      expect(calculateDrawCount(100, 3)).toBe(14); // 100 / 7 = 14
+    it('should distribute the remainder to the first players for large piles', () => {
+      // total = max(3, floor(100/7)) = 14; base = 4, extra = 2
+      expect(calculateDrawCount(100, 3, 0)).toBe(5);
+      expect(calculateDrawCount(100, 3, 1)).toBe(5);
+      expect(calculateDrawCount(100, 3, 2)).toBe(4);
     });
 
-    it('should handle 2-player game', () => {
-      expect(calculateDrawCount(18, 2)).toBe(3); // 18 / 6 = 3
+    it('should distribute the remainder to the first player in a 2-player game', () => {
+      // total = max(2, floor(18/6)) = 3; base = 1, extra = 1
+      expect(calculateDrawCount(18, 2, 0)).toBe(2);
+      expect(calculateDrawCount(18, 2, 1)).toBe(1);
     });
   });
 
@@ -152,7 +178,7 @@ describe('draw-round: Pure Query Functions', () => {
         { suit: 'hearts' },
         { _source: { suit: 'spades' } },
         { suit: 'hearts' },
-        {},
+        {}
       ];
       const counts = countBySuit(cards);
       expect(counts.hearts).toBe(2);
@@ -177,7 +203,7 @@ describe('draw-round: State Management', () => {
       expect(state).toEqual({
         playersAdded: [],
         playersDrawn: [],
-        drawResults: [],
+        drawResults: []
       });
     });
 
@@ -226,7 +252,7 @@ describe('draw-round: State Management', () => {
       await pile.setFlag('dod', 'currentRound', {
         playersAdded: 'not-an-array',
         playersDrawn: [],
-        drawResults: [],
+        drawResults: []
       });
 
       expect(loadRoundState()).toBe(null);
@@ -356,10 +382,14 @@ describe('draw-round: State Mutations', () => {
     beforeEach(() => {
       // Set up a complete game environment for draw tests
       const pile = new MockCardsPile(createLargePile(21));
+      const hand = createHandPile();
       const actor = new MockActor('actor1', 'TestActor');
       actor._cards = new MockCardsPile([]);
 
-      game.cards = createCardsMap([['pile1', pile]]);
+      game.cards = createCardsMap([
+        ['pile1', pile],
+        ['hand1', hand]
+      ]);
       game.user.id = 'user1';
       game.user.name = 'Player1';
       game.user.character = actor;
@@ -382,16 +412,26 @@ describe('draw-round: State Mutations', () => {
 
     it('should error if player has already drawn', async () => {
       const pile = Array.from(game.cards.values())[0];
-      await pile.setFlag('dod', 'currentRound', createRoundWithSomeDrawn(['user1'], ['user1']));
+      await pile.setFlag(
+        'dod',
+        'currentRound',
+        createRoundWithSomeDrawn(['user1'], ['user1'])
+      );
 
       const result = await executePlayerDraw('user1');
       expect(result.success).toBe(false);
-      expect(result.error).toBe('DECK_OF_DESTINY.messages.DrawRound.Error.AlreadyDrawn');
+      expect(result.error).toBe(
+        'DECK_OF_DESTINY.messages.DrawRound.Error.AlreadyDrawn'
+      );
     });
 
     it('should draw cards and update state successfully', async () => {
       const pile = Array.from(game.cards.values())[0];
-      await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user1', 'user2', 'user3']));
+      await pile.setFlag(
+        'dod',
+        'currentRound',
+        createRoundWithPlayersAdded(['user1', 'user2', 'user3'])
+      );
 
       const result = await executePlayerDraw('user1');
       expect(result.success).toBe(true);
@@ -404,12 +444,16 @@ describe('draw-round: State Mutations', () => {
 
     it('should calculate correct draw count based on players', async () => {
       const pile = Array.from(game.cards.values())[0];
-      await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user1', 'user2', 'user3']));
+      await pile.setFlag(
+        'dod',
+        'currentRound',
+        createRoundWithPlayersAdded(['user1', 'user2', 'user3'])
+      );
 
       const result = await executePlayerDraw('user1');
       expect(result.success).toBe(true);
-      // 21 cards / (4+3 players) = 3 cards
-      expect(result.data.drawnCount).toBe(3);
+      // total = max(3, floor(21/7)) = 3; base = 1, extra = 0; first drawer gets 1
+      expect(result.data.drawnCount).toBe(1);
     });
 
     it('should store draw result with card data', async () => {
@@ -422,7 +466,10 @@ describe('draw-round: State Mutations', () => {
       const drawResult = state.drawResults[0];
 
       expect(drawResult.userId).toBe('user1');
-      expect(drawResult.userName).toBe('Player1');
+      // executePlayerDraw prefers the actor's name over the Foundry user's
+      // display name when a character is assigned (see beforeEach: the
+      // mock actor is named 'TestActor').
+      expect(drawResult.userName).toBe('TestActor');
       expect(drawResult.cards).toBeDefined();
       expect(drawResult.cards.length).toBeGreaterThan(0);
       expect(drawResult.suits).toBeDefined();
@@ -430,7 +477,11 @@ describe('draw-round: State Mutations', () => {
 
     it('should indicate round complete when last player draws', async () => {
       const pile = Array.from(game.cards.values())[0];
-      await pile.setFlag('dod', 'currentRound', createRoundWithSomeDrawn(['user1', 'user2'], ['user2']));
+      await pile.setFlag(
+        'dod',
+        'currentRound',
+        createRoundWithSomeDrawn(['user1', 'user2'], ['user2'])
+      );
 
       const result = await executePlayerDraw('user1');
       expect(result.success).toBe(true);
@@ -439,7 +490,11 @@ describe('draw-round: State Mutations', () => {
 
     it('should indicate round not complete when players remain', async () => {
       const pile = Array.from(game.cards.values())[0];
-      await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user1', 'user2', 'user3']));
+      await pile.setFlag(
+        'dod',
+        'currentRound',
+        createRoundWithPlayersAdded(['user1', 'user2', 'user3'])
+      );
 
       const result = await executePlayerDraw('user1');
       expect(result.success).toBe(true);
@@ -452,10 +507,14 @@ describe('draw-round: Integration Tests', () => {
   describe('Full round lifecycle', () => {
     beforeEach(() => {
       const pile = new MockCardsPile(createLargePile(30));
+      const hand = createHandPile();
       const actor = new MockActor('actor1', 'TestActor');
       actor._cards = new MockCardsPile([]);
 
-      game.cards = createCardsMap([['pile1', pile]]);
+      game.cards = createCardsMap([
+        ['pile1', pile],
+        ['hand1', hand]
+      ]);
       game.user.character = actor;
     });
 
@@ -545,10 +604,14 @@ describe('draw-round: Integration Tests', () => {
   describe('Edge cases', () => {
     it('should handle empty pile gracefully', async () => {
       const pile = new MockCardsPile([]);
+      const hand = createHandPile();
       const actor = new MockActor('actor1', 'TestActor');
       actor._cards = new MockCardsPile([]);
 
-      game.cards = createCardsMap([['pile1', pile]]);
+      game.cards = createCardsMap([
+        ['pile1', pile],
+        ['hand1', hand]
+      ]);
       game.user.id = 'user1';
       game.user.name = 'Player1';
       game.user.character = actor;
@@ -561,10 +624,14 @@ describe('draw-round: Integration Tests', () => {
 
     it('should handle single-player round', async () => {
       const pile = new MockCardsPile(createLargePile(10));
+      const hand = createHandPile();
       const actor = new MockActor('actor1', 'TestActor');
       actor._cards = new MockCardsPile([]);
 
-      game.cards = createCardsMap([['pile1', pile]]);
+      game.cards = createCardsMap([
+        ['pile1', pile],
+        ['hand1', hand]
+      ]);
       game.user.id = 'user1';
       game.user.name = 'Player1';
       game.user.character = actor;
@@ -590,9 +657,11 @@ describe('draw-round: Integration Tests', () => {
       const state = loadRoundState();
       expect(state.playersAdded.length).toBe(8);
 
-      // Verify draw count is reasonable
-      const drawCount = calculateDrawCount(48, 8);
-      expect(drawCount).toBe(4); // 48 / 12 = 4
+      // Verify per-player draw count: 48/(4+8)=4 baseline total, but the
+      // "at least 1 card per player" floor raises the total to 8, so each
+      // of the 8 players gets exactly 1 card.
+      const drawCount = calculateDrawCount(48, 8, 0);
+      expect(drawCount).toBe(1);
     });
   });
 });
@@ -613,7 +682,7 @@ describe('draw-round: generateSummary special card names', () => {
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
-        },
+        }
       };
     };
   });
@@ -638,12 +707,12 @@ describe('draw-round: generateSummary special card names', () => {
               id: 'card1',
               name: 'Carta del Vento',
               suit: 'special:vento',
-              img: 'vento.png',
-            },
+              img: 'vento.png'
+            }
           ],
-          suits: { 'special:vento': 1 },
-        },
-      ],
+          suits: { 'special:vento': 1 }
+        }
+      ]
     };
 
     await generateSummary(state);
