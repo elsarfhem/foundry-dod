@@ -350,7 +350,9 @@
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 8px;
-  max-height: 220px;
+  // Match .header-cards' expand cap so both toggleable sections size
+  // consistently when fully expanded.
+  max-height: 500px;
   overflow-y: auto;
   transition: max-height 0.3s ease, opacity 0.3s;
   opacity: 1;
