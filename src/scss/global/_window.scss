@@ -60,9 +60,9 @@
   // is required here: Foundry core ships an unlayered flex-image reset
   // (flex-shrink/flex-basis/max-width) that otherwise always wins over our
   // system-layer CSS regardless of selector specificity.
-  width: 60px !important;
+  width: 55px !important;
   height: 84px !important;
-  max-width: 60px !important;
+  max-width: 55px !important;
   flex: 0 0 auto !important;
   object-fit: contain;
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
@@ -100,7 +100,7 @@
     // end up with mismatched top edges (only their bottoms are aligned).
     min-height: calc(1.2em * 2);
     text-align: center;
-    max-width: 60px;
+    max-width: 55px;
     overflow-wrap: break-word;
   }
 }
