@@ -76,8 +76,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-right: 5px;
-  margin-bottom: 5px;
 
   .card-thumb-name {
     font-size: 0.7em;
@@ -96,9 +94,12 @@ ol.items-list {
 
 // Bottom-align card thumbnails (overrides Foundry's default .flexrow centering)
 // and wrap onto additional rows once a draw has too many cards for one line.
+// Uses `gap` (not per-item margins) so rows stay evenly spaced even when
+// thumbnails have different heights (e.g. a 1-line vs 2-line name caption).
 .card-draw.flexrow {
   align-items: flex-end;
   flex-wrap: wrap;
+  gap: 10px 6px;
 }
 
 .chat-message {
