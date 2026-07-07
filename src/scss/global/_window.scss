@@ -66,7 +66,7 @@
   }
 
   &:hover {
-    transform: scale(5) translateY(-10px);
+    transform: scale(2) translateY(-10px);
     box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
     z-index: 100;
   }
@@ -92,6 +92,11 @@
 .card-draw,
 ol.items-list {
   overflow: visible !important;
+}
+
+// Bottom-align card thumbnails (overrides Foundry's default .flexrow centering)
+.card-draw.flexrow {
+  align-items: flex-end;
 }
 
 .chat-message {
