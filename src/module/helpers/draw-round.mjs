@@ -428,9 +428,13 @@ function generatePlayerDrawMessage(drawResult, playersNum) {
         .replace('{count}', drawResult.cards.length)}</div>`
     );
 
-    // Add suit counts
+    // Add suit counts (name lookup lets special-card suits display by name)
+    const suitNames = new Map();
+    drawResult.cards.forEach((c) => {
+      if (!suitNames.has(c.suit)) suitNames.set(c.suit, c.name);
+    });
     const suitCounts = Object.entries(drawResult.suits)
-      .map(([suit, count]) => `${suitToName(suit)}: ${count}`)
+      .map(([suit, count]) => `${suitToName(suit, suitNames.get(suit))}: ${count}`)
       .join(', ');
     lines.push(`<div class="draw-info-row">${suitCounts}</div>`);
 
@@ -518,12 +522,16 @@ function generatePlayerDrawMessage(drawResult, playersNum) {
  */
 export async function generateSummary(state) {
   try {
-    // Calculate totals by suit
+    // Calculate totals by suit (name lookup lets special-card suits display by name)
     const totalSuits = {};
+    const suitNames = new Map();
     for (const result of state.drawResults) {
       for (const [suit, count] of Object.entries(result.suits)) {
         totalSuits[suit] = (totalSuits[suit] || 0) + count;
       }
+      result.cards.forEach((c) => {
+        if (!suitNames.has(c.suit)) suitNames.set(c.suit, c.name);
+      });
     }
 
     const successCount = totalSuits['success'] || totalSuits['Success'] || 0;
@@ -540,7 +548,7 @@ export async function generateSummary(state) {
       const safeName = $('<div>').text(result.userName).html();
 
       const suitCounts = Object.entries(result.suits)
-        .map(([suit, count]) => `${suitToName(suit)}: ${count}`)
+        .map(([suit, count]) => `${suitToName(suit, suitNames.get(suit))}: ${count}`)
         .join(', ');
 
       lines.push('<div class="player-result">');
@@ -576,7 +584,9 @@ export async function generateSummary(state) {
 
     // Format total by suit with localized names
     const totalBySuitFormatted = Object.entries(totalSuits)
-      .map(([suit, count]) => `<li>${suitToName(suit)}: ${count}</li>`)
+      .map(
+        ([suit, count]) => `<li>${suitToName(suit, suitNames.get(suit))}: ${count}</li>`
+      )
       .join('');
 
     lines.push(`<ul class="suit-list">${totalBySuitFormatted}</ul>`);

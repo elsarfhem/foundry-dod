@@ -3,7 +3,7 @@
  * Tests all 82 test cases from the test strategy
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   loadRoundState,
   saveRoundState,
@@ -16,6 +16,7 @@ import {
   countBySuit,
   recordPlayerAdded,
   executePlayerDraw,
+  generateSummary,
 } from '../../src/module/helpers/draw-round.mjs';
 import {
   createEmptyRoundState,
@@ -593,5 +594,62 @@ describe('draw-round: Integration Tests', () => {
       const drawCount = calculateDrawCount(48, 8);
       expect(drawCount).toBe(4); // 48 / 12 = 4
     });
+  });
+});
+
+describe('draw-round: generateSummary special card names', () => {
+  beforeEach(() => {
+    // Minimal jQuery-like stub for the `$('<div>').text(x).html()` HTML-escaping
+    // pattern used in draw-round.mjs (NFR #5).
+    global.$ = () => {
+      let text = '';
+      return {
+        text(value) {
+          text = value;
+          return this;
+        },
+        html() {
+          return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+        },
+      };
+    };
+  });
+
+  afterEach(() => {
+    delete global.$;
+  });
+
+  it('shows the special card name instead of the raw suit string in the posted summary', async () => {
+    const messages = [];
+    global.ChatMessage = { create: (data) => messages.push(data) };
+
+    const state = {
+      playersAdded: ['user1'],
+      playersDrawn: ['user1'],
+      drawResults: [
+        {
+          userId: 'user1',
+          userName: 'Player1',
+          cards: [
+            {
+              id: 'card1',
+              name: 'Carta del Vento',
+              suit: 'special:vento',
+              img: 'vento.png',
+            },
+          ],
+          suits: { 'special:vento': 1 },
+        },
+      ],
+    };
+
+    await generateSummary(state);
+
+    expect(messages).toHaveLength(1);
+    expect(messages[0].content).toContain('Carta del Vento');
+    expect(messages[0].content).not.toContain('special:vento:');
   });
 });

@@ -65,15 +65,16 @@ export async function aggiungiAlMazzo() {
         'DECK_OF_DESTINY.dialogs.createDeck.specialCardsSection'
       )}</strong></label></div>` +
       specialDefinitions
-        .map(
-          (d, i) => `
+        .map((d, i) => {
+          const safeName = $('<div>').text(d.name).html();
+          return `
           <div class="form-group">
-           <label>${d.name} (${d.available})</label>
+           <label>${safeName} (${d.available})</label>
            <input id="special-${i}" name="special-${i}" value="0" tabindex="${
             6 + i
           }" type="number" min="0" max="${d.available}"></input>
-          </div>`
-        )
+          </div>`;
+        })
         .join('')
     : '';
 
@@ -238,15 +239,16 @@ export async function componiIlMazzoEPesca() {
         'DECK_OF_DESTINY.dialogs.createDeck.specialCardsSection'
       )}</strong></label></div>` +
       specialDefinitions
-        .map(
-          (d, i) => `
+        .map((d, i) => {
+          const safeName = $('<div>').text(d.name).html();
+          return `
           <div class="form-group">
-           <label>${d.name} (${d.available})</label>
+           <label>${safeName} (${d.available})</label>
            <input id="special-${i}" name="special-${i}" value="0" tabindex="${
             7 + i
           }" type="number" min="0" max="${d.available}"></input>
-          </div>`
-        )
+          </div>`;
+        })
         .join('')
     : '';
 
@@ -1061,6 +1063,14 @@ export async function tiroDifesa(actor = null) {
 function openSpecialCardForm({ deck, cardsDocuments, definition = null }) {
   return new Promise((resolve) => {
     const isEdit = Boolean(definition);
+    // HTML-escape GM-controlled text before interpolating into the form
+    // (same pattern as draw-round.mjs's NFR #5 escaping).
+    const safeName = $('<div>')
+      .text(definition?.name ?? '')
+      .html();
+    const safeDescription = $('<div>')
+      .text(definition?.description ?? '')
+      .html();
     new Dialog({
       title: isEdit
         ? game.i18n.localize('DECK_OF_DESTINY.dialogs.manageSpecialCards.editTitle')
@@ -1071,15 +1081,13 @@ function openSpecialCardForm({ deck, cardsDocuments, definition = null }) {
             <label>${game.i18n.localize(
               'DECK_OF_DESTINY.dialogs.manageSpecialCards.name'
             )}</label>
-            <input name="name" type="text" value="${
-              definition?.name ?? ''
-            }" autofocus onFocus="select()"/>
+            <input name="name" type="text" value="${safeName}" autofocus onFocus="select()"/>
           </div>
           <div class="form-group">
             <label>${game.i18n.localize(
               'DECK_OF_DESTINY.dialogs.manageSpecialCards.power'
             )}</label>
-            <textarea name="description">${definition?.description ?? ''}</textarea>
+            <textarea name="description">${safeDescription}</textarea>
           </div>
           <div class="form-group">
             <label>${game.i18n.localize(
@@ -1189,21 +1197,22 @@ export async function gestisciCarteSpeciali() {
 
   const rows = definitions.length
     ? definitions
-        .map(
-          (d) => `
+        .map((d) => {
+          const safeName = $('<div>').text(d.name).html();
+          return `
         <li data-suit="${
           d.suit
         }" style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
           <img src="${d.img || 'icons/svg/card-hand.svg'}" width="32" height="32"/>
-          <span style="flex:1;">${d.name} (${d.available})</span>
+          <span style="flex:1;">${safeName} (${d.available})</span>
           <button type="button" data-action="edit" data-suit="${d.suit}">
             <i class="fas fa-edit"></i>
           </button>
           <button type="button" data-action="delete" data-suit="${d.suit}">
             <i class="fas fa-trash"></i>
           </button>
-        </li>`
-        )
+        </li>`;
+        })
         .join('')
     : `<li>${game.i18n.localize(
         'DECK_OF_DESTINY.dialogs.manageSpecialCards.noCards'
