@@ -32,26 +32,6 @@
       </div>
     </div>
   {{/each}}
-  <div class="special-cards-section">
-    <button type="button" class="toggle-special-cards" data-target=".special-cards-list"
-      aria-expanded="false" data-label-show="{{localize 'DECK_OF_DESTINY.labels.showSpecialCards'}}"
-      data-label-hide="{{localize 'DECK_OF_DESTINY.labels.hideSpecialCards'}}">
-      {{localize 'DECK_OF_DESTINY.labels.specialCards'}}
-    </button>
-    <div class="special-cards-list collapsed">
-      {{#each specialCards as |card|}}
-        <label class="special-card-row {{#unless card.available}}disabled{{/unless}}">
-          <input type="checkbox" name="specialCard.{{card.suit}}"
-            {{#unless card.available}}disabled{{/unless}}
-            title="{{#unless card.available}}{{localize 'DECK_OF_DESTINY.messages.warnings.noSpecialCardsAvailable'}}{{/unless}}"/>
-          <img class="card-img" src="{{card.img}}" alt="{{card.name}}"/>
-          <span class="special-card-name">{{card.name}}</span>
-        </label>
-      {{else}}
-        <p class="special-cards-empty">{{localize 'DECK_OF_DESTINY.dialogs.manageSpecialCards.noCards'}}</p>
-      {{/each}}
-    </div>
-  </div>
   <div class="resource card-buttons flex-group-center">
     <button class="card-button defense-roll">
       <i class="fa-solid fa-shield-halved"></i>

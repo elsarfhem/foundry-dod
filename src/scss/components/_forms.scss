@@ -113,19 +113,10 @@
     }
 
     .card-buttons {
-      // Span every column of the parent .grid-6col row (was previously the
-      // 6th of 6 equal grid cells, stacking its buttons vertically in a
-      // narrow column; adding .special-cards-section above pushed it into
-      // the wrong position entirely). Now sits on its own full-width row
-      // below the special-cards section, with buttons laid out horizontally.
-      grid-column: 1 / -1;
       display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 0.5rem;
+      justify-content: space-between;
 
       .card-button {
         border-radius: $border-radius-sm;
@@ -347,63 +338,53 @@
   }
 }
 
-.special-cards-section {
-  // Span every column of the parent .grid-6col row so this section sits on
-  // its own full-width row below the suit counters, instead of being
-  // squeezed into a single 1/6-width grid cell (which also pushed
-  // .card-buttons into the wrong position - see .card-buttons below).
-  grid-column: 1 / -1;
-  width: 100%;
-  margin-top: 0.5rem;
+.toggle-special-cards {
+  font-size: medium;
+  font-family: $font-primary;
+  cursor: pointer;
+}
 
-  .toggle-special-cards {
-    font-size: medium;
-    font-family: $font-primary;
-    cursor: pointer;
+.special-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease, opacity 0.3s;
+  opacity: 1;
+
+  &.collapsed {
+    max-height: 0;
+    opacity: 0.2;
+    pointer-events: none;
+    overflow: hidden;
   }
 
-  .special-cards-list {
+  .special-card-row {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    max-height: 220px;
-    overflow-y: auto;
-    transition: max-height 0.3s ease, opacity 0.3s;
-    opacity: 1;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
 
-    &.collapsed {
-      max-height: 0;
-      opacity: 0.2;
-      pointer-events: none;
-      overflow: hidden;
+    &.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
     }
 
-    .special-card-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-
-      &.disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-      }
-
-      .card-img {
-        width: 28px;
-        height: 28px;
-        flex-shrink: 0;
-      }
-
-      .special-card-name {
-        flex: 1;
-      }
+    .card-img {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
     }
 
-    .special-cards-empty {
-      font-style: italic;
-      opacity: 0.7;
+    .special-card-name {
+      flex: 1;
     }
+  }
+
+  .special-cards-empty {
+    font-style: italic;
+    opacity: 0.7;
   }
 }
 
