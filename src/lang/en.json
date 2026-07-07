@@ -231,7 +231,19 @@
         "numFailure": "# Failure Cards:",
         "numIssue": "# Issue Cards:",
         "numDestiny": "# Destiny Cards:",
-        "numFortune": "# Fortune Cards:"
+        "numFortune": "# Fortune Cards:",
+        "specialCardsSection": "Special Cards:"
+      },
+      "manageSpecialCards": {
+        "title": "Manage Special Cards",
+        "addTitle": "Add Special Card",
+        "editTitle": "Edit Special Card",
+        "name": "Name:",
+        "power": "Power:",
+        "image": "Image (path, optional):",
+        "copies": "Copies:",
+        "addNew": "Add Special Card",
+        "noCards": "No special cards defined yet."
       },
       "composeDeck": {
         "title": "Compose Deck & Draw",
@@ -261,6 +273,7 @@
         "divide": "Divide",
         "request": "Request",
         "roll": "Roll",
+        "save": "Save",
         "cancel": "Cancel",
         "yes": "Yes",
         "no": "No"
@@ -282,12 +295,15 @@
         "noCardsForRisk": "No success or failure cards found in the deck! The risk action cannot be completed.",
         "noSuccessOrFailure": "No success or failure found in the deck! The test had neither success nor failure.",
         "noFortuneCardsInHand": "There are no Fortune cards in hand.",
-        "noFortuneCards": "There are no Fortune cards in the current hand."
+        "noFortuneCards": "There are no Fortune cards in the current hand.",
+        "specialCardNameRequired": "Please enter a name for the special card."
       },
       "warnings": {
         "unequalCards": "Warning: the number of successes and failures in hand is not equal.",
         "onlyGMEmpty": "Only the GM can empty the deck.",
-        "operationInProgress": "A card operation is already in progress. Please wait."
+        "operationInProgress": "A card operation is already in progress. Please wait.",
+        "onlyGMManageSpecial": "Only the GM can manage special cards.",
+        "copiesShortfall": "Could not remove {shortfall} cop(y/ies) of \"{name}\" — some are currently in play."
       },
       "info": {
         "success": "Successes",
