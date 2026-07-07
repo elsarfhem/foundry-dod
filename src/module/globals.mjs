@@ -23,6 +23,16 @@ import {
 let _cardOperationInProgress = false;
 
 /**
+ * The currently-open "Gestisci carte speciali" dialog instance, if any.
+ * Tracked so that re-invoking the macro (e.g. a double-click on the hotbar
+ * icon, or clicking it again while already open) closes the previous
+ * instance instead of stacking an independent one — otherwise editing a
+ * card in one instance leaves any other open instance showing stale data.
+ * @type {Dialog|null}
+ */
+let _manageSpecialCardsDialog = null;
+
+/**
  * Check whether a card operation is currently in progress.
  * @returns {boolean}
  */
@@ -1203,6 +1213,21 @@ function openSpecialCardForm({ deck, cardsDocuments, definition = null }) {
 }
 
 /**
+ * True while an open/close cycle of the manage-special-cards dialog is in
+ * flight. Guards against a rapid double-click on the macro (or clicking it
+ * again while already open): concurrent extra invocations are silently
+ * ignored rather than queued, since Foundry's own Dialog render()/close()
+ * don't reliably serialize against each other even when each step is
+ * individually awaited — attempting to queue several open cycles back to
+ * back was still observed to leave stale "ghost" dialog elements behind.
+ * Dropping the redundant extra calls sidesteps that entirely: only one
+ * cycle ever runs, and it already reflects the latest state by the time it
+ * finishes.
+ * @type {boolean}
+ */
+let _manageSpecialCardsDialogBusy = false;
+
+/**
  * Opens the GM-only special card management dialog: list, add, edit, and
  * delete special card definitions living in the master deck.
  */
@@ -1212,6 +1237,27 @@ export async function gestisciCarteSpeciali() {
       game.i18n.localize('DECK_OF_DESTINY.messages.warnings.onlyGMManageSpecial')
     );
     return;
+  }
+
+  if (_manageSpecialCardsDialogBusy) return;
+  _manageSpecialCardsDialogBusy = true;
+  try {
+    await _openManageSpecialCardsDialog();
+  } finally {
+    _manageSpecialCardsDialogBusy = false;
+  }
+}
+
+/**
+ * Builds and renders the manage-special-cards Dialog. Only ever invoked
+ * through the busy-guard in {@link gestisciCarteSpeciali} — never call this
+ * directly.
+ * @returns {Promise<void>}
+ */
+async function _openManageSpecialCardsDialog() {
+  if (_manageSpecialCardsDialog) {
+    await _manageSpecialCardsDialog.close();
+    _manageSpecialCardsDialog = null;
   }
 
   const deck = game.cards.getName('DoD - lista carte');
@@ -1262,14 +1308,12 @@ export async function gestisciCarteSpeciali() {
     render: (html) => {
       html.find('[data-action=add]').on('click', async () => {
         await openSpecialCardForm({ deck, cardsDocuments });
-        await dialog.close();
         gestisciCarteSpeciali();
       });
       html.find('[data-action=edit]').on('click', async (event) => {
         const suit = event.currentTarget.dataset.suit;
         const definition = definitions.find((d) => d.suit === suit);
         await openSpecialCardForm({ deck, cardsDocuments, definition });
-        await dialog.close();
         gestisciCarteSpeciali();
       });
       html.find('[data-action=delete]').on('click', async (event) => {
@@ -1277,10 +1321,13 @@ export async function gestisciCarteSpeciali() {
         await withCardLock(async () => {
           await deleteSpecialCardDefinition(cardsDocuments, suit);
         });
-        await dialog.close();
         gestisciCarteSpeciali();
       });
+    },
+    close: () => {
+      if (_manageSpecialCardsDialog === dialog) _manageSpecialCardsDialog = null;
     }
   });
-  dialog.render(true);
+  _manageSpecialCardsDialog = dialog;
+  await dialog.render(true);
 }
