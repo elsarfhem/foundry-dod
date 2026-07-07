@@ -338,6 +338,84 @@
   }
 }
 
+.toggle-special-cards {
+  font-size: medium;
+  font-family: $font-primary;
+  cursor: pointer;
+}
+
+.special-cards-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
+  // Match .header-cards' actual rendered height (measured, since its own
+  // max-height:500px is just an animation-friendly cap, not its real size)
+  // so both toggleable sections occupy the same visual space regardless of
+  // how many special cards are defined - short lists leave blank space,
+  // long lists scroll internally.
+  height: 241px;
+  max-height: 241px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease, opacity 0.3s;
+  opacity: 1;
+
+  &.collapsed {
+    max-height: 0;
+    opacity: 0.2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .special-card-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    // Never shrink below natural size - without this, once too many cards
+    // are checklisted to fit on one line, flex-shrink squeezes every tile
+    // down instead of wrapping onto additional rows (same fix as the chat
+    // card thumbnails).
+    flex-shrink: 0;
+    gap: 4px;
+    cursor: pointer;
+
+    &.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .card-img {
+      // Fixed box + object-fit so every card renders at the correct aspect
+      // ratio (not squashed into a square) and every tile lines up, same
+      // approach used for the chat card thumbnails. Sized close to the main
+      // counter cards above (.card .card-img, height: 180px) so the
+      // checklist doesn't look like a miniature afterthought now that its
+      // section is the same height. !important is required: Foundry core
+      // ships an unlayered flex-image reset (flex-shrink/flex-basis/max-width)
+      // that otherwise always wins over our system-layer CSS regardless of
+      // selector specificity.
+      width: 105px !important;
+      height: 155px !important;
+      max-width: 105px !important;
+      flex: 0 0 auto !important;
+      object-fit: contain;
+    }
+
+    .special-card-name {
+      max-width: 105px;
+      text-align: center;
+      font-size: 1em;
+      overflow-wrap: break-word;
+    }
+  }
+
+  .special-cards-empty {
+    font-style: italic;
+    opacity: 0.7;
+  }
+}
+
 .sheet-tabs {
   flex: 0;
 }

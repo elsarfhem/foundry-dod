@@ -13,7 +13,7 @@ import {
   drawCardsForPlayer,
   resetActorCards,
   subtractSheetCard,
-  toggleHeaderCards
+  toggleCollapsible
 } from './actor-sheet/cards.mjs';
 import {
   decreaseAttribute,
@@ -29,6 +29,7 @@ import {
 } from './actor-sheet/conditions-trauma.mjs';
 import { activateNPCListeners } from './actor-sheet/npc.mjs';
 import { tiroDifesa } from '../globals.mjs';
+import { getSpecialCardDefinitions } from '../helpers/special-cards.mjs';
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -83,6 +84,17 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     // Adding a pointer to CONFIG.DECK_OF_DESTINY
     context.config = CONFIG.DECK_OF_DESTINY;
+
+    // Special cards available to add to the pile from this sheet
+    const specialCardsDeck = game.cards.getName('DoD - lista carte');
+    context.specialCards = specialCardsDeck
+      ? getSpecialCardDefinitions(specialCardsDeck).map((d) => ({
+          suit: d.suit,
+          name: d.name,
+          img: d.img,
+          available: d.available
+        }))
+      : [];
 
     // Prepare items to display
     this._prepareItems(context);
@@ -176,7 +188,18 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
       item.sheet.render(true);
     });
 
-    html.on('click', '.toggle-header-cards', (ev) => toggleHeaderCards(html, ev));
+    html.on('click', '.toggle-header-cards, .toggle-special-cards', (ev) =>
+      toggleCollapsible(html, ev)
+    );
+
+    // Always start the special-cards checklist collapsed on render, even if
+    // a previous render left it expanded (e.g. a non-forced re-render that
+    // preserves existing DOM state).
+    const $specialCardsList = html.find('.special-cards-list');
+    $specialCardsList.addClass('collapsed');
+    const $toggleSpecialCards = html.find('.toggle-special-cards');
+    $toggleSpecialCards.attr('aria-expanded', false);
+    $toggleSpecialCards.text($toggleSpecialCards.data('label-show'));
 
     // Handle chat sharing for items, talents, abilities, and powers.
     html.on('click', '.item-chat', async (ev) => sendItemToChat(this, ev));

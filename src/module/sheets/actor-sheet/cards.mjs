@@ -6,6 +6,7 @@ import {
   getCardsToDraw
 } from '../../helpers/card-utils.mjs';
 import { recordPlayerAdded, executePlayerDraw } from '../../helpers/draw-round.mjs';
+import { isSpecialSuit } from '../../helpers/special-cards.mjs';
 
 // Card management helpers
 /**
@@ -148,7 +149,12 @@ function updateCardInput(sheet, cardType, value) {
  */
 export async function addCardsToPile(sheet) {
   const data = sheet.actor.toObject().system.cards;
-  if (isEmptyCardData(data))
+  const checkedSpecials = Array.from(
+    sheet.element[0].querySelectorAll(
+      'input[name^="specialCard."]:checked:not(:disabled)'
+    )
+  );
+  if (isEmptyCardData(data) && checkedSpecials.length === 0)
     return ui.notifications.warn('There are no cards to add to pile.');
   const deck = game.cards.getName('DoD - lista carte');
   if (!deck)
@@ -166,14 +172,42 @@ export async function addCardsToPile(sheet) {
     const count = Math.max(0, cardObj.value + cardObj.modifier);
     if (count > 0) suitCounts[cardType] = count;
   }
+
+  // Merge checked special cards into the same suitCounts object, so the
+  // whole pile-add happens in one passCardsBySuitAndSync call.
+  const addedSpecials = checkedSpecials.map((input) => {
+    const suit = input.name.replace('specialCard.', '');
+    const name = input
+      .closest('.special-card-row')
+      .querySelector('.special-card-name').textContent;
+    suitCounts[suit] = 1;
+    return { suit, name, count: 1 };
+  });
+
   if (!Object.keys(suitCounts).length)
     return ui.notifications.warn('No available cards to add to pile.');
   await passCardsBySuitAndSync(deck, pile, suitCounts, { chatNotification: false });
-  notifyAddedCardsToChat(pile, data);
+  notifyAddedCardsToChat(pile, data, addedSpecials);
   await resetActorCards(sheet);
+  uncheckSpecialCards(sheet);
 
   // Record that this player has added cards for the draw round
   await recordPlayerAdded(game.user.id);
+}
+
+/**
+ * Uncheck every special-card checkbox on the sheet after a successful add.
+ * @param {Object} sheet
+ */
+function uncheckSpecialCards(sheet) {
+  try {
+    const root = sheet.element[0];
+    root.querySelectorAll('input[name^="specialCard."]').forEach((input) => {
+      input.checked = false;
+    });
+  } catch (e) {
+    console.debug('Special card checkbox reset skipped', e);
+  }
 }
 
 /**
@@ -241,15 +275,16 @@ export async function drawCardsFromPile() {
 }
 
 /**
- * Toggle the collapsed state of the header-cards section.
+ * Toggle the collapsed state of a collapsible section, reading which
+ * section from the clicked button's data-target attribute.
  * @param {JQuery} html - The jQuery-wrapped HTML of the sheet
  * @param {Event} ev - The click event
  */
-export function toggleHeaderCards(html, ev) {
+export function toggleCollapsible(html, ev) {
   const $btn = $(ev.currentTarget);
-  const $cards = html.find('.header-cards');
-  $cards.toggleClass('collapsed');
-  const expanded = !$cards.hasClass('collapsed');
+  const $section = html.find($btn.data('target'));
+  $section.toggleClass('collapsed');
+  const expanded = !$section.hasClass('collapsed');
   $btn.attr('aria-expanded', expanded);
 
   // Update button text based on expanded state
@@ -295,8 +330,9 @@ async function passWhiteCardsToPile(deck, pile) {
  * Notify added cards to chat using consistent styling and buttons
  * @param {*} pile - The pile document
  * @param {*} data - Actor card data
+ * @param {Array} addedSpecials - Array of special cards added
  */
-function notifyAddedCardsToChat(pile, data) {
+function notifyAddedCardsToChat(pile, data, addedSpecials = []) {
   // Count cards by suit in the pile
   const pileSuits = {
     success: 0,
@@ -306,9 +342,17 @@ function notifyAddedCardsToChat(pile, data) {
     destiny: 0,
     white: 0
   };
+  const pileSpecials = new Map();
   for (const card of pile.cards) {
     if (pileSuits[card.suit] !== undefined) {
       pileSuits[card.suit]++;
+    } else if (isSpecialSuit(card.suit)) {
+      const existing = pileSpecials.get(card.suit);
+      if (existing) {
+        existing.count++;
+      } else {
+        pileSpecials.set(card.suit, { count: 1, name: card.name });
+      }
     }
   }
 
@@ -341,6 +385,10 @@ function notifyAddedCardsToChat(pile, data) {
       lines.push(`<li>${suitToName(suit)}: ${count}</li>`);
     }
   }
+  for (const { suit, name, count } of addedSpecials) {
+    const safeSpecialName = $('<div>').text(name).html();
+    lines.push(`<li>${suitToName(suit, safeSpecialName)}: ${count}</li>`);
+  }
   lines.push('</ul>');
   lines.push('</div>');
 
@@ -351,12 +399,15 @@ function notifyAddedCardsToChat(pile, data) {
     )}:</strong></p>`
   );
   lines.push('<ul class="suit-list">');
-  lines.push(`<li>${suitToName('success')}: ${pileSuits.success}</li>`);
-  lines.push(`<li>${suitToName('failure')}: ${pileSuits.failure}</li>`);
-  lines.push(`<li>${suitToName('issue')}: ${pileSuits.issue}</li>`);
-  lines.push(`<li>${suitToName('fortune')}: ${pileSuits.fortune}</li>`);
-  lines.push(`<li>${suitToName('destiny')}: ${pileSuits.destiny}</li>`);
-  lines.push(`<li>${suitToName('white')}: ${pileSuits.white}</li>`);
+  for (const suit of ['success', 'failure', 'issue', 'fortune', 'destiny', 'white']) {
+    if (pileSuits[suit] > 0) {
+      lines.push(`<li>${suitToName(suit)}: ${pileSuits[suit]}</li>`);
+    }
+  }
+  for (const [suit, { count, name }] of pileSpecials) {
+    const safePileSpecialName = $('<div>').text(name).html();
+    lines.push(`<li>${suitToName(suit, safePileSpecialName)}: ${count}</li>`);
+  }
   lines.push('</ul>');
 
   // Build button data

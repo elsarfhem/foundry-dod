@@ -159,7 +159,9 @@
       "value": "Valore",
       "weight": "Peso",
       "showCards": "Mostra Carte",
-      "hideCards": "Nascondi Carte"
+      "hideCards": "Nascondi Carte",
+      "showSpecialCards": "Mostra Carte Speciali",
+      "hideSpecialCards": "Nascondi Carte Speciali"
     },
     "sheet": {
       "labels": {
@@ -231,7 +233,19 @@
         "numFailure": "Num. Carte Fallimento:",
         "numIssue": "Num. Carte Imprevisto:",
         "numDestiny": "Num. Carte del Destino:",
-        "numFortune": "Num. Carte Fortuna:"
+        "numFortune": "Num. Carte Fortuna:",
+        "specialCardsSection": "Carte Speciali:"
+      },
+      "manageSpecialCards": {
+        "title": "Gestisci Carte Speciali",
+        "addTitle": "Aggiungi Carta Speciale",
+        "editTitle": "Modifica Carta Speciale",
+        "name": "Nome:",
+        "power": "Potere:",
+        "image": "Immagine (percorso, opzionale):",
+        "copies": "Copie:",
+        "addNew": "Aggiungi Carta Speciale",
+        "noCards": "Nessuna carta speciale definita."
       },
       "composeDeck": {
         "title": "Componi il mazzo e pesca",
@@ -261,6 +275,7 @@
         "divide": "Dividi",
         "request": "Richiedi",
         "roll": "Tira",
+        "save": "Salva",
         "cancel": "Annulla",
         "yes": "Sì",
         "no": "No"
@@ -282,12 +297,16 @@
         "noCardsForRisk": "Nessuna carta successo o fallimento trovata nel mazzo! L'azione di rischio non può essere completata.",
         "noSuccessOrFailure": "Nessun successo o fallimento trovato nel mazzo! La prova non ha avuto successo né fallimento.",
         "noFortuneCardsInHand": "Non ci sono Carte Fortuna nella mano.",
-        "noFortuneCards": "Non ci sono carte fortuna nella mano attuale."
+        "noFortuneCards": "Non ci sono carte fortuna nella mano attuale.",
+        "specialCardNameRequired": "Inserisci un nome per la carta speciale."
       },
       "warnings": {
         "unequalCards": "Attenzione: il numero di successi e di fallimenti nella mano non sono uguali.",
         "onlyGMEmpty": "Solo il GM può svuotare il mazzo.",
-        "operationInProgress": "Un'operazione con le carte è già in corso. Attendere."
+        "operationInProgress": "Un'operazione con le carte è già in corso. Attendere.",
+        "onlyGMManageSpecial": "Solo il GM può gestire le carte speciali.",
+        "copiesShortfall": "Impossibile rimuovere {shortfall} copie di \"{name}\" — alcune sono già in gioco.",
+        "noSpecialCardsAvailable": "Nessuna copia di questa carta speciale è disponibile nel mazzo."
       },
       "info": {
         "success": "Successi",

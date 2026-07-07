@@ -3,13 +3,15 @@ import {
   passCardsBySuitAndSync,
   drawCards
 } from './helpers/card-utils.mjs';
-import { createDrawChat } from './helpers/chat.mjs';
+import { createDrawChat, suitToName, renderCardThumbnail } from './helpers/chat.mjs';
 import { clearRoundState } from './helpers/draw-round.mjs';
-
-const suitToName = (suit) => {
-  const key = `DECK_OF_DESTINY.cards.${suit}`;
-  return game.i18n.localize(key) || suit;
-};
+import {
+  getSpecialCardDefinitions,
+  createSpecialCardDefinition,
+  updateSpecialCardDefinition,
+  adjustSpecialCardCopies,
+  deleteSpecialCardDefinition
+} from './helpers/special-cards.mjs';
 
 /**
  * Global lock to prevent concurrent card macro execution.
@@ -19,6 +21,16 @@ const suitToName = (suit) => {
  * @type {boolean}
  */
 let _cardOperationInProgress = false;
+
+/**
+ * The currently-open "Gestisci carte speciali" dialog instance, if any.
+ * Tracked so that re-invoking the macro (e.g. a double-click on the hotbar
+ * icon, or clicking it again while already open) closes the previous
+ * instance instead of stacking an independent one — otherwise editing a
+ * card in one instance leaves any other open instance showing stale data.
+ * @type {Dialog|null}
+ */
+let _manageSpecialCardsDialog = null;
 
 /**
  * Check whether a card operation is currently in progress.
@@ -57,6 +69,25 @@ export async function aggiungiAlMazzo() {
   const deck = game.cards.getName('DoD - lista carte');
   const pile = game.cards.getName('Mazzo');
 
+  const specialDefinitions = getSpecialCardDefinitions(deck);
+  const specialRows = specialDefinitions.length
+    ? `<div class="form-group"><label><strong>${game.i18n.localize(
+        'DECK_OF_DESTINY.dialogs.createDeck.specialCardsSection'
+      )}</strong></label></div>` +
+      specialDefinitions
+        .map((d, i) => {
+          const safeName = $('<div>').text(d.name).html();
+          return `
+          <div class="form-group">
+           <label>${safeName} (${d.available})</label>
+           <input id="special-${i}" name="special-${i}" value="0" tabindex="${
+            6 + i
+          }" type="number" min="0" max="${d.available}"></input>
+          </div>`;
+        })
+        .join('')
+    : '';
+
   let confirmed = false;
 
   new Dialog({
@@ -93,6 +124,7 @@ export async function aggiungiAlMazzo() {
            )}</label>
            <input id="fortune-cards" name="fortune-cards" value="0" tabindex="5" type="number" min="0"></input>
           </div>
+          ${specialRows}
          </form>
          `,
     buttons: {
@@ -119,12 +151,29 @@ export async function aggiungiAlMazzo() {
             fortuneCardsNum
           } = getCardCountsFromDialog(html);
 
+          const specialCounts = {};
+          specialDefinitions.forEach((d, i) => {
+            const qty = parseInt(html.find(`[name=special-${i}]`)[0]?.value) || 0;
+            if (qty > 0) specialCounts[d.suit] = qty;
+          });
+          const totalSpecialQty = Object.values(specialCounts).reduce(
+            (a, b) => a + b,
+            0
+          );
+          const specialSummary = Object.entries(specialCounts)
+            .map(([suit, qty]) => {
+              const def = specialDefinitions.find((d) => d.suit === suit);
+              return `<li>${def.name}: ${qty}</li>`;
+            })
+            .join('');
+
           const totalCards =
             issueCardsNum +
             successCardsNum +
             destinyCardsNum +
             failureCardsNum +
-            fortuneCardsNum;
+            fortuneCardsNum +
+            totalSpecialQty;
 
           if (totalCards > 0) {
             await passCardsBySuitAndSync(
@@ -135,7 +184,8 @@ export async function aggiungiAlMazzo() {
                 failure: failureCardsNum,
                 issue: issueCardsNum,
                 destiny: destinyCardsNum,
-                fortune: fortuneCardsNum
+                fortune: fortuneCardsNum,
+                ...specialCounts
               },
               { chatNotification: false }
             );
@@ -161,6 +211,7 @@ export async function aggiungiAlMazzo() {
             <li>${game.i18n.localize(
               'DECK_OF_DESTINY.cards.destiny'
             )}: ${destinyCardsNum}</li>
+            ${specialSummary}
           </ul>`
             });
           }
@@ -191,6 +242,25 @@ export async function componiIlMazzoEPesca() {
   });
   const pile = game.cards.getName('Mazzo');
   const hand = game.cards.getName('Mano');
+
+  const specialDefinitions = getSpecialCardDefinitions(deck);
+  const specialRows = specialDefinitions.length
+    ? `<div class="form-group"><label><strong>${game.i18n.localize(
+        'DECK_OF_DESTINY.dialogs.createDeck.specialCardsSection'
+      )}</strong></label></div>` +
+      specialDefinitions
+        .map((d, i) => {
+          const safeName = $('<div>').text(d.name).html();
+          return `
+          <div class="form-group">
+           <label>${safeName} (${d.available})</label>
+           <input id="special-${i}" name="special-${i}" value="0" tabindex="${
+            7 + i
+          }" type="number" min="0" max="${d.available}"></input>
+          </div>`;
+        })
+        .join('')
+    : '';
 
   let confirmed = false;
 
@@ -234,6 +304,7 @@ export async function componiIlMazzoEPesca() {
          )}</label>
          <input id="fortune-cards" name="fortune-cards" value="0" tabindex="6" type="number" min="0"></input>
         </div>
+        ${specialRows}
        </form>
        `,
     buttons: {
@@ -261,6 +332,22 @@ export async function componiIlMazzoEPesca() {
             fortuneCardsNum
           } = getCardCountsFromDialog(html);
 
+          const specialCounts = {};
+          specialDefinitions.forEach((d, i) => {
+            const qty = parseInt(html.find(`[name=special-${i}]`)[0]?.value) || 0;
+            if (qty > 0) specialCounts[d.suit] = qty;
+          });
+          const totalSpecialQty = Object.values(specialCounts).reduce(
+            (a, b) => a + b,
+            0
+          );
+          const specialSummary = Object.entries(specialCounts)
+            .map(([suit, qty]) => {
+              const def = specialDefinitions.find((d) => d.suit === suit);
+              return `<li>${def.name}: ${qty}</li>`;
+            })
+            .join('');
+
           ChatMessage.create({
             user: game.user._id,
             content: `<p>Il mazzo é composto da: </p>
@@ -270,6 +357,7 @@ export async function componiIlMazzoEPesca() {
               <li>Carta Imprevisto: ${issueCardsNum}</li>
               <li>Carta Fortuna: ${fortuneCardsNum}</li>
               <li>Carta del Destino: ${destinyCardsNum}</li>
+              ${specialSummary}
           </ul>`
           });
 
@@ -280,7 +368,8 @@ export async function componiIlMazzoEPesca() {
               issueCardsNum -
               destinyCardsNum -
               failureCardsNum -
-              fortuneCardsNum
+              fortuneCardsNum -
+              totalSpecialQty
           );
 
           const totalCards =
@@ -288,7 +377,8 @@ export async function componiIlMazzoEPesca() {
             successCardsNum +
             destinyCardsNum +
             failureCardsNum +
-            fortuneCardsNum;
+            fortuneCardsNum +
+            totalSpecialQty;
 
           if (totalCards > 0) {
             await passCardsBySuitAndSync(
@@ -300,7 +390,8 @@ export async function componiIlMazzoEPesca() {
                 failure: failureCardsNum,
                 issue: issueCardsNum,
                 destiny: destinyCardsNum,
-                fortune: fortuneCardsNum
+                fortune: fortuneCardsNum,
+                ...specialCounts
               },
               { chatNotification: false }
             );
@@ -498,17 +589,18 @@ export async function rischia() {
       drawnCards.sort((a, b) => a.suit.localeCompare(b.suit));
       const map = new Map();
       drawnCards.forEach((card) => {
-        let cardTypeNum = map.get(card.suit);
-        if (cardTypeNum > 0) {
-          map.set(card.suit, ++cardTypeNum);
+        const existing = map.get(card.suit);
+        if (existing) {
+          existing.count++;
         } else {
-          map.set(card.suit, 1);
+          map.set(card.suit, { count: 1, name: card.name });
         }
-        cardsHtml += `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px;margin-right: 5px;margin-bottom: 5px;"/>`;
+        cardsHtml += renderCardThumbnail(card);
       });
-      console.log('map ' + map);
       const summary = Array.from(map)
-        .map(([suit, num]) => `<li>${suitToName(suit)}: ${num}</li>`)
+        .map(
+          ([suit, { count, name }]) => `<li>${suitToName(suit, name)}: ${count}</li>`
+        )
         .join('');
 
       const outcomeText =
@@ -970,4 +1062,272 @@ export async function tiroDifesa(actor = null) {
       }
     }
   }).render(true);
+}
+
+/**
+ * Open/close/edit a single special card definition's add-or-edit form.
+ * Resolves once the nested dialog is confirmed or cancelled.
+ * @param {{deck: Cards, cardsDocuments: Cards[], definition: object|null}} args
+ * @returns {Promise<void>}
+ */
+function openSpecialCardForm({ deck, cardsDocuments, definition = null }) {
+  return new Promise((resolve) => {
+    const isEdit = Boolean(definition);
+    // HTML-escape GM-controlled text before interpolating into the form
+    // (same pattern as draw-round.mjs's NFR #5 escaping).
+    // safeName also escapes `"` because it's interpolated into a `value="..."`
+    // attribute (not just element content), where an unescaped quote would
+    // break out of the attribute.
+    const safeName = $('<div>')
+      .text(definition?.name ?? '')
+      .html()
+      .replace(/"/g, '&quot;');
+    const safeDescription = $('<div>')
+      .text(definition?.description ?? '')
+      .html();
+    const safeImg = $('<div>')
+      .text(definition?.img ?? '')
+      .html()
+      .replace(/"/g, '&quot;');
+    new Dialog({
+      title: isEdit
+        ? game.i18n.localize('DECK_OF_DESTINY.dialogs.manageSpecialCards.editTitle')
+        : game.i18n.localize('DECK_OF_DESTINY.dialogs.manageSpecialCards.addTitle'),
+      content: `
+        <form>
+          <div class="form-group">
+            <label>${game.i18n.localize(
+              'DECK_OF_DESTINY.dialogs.manageSpecialCards.name'
+            )}</label>
+            <input name="name" type="text" value="${safeName}" autofocus onFocus="select()"/>
+          </div>
+          <div class="form-group">
+            <label>${game.i18n.localize(
+              'DECK_OF_DESTINY.dialogs.manageSpecialCards.power'
+            )}</label>
+            <textarea name="description">${safeDescription}</textarea>
+          </div>
+          <div class="form-group">
+            <label>${game.i18n.localize(
+              'DECK_OF_DESTINY.dialogs.manageSpecialCards.image'
+            )}</label>
+            <div class="form-fields">
+              <input name="img" type="text" value="${safeImg}"/>
+              <button type="button" class="file-picker" data-type="image" data-target="img" title="${game.i18n.localize(
+                'DECK_OF_DESTINY.dialogs.manageSpecialCards.image'
+              )}">
+                <i class="fas fa-file-import fa-fw"></i>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>${game.i18n.localize(
+              'DECK_OF_DESTINY.dialogs.manageSpecialCards.copies'
+            )}</label>
+            <input name="copies" type="number" min="1" value="${
+              definition?.available ?? 1
+            }"/>
+          </div>
+        </form>
+      `,
+      buttons: {
+        save: {
+          icon: '<i class="fas fa-check"></i>',
+          label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.save'),
+          callback: async (html) => {
+            const name = html.find('[name=name]')[0].value.trim();
+            const description = html.find('[name=description]')[0].value.trim();
+            const img = html.find('[name=img]')[0].value.trim();
+            const copies = Math.max(
+              1,
+              parseInt(html.find('[name=copies]')[0].value) || 1
+            );
+
+            if (!name) {
+              ui.notifications.error(
+                game.i18n.localize(
+                  'DECK_OF_DESTINY.messages.errors.specialCardNameRequired'
+                )
+              );
+              resolve();
+              return;
+            }
+
+            await withCardLock(async () => {
+              if (isEdit) {
+                await updateSpecialCardDefinition(cardsDocuments, definition.suit, {
+                  name,
+                  description,
+                  img
+                });
+                const { shortfall } = await adjustSpecialCardCopies(
+                  deck,
+                  definition.suit,
+                  copies,
+                  { name, description, img }
+                );
+                if (shortfall > 0) {
+                  ui.notifications.warn(
+                    game.i18n.format(
+                      'DECK_OF_DESTINY.messages.warnings.copiesShortfall',
+                      {
+                        name,
+                        shortfall
+                      }
+                    )
+                  );
+                }
+              } else {
+                await createSpecialCardDefinition(deck, {
+                  name,
+                  description,
+                  img,
+                  copies
+                });
+              }
+            });
+            resolve();
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.cancel'),
+          callback: () => resolve()
+        }
+      },
+      default: 'save',
+      close: () => resolve(),
+      render: (html) => {
+        html.find('.file-picker').on('click', (event) => {
+          const button = event.currentTarget;
+          const input = html.find(`[name="${button.dataset.target}"]`);
+          new FilePicker({
+            type: button.dataset.type,
+            current: input.val(),
+            callback: (path) => input.val(path)
+          }).browse();
+        });
+      }
+    }).render(true);
+  });
+}
+
+/**
+ * True while an open/close cycle of the manage-special-cards dialog is in
+ * flight. Guards against a rapid double-click on the macro (or clicking it
+ * again while already open): concurrent extra invocations are silently
+ * ignored rather than queued, since Foundry's own Dialog render()/close()
+ * don't reliably serialize against each other even when each step is
+ * individually awaited — attempting to queue several open cycles back to
+ * back was still observed to leave stale "ghost" dialog elements behind.
+ * Dropping the redundant extra calls sidesteps that entirely: only one
+ * cycle ever runs, and it already reflects the latest state by the time it
+ * finishes.
+ * @type {boolean}
+ */
+let _manageSpecialCardsDialogBusy = false;
+
+/**
+ * Opens the GM-only special card management dialog: list, add, edit, and
+ * delete special card definitions living in the master deck.
+ */
+export async function gestisciCarteSpeciali() {
+  if (!game.user?.isGM) {
+    ui.notifications.warn(
+      game.i18n.localize('DECK_OF_DESTINY.messages.warnings.onlyGMManageSpecial')
+    );
+    return;
+  }
+
+  if (_manageSpecialCardsDialogBusy) return;
+  _manageSpecialCardsDialogBusy = true;
+  try {
+    await _openManageSpecialCardsDialog();
+  } finally {
+    _manageSpecialCardsDialogBusy = false;
+  }
+}
+
+/**
+ * Builds and renders the manage-special-cards Dialog. Only ever invoked
+ * through the busy-guard in {@link gestisciCarteSpeciali} — never call this
+ * directly.
+ * @returns {Promise<void>}
+ */
+async function _openManageSpecialCardsDialog() {
+  if (_manageSpecialCardsDialog) {
+    await _manageSpecialCardsDialog.close();
+    _manageSpecialCardsDialog = null;
+  }
+
+  const deck = game.cards.getName('DoD - lista carte');
+  const pile = game.cards.getName('Mazzo');
+  const hand = game.cards.getName('Mano');
+  const cardsDocuments = [deck, pile, hand];
+
+  const definitions = getSpecialCardDefinitions(deck);
+
+  const rows = definitions.length
+    ? definitions
+        .map((d) => {
+          const safeName = $('<div>').text(d.name).html();
+          return `
+        <li data-suit="${d.suit}" style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+          <img src="${d.img}" width="32" height="32"/>
+          <span style="flex:1;">${safeName} (${d.available})</span>
+          <button type="button" data-action="edit" data-suit="${d.suit}">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button type="button" data-action="delete" data-suit="${d.suit}">
+            <i class="fas fa-trash"></i>
+          </button>
+        </li>`;
+        })
+        .join('')
+    : `<li>${game.i18n.localize(
+        'DECK_OF_DESTINY.dialogs.manageSpecialCards.noCards'
+      )}</li>`;
+
+  const dialog = new Dialog({
+    title: game.i18n.localize('DECK_OF_DESTINY.dialogs.manageSpecialCards.title'),
+    content: `
+      <ul style="list-style:none; padding:0;">${rows}</ul>
+      <button type="button" data-action="add">
+        <i class="fas fa-plus"></i> ${game.i18n.localize(
+          'DECK_OF_DESTINY.dialogs.manageSpecialCards.addNew'
+        )}
+      </button>
+    `,
+    buttons: {
+      close: {
+        icon: '<i class="fas fa-times"></i>',
+        label: game.i18n.localize('DECK_OF_DESTINY.dialogs.buttons.cancel')
+      }
+    },
+    default: 'close',
+    render: (html) => {
+      html.find('[data-action=add]').on('click', async () => {
+        await openSpecialCardForm({ deck, cardsDocuments });
+        gestisciCarteSpeciali();
+      });
+      html.find('[data-action=edit]').on('click', async (event) => {
+        const suit = event.currentTarget.dataset.suit;
+        const definition = definitions.find((d) => d.suit === suit);
+        await openSpecialCardForm({ deck, cardsDocuments, definition });
+        gestisciCarteSpeciali();
+      });
+      html.find('[data-action=delete]').on('click', async (event) => {
+        const suit = event.currentTarget.dataset.suit;
+        await withCardLock(async () => {
+          await deleteSpecialCardDefinition(cardsDocuments, suit);
+        });
+        gestisciCarteSpeciali();
+      });
+    },
+    close: () => {
+      if (_manageSpecialCardsDialog === dialog) _manageSpecialCardsDialog = null;
+    }
+  });
+  _manageSpecialCardsDialog = dialog;
+  await dialog.render(true);
 }

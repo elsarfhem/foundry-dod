@@ -19,13 +19,16 @@ export class MockCard {
     this.name = data.name || 'Test Card';
     this.suit = data.suit || 'hearts';
     this.value = data.value || 5;
+    this.description = data.description || '';
+    this.faces = data.faces || [{ name: this.name, img: null, text: '' }];
+    this.drawn = data.drawn || false;
     this._source = data._source || { suit: this.suit };
   }
 
   get system() {
     return {
       suit: this.suit,
-      value: this.value,
+      value: this.value
     };
   }
 }
@@ -84,6 +87,37 @@ export class MockCardsPile {
 
     return drawnCards;
   }
+
+  async createEmbeddedDocuments(embeddedName, dataArray, options = {}) {
+    const created = dataArray.map((data, index) => {
+      const card = new MockCard({
+        ...data,
+        id: data._id || `${this.id}-new-${this.cards.size + index + 1}`
+      });
+      this.cards.set(card.id, card);
+      return card;
+    });
+    return created;
+  }
+
+  async updateEmbeddedDocuments(embeddedName, updatesArray, options = {}) {
+    const updated = [];
+    for (const update of updatesArray) {
+      const card = this.cards.get(update._id);
+      if (!card) continue;
+      Object.assign(card, update);
+      updated.push(card);
+    }
+    return updated;
+  }
+
+  async deleteEmbeddedDocuments(embeddedName, idsArray, options = {}) {
+    const deleted = [];
+    for (const id of idsArray) {
+      if (this.cards.delete(id)) deleted.push(id);
+    }
+    return deleted;
+  }
 }
 
 // Mock actor
@@ -114,7 +148,7 @@ export class MockGame {
           str = str.replace(`{${k}}`, v);
         }
         return str;
-      },
+      }
     };
 
     // Add getName method to cards collection
@@ -140,8 +174,8 @@ export const mockUI = {
   notifications: {
     info: (message) => console.log('[INFO]', message),
     warn: (message) => console.warn('[WARN]', message),
-    error: (message) => console.error('[ERROR]', message),
-  },
+    error: (message) => console.error('[ERROR]', message)
+  }
 };
 
 // Mock ChatMessage
@@ -165,13 +199,13 @@ export function createMockGame(options = {}) {
     new MockUser('user1', 'Player1', false),
     new MockUser('user2', 'Player2', false),
     new MockUser('user3', 'Player3', false),
-    new MockUser('gm', 'GameMaster', true),
+    new MockUser('gm', 'GameMaster', true)
   ];
 
   const cards = options.cards || [
     new MockCard({ id: 'c1', suit: 'hearts', value: 5 }),
     new MockCard({ id: 'c2', suit: 'spades', value: 8 }),
-    new MockCard({ id: 'c3', suit: 'diamonds', value: 3 }),
+    new MockCard({ id: 'c3', suit: 'diamonds', value: 3 })
   ];
 
   const pile = new MockCardsPile(cards);
@@ -180,8 +214,28 @@ export function createMockGame(options = {}) {
   return new MockGame({
     user: users[0],
     users,
-    cards: cardsMap,
+    cards: cardsMap
   });
+}
+
+/**
+ * Minimal jQuery-like stub supporting the `$('<div>').text(x).html()`
+ * HTML-escaping pattern used by draw-round.mjs. Mirrors real browser
+ * serialization: escapes `&`, `<`, `>` (element-content escaping) but not
+ * `"`, since that's exactly what `.html()` does in a real DOM.
+ */
+export function mockJQuery() {
+  let text = '';
+  const wrapper = {
+    text(value) {
+      text = value == null ? '' : String(value);
+      return wrapper;
+    },
+    html() {
+      return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+  };
+  return wrapper;
 }
 
 /**
@@ -191,6 +245,8 @@ export function setupGlobalMocks(game) {
   global.game = game;
   global.ui = mockUI;
   global.ChatMessage = MockChatMessage;
+  global.$ = mockJQuery;
+  global.CONST = { CARD_DRAW_MODES: { TOP: 0, BOTTOM: 1, RANDOM: 2, SHUFFLE: 3 } };
 }
 
 /**
@@ -200,6 +256,19 @@ export function teardownGlobalMocks() {
   delete global.game;
   delete global.ui;
   delete global.ChatMessage;
+  delete global.$;
+  delete global.CONST;
+}
+
+/**
+ * Create a MockCardsPile named "Mano", matching the real hand collection
+ * executePlayerDraw looks up via `game.cards.getName('Mano')`.
+ */
+export function createHandPile(cards = []) {
+  const hand = new MockCardsPile(cards);
+  hand.id = 'hand1';
+  hand.name = 'Mano';
+  return hand;
 }
 
 /**
