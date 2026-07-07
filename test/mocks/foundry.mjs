@@ -19,6 +19,9 @@ export class MockCard {
     this.name = data.name || 'Test Card';
     this.suit = data.suit || 'hearts';
     this.value = data.value || 5;
+    this.description = data.description || '';
+    this.faces = data.faces || [{ name: this.name, img: null, text: '' }];
+    this.drawn = data.drawn || false;
     this._source = data._source || { suit: this.suit };
   }
 
@@ -83,6 +86,37 @@ export class MockCardsPile {
     }
 
     return drawnCards;
+  }
+
+  async createEmbeddedDocuments(embeddedName, dataArray, options = {}) {
+    const created = dataArray.map((data, index) => {
+      const card = new MockCard({
+        ...data,
+        id: data._id || `${this.id}-new-${this.cards.size + index + 1}`
+      });
+      this.cards.set(card.id, card);
+      return card;
+    });
+    return created;
+  }
+
+  async updateEmbeddedDocuments(embeddedName, updatesArray, options = {}) {
+    const updated = [];
+    for (const update of updatesArray) {
+      const card = this.cards.get(update._id);
+      if (!card) continue;
+      Object.assign(card, update);
+      updated.push(card);
+    }
+    return updated;
+  }
+
+  async deleteEmbeddedDocuments(embeddedName, idsArray, options = {}) {
+    const deleted = [];
+    for (const id of idsArray) {
+      if (this.cards.delete(id)) deleted.push(id);
+    }
+    return deleted;
   }
 }
 
