@@ -346,8 +346,10 @@
 
 .special-cards-list {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
   max-height: 220px;
   overflow-y: auto;
   transition: max-height 0.3s ease, opacity 0.3s;
@@ -362,8 +364,14 @@
 
   .special-card-row {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 6px;
+    // Never shrink below natural size - without this, once too many cards
+    // are checklisted to fit on one line, flex-shrink squeezes every tile
+    // down instead of wrapping onto additional rows (same fix as the chat
+    // card thumbnails).
+    flex-shrink: 0;
+    gap: 4px;
     cursor: pointer;
 
     &.disabled {
@@ -372,13 +380,24 @@
     }
 
     .card-img {
-      width: 28px;
-      height: 28px;
-      flex-shrink: 0;
+      // Fixed box + object-fit so every card renders at the correct aspect
+      // ratio (not squashed into a square) and every tile lines up, same
+      // approach used for the chat card thumbnails. !important is required:
+      // Foundry core ships an unlayered flex-image reset
+      // (flex-shrink/flex-basis/max-width) that otherwise always wins over
+      // our system-layer CSS regardless of selector specificity.
+      width: 40px !important;
+      height: 58px !important;
+      max-width: 40px !important;
+      flex: 0 0 auto !important;
+      object-fit: contain;
     }
 
     .special-card-name {
-      flex: 1;
+      max-width: 60px;
+      text-align: center;
+      font-size: 0.8em;
+      overflow-wrap: break-word;
     }
   }
 

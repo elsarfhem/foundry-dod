@@ -6,11 +6,11 @@
 <div class="special-cards-list collapsed">
   {{#each specialCards as |card|}}
     <label class="special-card-row {{#unless card.available}}disabled{{/unless}}">
+      <img class="card-img" src="{{card.img}}" alt="{{card.name}}"/>
+      <span class="special-card-name">{{card.name}}</span>
       <input type="checkbox" name="specialCard.{{card.suit}}"
         {{#unless card.available}}disabled{{/unless}}
         title="{{#unless card.available}}{{localize 'DECK_OF_DESTINY.messages.warnings.noSpecialCardsAvailable'}}{{/unless}}"/>
-      <img class="card-img" src="{{card.img}}" alt="{{card.name}}"/>
-      <span class="special-card-name">{{card.name}}</span>
     </label>
   {{else}}
     <p class="special-cards-empty">{{localize 'DECK_OF_DESTINY.dialogs.manageSpecialCards.noCards'}}</p>
