@@ -54,6 +54,17 @@
 }
 
 .card-face {
+  // Fixed box + object-fit so every card renders at the same size in chat,
+  // regardless of a given card art asset's native aspect ratio (otherwise
+  // thumbnails in the same row end up with different heights). !important
+  // is required here: Foundry core ships an unlayered flex-image reset
+  // (flex-shrink/flex-basis/max-width) that otherwise always wins over our
+  // system-layer CSS regardless of selector specificity.
+  width: 60px !important;
+  height: 84px !important;
+  max-width: 60px !important;
+  flex: 0 0 auto !important;
+  object-fit: contain;
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
@@ -76,9 +87,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  // Never shrink below natural size - without this, once too many cards are
+  // drawn to fit on one line, flex-shrink squeezes every thumbnail down
+  // instead of wrapping them onto additional rows at full size.
+  flex-shrink: 0;
 
   .card-thumb-name {
     font-size: 0.7em;
+    line-height: 1.2;
+    // Reserve space for 2 lines so 1-line and 2-line names produce the same
+    // total thumbnail height - otherwise adjacent thumbnails in the same row
+    // end up with mismatched top edges (only their bottoms are aligned).
+    min-height: calc(1.2em * 2);
     text-align: center;
     max-width: 60px;
     overflow-wrap: break-word;
