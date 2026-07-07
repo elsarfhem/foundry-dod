@@ -72,6 +72,21 @@
   }
 }
 
+.card-thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 5px;
+  margin-bottom: 5px;
+
+  .card-thumb-name {
+    font-size: 0.7em;
+    text-align: center;
+    max-width: 90px;
+    overflow-wrap: break-word;
+  }
+}
+
 // Ensure chat containers allow overflow for zoom effect
 .chat-message .message-content,
 .card-draw,

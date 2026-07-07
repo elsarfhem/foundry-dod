@@ -3,7 +3,7 @@ import {
   passCardsBySuitAndSync,
   drawCards
 } from './helpers/card-utils.mjs';
-import { createDrawChat, suitToName } from './helpers/chat.mjs';
+import { createDrawChat, suitToName, renderCardThumbnail } from './helpers/chat.mjs';
 import { clearRoundState } from './helpers/draw-round.mjs';
 import {
   getSpecialCardDefinitions,
@@ -585,7 +585,7 @@ export async function rischia() {
         } else {
           map.set(card.suit, { count: 1, name: card.name });
         }
-        cardsHtml += `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px;margin-right: 5px;margin-bottom: 5px;"/>`;
+        cardsHtml += renderCardThumbnail(card);
       });
       const summary = Array.from(map)
         .map(

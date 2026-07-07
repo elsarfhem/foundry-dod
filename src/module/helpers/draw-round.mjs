@@ -29,7 +29,7 @@
 
 import { drawCards } from './card-utils.mjs';
 import { getCardsToDraw } from './card-utils.mjs';
-import { showChatRequest, suitToName } from './chat.mjs';
+import { showChatRequest, suitToName, renderCardThumbnail } from './chat.mjs';
 
 /**
  * Get the pile document (cached lookup)
@@ -440,10 +440,7 @@ function generatePlayerDrawMessage(drawResult, playersNum) {
 
     // Add card thumbnails with zoom effect
     const cardsHtml = drawResult.cards
-      .map(
-        (card) =>
-          `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px; margin-right: 5px; margin-bottom: 5px;"/>`
-      )
+      .map((card) => renderCardThumbnail(card))
       .join('');
     lines.push(`<div class="card-draw flexrow">${cardsHtml}</div>`);
     lines.push('</div>');
@@ -561,12 +558,7 @@ export async function generateSummary(state) {
       );
 
       // Add card thumbnails for this player
-      const cardsHtml = result.cards
-        .map(
-          (card) =>
-            `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px; margin-right: 5px; margin-bottom: 5px;"/>`
-        )
-        .join('');
+      const cardsHtml = result.cards.map((card) => renderCardThumbnail(card)).join('');
       lines.push(`<div class="card-draw flexrow">${cardsHtml}</div>`);
       lines.push('</div>');
     }

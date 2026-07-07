@@ -15,6 +15,22 @@ export function suitToName(suit, cardName) {
   return localized === key ? suit : localized;
 }
 
+/**
+ * Render a single drawn card as a thumbnail with a visible name caption
+ * (not just an alt/title tooltip).
+ * @param {{name: string, img: string}} card
+ * @returns {string}
+ */
+export function renderCardThumbnail(card) {
+  const safeName = $('<div>').text(card.name).html();
+  return `
+    <div class="card-thumb">
+      <img class="card-face" src="${card.img}" alt="${safeName}" title="${safeName}" style="max-width: 90px;"/>
+      <span class="card-thumb-name">${safeName}</span>
+    </div>
+  `;
+}
+
 // Registry of available chat button actions
 const actionRegistry = {
   viewHand: () => game.cards.getName('Mano')?.sheet.render(true),
@@ -110,7 +126,7 @@ export function createDrawChat(drawCards, playersNum) {
     } else {
       suitInfo.set(card.suit, { count: 1, name: card.name });
     }
-    cardsHtml += `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px; margin-right: 5px; margin-bottom: 5px;"/>`;
+    cardsHtml += renderCardThumbnail(card);
   }
   const summary = Array.from(suitInfo)
     .map(([suit, { count, name }]) => `<li>${suitToName(suit, name)}: ${count}</li>`)

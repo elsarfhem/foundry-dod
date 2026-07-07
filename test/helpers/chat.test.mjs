@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { suitToName, createDrawChat } from '../../src/module/helpers/chat.mjs';
+import { suitToName, createDrawChat, renderCardThumbnail } from '../../src/module/helpers/chat.mjs';
 
 describe('chat: suitToName', () => {
   beforeEach(() => {
@@ -50,5 +50,21 @@ describe('chat: createDrawChat', () => {
     expect(messages).toHaveLength(1);
     expect(messages[0].content).toContain('Carta del Vento: 2');
     expect(messages[0].content).toContain('success: 1');
+  });
+});
+
+describe('chat: renderCardThumbnail', () => {
+  it('renders the image and a visible name caption', () => {
+    const html = renderCardThumbnail({ name: 'Carta del Vento', img: 'vento.png' });
+    expect(html).toContain('src="vento.png"');
+    expect(html).toContain('class="card-thumb-name"');
+    expect(html).toContain('>Carta del Vento<');
+  });
+
+  it('escapes HTML-sensitive characters in the name', () => {
+    const html = renderCardThumbnail({ name: '<b>Evil</b> & "Quoted"', img: 'x.png' });
+    expect(html).not.toContain('<b>Evil</b>');
+    expect(html).toContain('&lt;b&gt;Evil&lt;/b&gt;');
+    expect(html).toContain('&amp;');
   });
 });
