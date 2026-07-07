@@ -1065,9 +1065,13 @@ function openSpecialCardForm({ deck, cardsDocuments, definition = null }) {
     const isEdit = Boolean(definition);
     // HTML-escape GM-controlled text before interpolating into the form
     // (same pattern as draw-round.mjs's NFR #5 escaping).
+    // safeName also escapes `"` because it's interpolated into a `value="..."`
+    // attribute (not just element content), where an unescaped quote would
+    // break out of the attribute.
     const safeName = $('<div>')
       .text(definition?.name ?? '')
-      .html();
+      .html()
+      .replace(/"/g, '&quot;');
     const safeDescription = $('<div>')
       .text(definition?.description ?? '')
       .html();
