@@ -1,0 +1,11 @@
+services:
+  foundry:
+    image: direckthit/fvtt-docker:latest
+    container_name: ${FOUNDRY_CONTAINER_NAME:-fvtt-dod-dev}
+    ports:
+      - "${FOUNDRY_PORT:-30002}:30000"
+    volumes:
+      - ${FOUNDRY_DATA_DIR:-./.foundry-data}:/data/foundryvtt
+      - ${DOD_SYSTEM_PATH:-.}:/data/foundryvtt/Data/systems/dod
+      - ${FOUNDRY_APP_DIR}:/opt/foundryvtt/resources/app:ro
+    restart: unless-stopped

@@ -23,3 +23,10 @@ foundry-dev.yaml
 CLAUDE.md
 
 *.log
+
+# Local worktree scratch space
+.worktrees/
+
+# Local docker-compose overrides / Foundry data (host-specific, may contain license.json)
+.env
+.foundry-data/
