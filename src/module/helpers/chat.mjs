@@ -1,6 +1,18 @@
-export function suitToName(suit) {
+import { isSpecialSuit } from './special-cards.mjs';
+
+/**
+ * Resolve the display label for a suit. Special cards (suit starting with
+ * "special:") have no localization key, so they fall back to the card's
+ * own name.
+ * @param {string} suit
+ * @param {string} [cardName] - Required to resolve a special card's label.
+ * @returns {string}
+ */
+export function suitToName(suit, cardName) {
+  if (isSpecialSuit(suit)) return cardName ?? suit;
   const key = `DECK_OF_DESTINY.cards.${suit}`;
-  return game.i18n.localize(key) || suit;
+  const localized = game.i18n.localize(key);
+  return localized === key ? suit : localized;
 }
 
 // Registry of available chat button actions
@@ -89,19 +101,24 @@ export function createDrawChat(drawCards, playersNum) {
   if (!Array.isArray(drawCards) || drawCards.length === 0) return;
   // Sort cards for predictable suit ordering
   drawCards.sort((a, b) => a.suit.localeCompare(b.suit));
-  const suitCounts = new Map();
+  const suitInfo = new Map();
   let cardsHtml = '';
   for (const card of drawCards) {
-    suitCounts.set(card.suit, (suitCounts.get(card.suit) || 0) + 1);
+    const existing = suitInfo.get(card.suit);
+    if (existing) {
+      existing.count++;
+    } else {
+      suitInfo.set(card.suit, { count: 1, name: card.name });
+    }
     cardsHtml += `<img class="card-face" src="${card.img}" alt="${card.name}" title="${card.name}" style="max-width: 90px; margin-right: 5px; margin-bottom: 5px;"/>`;
   }
-  const summary = Array.from(suitCounts)
-    .map(([suit, num]) => `<li>${suitToName(suit)}: ${num}</li>`)
+  const summary = Array.from(suitInfo)
+    .map(([suit, { count, name }]) => `<li>${suitToName(suit, name)}: ${count}</li>`)
     .join('');
 
-  const successCount = suitCounts.get('success') || 0;
-  const failureCount = suitCounts.get('failure') || 0;
-  const fortuneCount = suitCounts.get('fortune') || 0;
+  const successCount = suitInfo.get('success')?.count || 0;
+  const failureCount = suitInfo.get('failure')?.count || 0;
+  const fortuneCount = suitInfo.get('fortune')?.count || 0;
 
   const buttons = [
     {
