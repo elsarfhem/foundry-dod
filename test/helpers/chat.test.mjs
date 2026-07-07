@@ -67,4 +67,15 @@ describe('chat: renderCardThumbnail', () => {
     expect(html).toContain('&lt;b&gt;Evil&lt;/b&gt;');
     expect(html).toContain('&amp;');
   });
+
+  it('escapes double quotes so they cannot break out of the alt/title attributes', () => {
+    const html = renderCardThumbnail({ name: 'Evil" onmouseover="x', img: 'x.png' });
+    expect(html).toContain('&quot;');
+    // A real (unescaped) quote immediately followed by ` onmouseover="` would
+    // mean the attacker's quote closed the attribute early, turning
+    // onmouseover into a live, executable attribute. With correct escaping
+    // this exact substring can never appear (the closing quote is `&quot;`,
+    // not a literal `"`).
+    expect(html).not.toContain('" onmouseover="');
+  });
 });

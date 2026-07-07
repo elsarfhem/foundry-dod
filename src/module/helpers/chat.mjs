@@ -22,7 +22,10 @@ export function suitToName(suit, cardName) {
  * @returns {string}
  */
 export function renderCardThumbnail(card) {
-  const safeName = $('<div>').text(card.name).html();
+  // safeName also escapes `"` because it's interpolated into `alt="..."`/
+  // `title="..."` attributes (not just element content), where an
+  // unescaped quote would break out of the attribute.
+  const safeName = $('<div>').text(card.name).html().replace(/"/g, '&quot;');
   return `
     <div class="card-thumb">
       <img class="card-face" src="${card.img}" alt="${safeName}" title="${safeName}" style="max-width: 90px;"/>
