@@ -6,6 +6,7 @@ import {
   getCardsToDraw
 } from '../../helpers/card-utils.mjs';
 import { recordPlayerAdded, executePlayerDraw } from '../../helpers/draw-round.mjs';
+import { isSpecialSuit } from '../../helpers/special-cards.mjs';
 
 // Card management helpers
 /**
@@ -341,9 +342,17 @@ function notifyAddedCardsToChat(pile, data, addedSpecials = []) {
     destiny: 0,
     white: 0
   };
+  const pileSpecials = new Map();
   for (const card of pile.cards) {
     if (pileSuits[card.suit] !== undefined) {
       pileSuits[card.suit]++;
+    } else if (isSpecialSuit(card.suit)) {
+      const existing = pileSpecials.get(card.suit);
+      if (existing) {
+        existing.count++;
+      } else {
+        pileSpecials.set(card.suit, { count: 1, name: card.name });
+      }
     }
   }
 
@@ -390,12 +399,15 @@ function notifyAddedCardsToChat(pile, data, addedSpecials = []) {
     )}:</strong></p>`
   );
   lines.push('<ul class="suit-list">');
-  lines.push(`<li>${suitToName('success')}: ${pileSuits.success}</li>`);
-  lines.push(`<li>${suitToName('failure')}: ${pileSuits.failure}</li>`);
-  lines.push(`<li>${suitToName('issue')}: ${pileSuits.issue}</li>`);
-  lines.push(`<li>${suitToName('fortune')}: ${pileSuits.fortune}</li>`);
-  lines.push(`<li>${suitToName('destiny')}: ${pileSuits.destiny}</li>`);
-  lines.push(`<li>${suitToName('white')}: ${pileSuits.white}</li>`);
+  for (const suit of ['success', 'failure', 'issue', 'fortune', 'destiny', 'white']) {
+    if (pileSuits[suit] > 0) {
+      lines.push(`<li>${suitToName(suit)}: ${pileSuits[suit]}</li>`);
+    }
+  }
+  for (const [suit, { count, name }] of pileSpecials) {
+    const safePileSpecialName = $('<div>').text(name).html();
+    lines.push(`<li>${suitToName(suit, safePileSpecialName)}: ${count}</li>`);
+  }
   lines.push('</ul>');
 
   // Build button data
