@@ -241,15 +241,16 @@ export async function drawCardsFromPile() {
 }
 
 /**
- * Toggle the collapsed state of the header-cards section.
+ * Toggle the collapsed state of a collapsible section, reading which
+ * section from the clicked button's data-target attribute.
  * @param {JQuery} html - The jQuery-wrapped HTML of the sheet
  * @param {Event} ev - The click event
  */
-export function toggleHeaderCards(html, ev) {
+export function toggleCollapsible(html, ev) {
   const $btn = $(ev.currentTarget);
-  const $cards = html.find('.header-cards');
-  $cards.toggleClass('collapsed');
-  const expanded = !$cards.hasClass('collapsed');
+  const $section = html.find($btn.data('target'));
+  $section.toggleClass('collapsed');
+  const expanded = !$section.hasClass('collapsed');
   $btn.attr('aria-expanded', expanded);
 
   // Update button text based on expanded state

@@ -338,6 +338,61 @@
   }
 }
 
+.special-cards-section {
+  width: 100%;
+  margin-top: 0.5rem;
+
+  .toggle-special-cards {
+    font-size: medium;
+    font-family: $font-primary;
+    cursor: pointer;
+  }
+
+  .special-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+    transition: max-height 0.3s ease, opacity 0.3s;
+    opacity: 1;
+
+    &.collapsed {
+      max-height: 0;
+      opacity: 0.2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .special-card-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+
+      &.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .card-img {
+        width: 28px;
+        height: 28px;
+        flex-shrink: 0;
+      }
+
+      .special-card-name {
+        flex: 1;
+      }
+    }
+
+    .special-cards-empty {
+      font-style: italic;
+      opacity: 0.7;
+    }
+  }
+}
+
 .sheet-tabs {
   flex: 0;
 }

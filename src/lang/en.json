@@ -159,7 +159,10 @@
       "value": "Value",
       "weight": "Weight",
       "showCards": "Show Cards",
-      "hideCards": "Hide Cards"
+      "hideCards": "Hide Cards",
+      "specialCards": "Special Cards",
+      "showSpecialCards": "Show Special Cards",
+      "hideSpecialCards": "Hide Special Cards"
     },
     "sheet": {
       "labels": {
@@ -303,7 +306,8 @@
         "onlyGMEmpty": "Only the GM can empty the deck.",
         "operationInProgress": "A card operation is already in progress. Please wait.",
         "onlyGMManageSpecial": "Only the GM can manage special cards.",
-        "copiesShortfall": "Could not remove {shortfall} cop(y/ies) of \"{name}\" — some are currently in play."
+        "copiesShortfall": "Could not remove {shortfall} cop(y/ies) of \"{name}\" — some are currently in play.",
+        "noSpecialCardsAvailable": "No copies of this special card are available in the deck."
       },
       "info": {
         "success": "Successes",

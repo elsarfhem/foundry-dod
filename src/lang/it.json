@@ -159,7 +159,10 @@
       "value": "Valore",
       "weight": "Peso",
       "showCards": "Mostra Carte",
-      "hideCards": "Nascondi Carte"
+      "hideCards": "Nascondi Carte",
+      "specialCards": "Carte Speciali",
+      "showSpecialCards": "Mostra Carte Speciali",
+      "hideSpecialCards": "Nascondi Carte Speciali"
     },
     "sheet": {
       "labels": {
@@ -303,7 +306,8 @@
         "onlyGMEmpty": "Solo il GM può svuotare il mazzo.",
         "operationInProgress": "Un'operazione con le carte è già in corso. Attendere.",
         "onlyGMManageSpecial": "Solo il GM può gestire le carte speciali.",
-        "copiesShortfall": "Impossibile rimuovere {shortfall} copie di \"{name}\" — alcune sono già in gioco."
+        "copiesShortfall": "Impossibile rimuovere {shortfall} copie di \"{name}\" — alcune sono già in gioco.",
+        "noSpecialCardsAvailable": "Nessuna copia di questa carta speciale è disponibile nel mazzo."
       },
       "info": {
         "success": "Successi",
