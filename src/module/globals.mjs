@@ -1209,7 +1209,7 @@ export async function gestisciCarteSpeciali() {
         'DECK_OF_DESTINY.dialogs.manageSpecialCards.noCards'
       )}</li>`;
 
-  new Dialog({
+  const dialog = new Dialog({
     title: game.i18n.localize('DECK_OF_DESTINY.dialogs.manageSpecialCards.title'),
     content: `
       <ul style="list-style:none; padding:0;">${rows}</ul>
@@ -1229,12 +1229,14 @@ export async function gestisciCarteSpeciali() {
     render: (html) => {
       html.find('[data-action=add]').on('click', async () => {
         await openSpecialCardForm({ deck, cardsDocuments });
+        await dialog.close();
         gestisciCarteSpeciali();
       });
       html.find('[data-action=edit]').on('click', async (event) => {
         const suit = event.currentTarget.dataset.suit;
         const definition = definitions.find((d) => d.suit === suit);
         await openSpecialCardForm({ deck, cardsDocuments, definition });
+        await dialog.close();
         gestisciCarteSpeciali();
       });
       html.find('[data-action=delete]').on('click', async (event) => {
@@ -1242,8 +1244,10 @@ export async function gestisciCarteSpeciali() {
         await withCardLock(async () => {
           await deleteSpecialCardDefinition(cardsDocuments, suit);
         });
+        await dialog.close();
         gestisciCarteSpeciali();
       });
     }
-  }).render(true);
+  });
+  dialog.render(true);
 }
