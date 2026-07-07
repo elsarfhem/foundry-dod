@@ -388,21 +388,24 @@
     .card-img {
       // Fixed box + object-fit so every card renders at the correct aspect
       // ratio (not squashed into a square) and every tile lines up, same
-      // approach used for the chat card thumbnails. !important is required:
-      // Foundry core ships an unlayered flex-image reset
-      // (flex-shrink/flex-basis/max-width) that otherwise always wins over
-      // our system-layer CSS regardless of selector specificity.
-      width: 40px !important;
-      height: 58px !important;
-      max-width: 40px !important;
+      // approach used for the chat card thumbnails. Sized close to the main
+      // counter cards above (.card .card-img, height: 180px) so the
+      // checklist doesn't look like a miniature afterthought now that its
+      // section is the same height. !important is required: Foundry core
+      // ships an unlayered flex-image reset (flex-shrink/flex-basis/max-width)
+      // that otherwise always wins over our system-layer CSS regardless of
+      // selector specificity.
+      width: 105px !important;
+      height: 155px !important;
+      max-width: 105px !important;
       flex: 0 0 auto !important;
       object-fit: contain;
     }
 
     .special-card-name {
-      max-width: 60px;
+      max-width: 105px;
       text-align: center;
-      font-size: 0.8em;
+      font-size: 1em;
       overflow-wrap: break-word;
     }
   }
