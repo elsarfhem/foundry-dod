@@ -82,7 +82,7 @@
   .card-thumb-name {
     font-size: 0.7em;
     text-align: center;
-    max-width: 90px;
+    max-width: 60px;
     overflow-wrap: break-word;
   }
 }
@@ -95,8 +95,10 @@ ol.items-list {
 }
 
 // Bottom-align card thumbnails (overrides Foundry's default .flexrow centering)
+// and wrap onto additional rows once a draw has too many cards for one line.
 .card-draw.flexrow {
   align-items: flex-end;
+  flex-wrap: wrap;
 }
 
 .chat-message {

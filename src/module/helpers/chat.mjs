@@ -28,7 +28,7 @@ export function renderCardThumbnail(card) {
   const safeName = $('<div>').text(card.name).html().replace(/"/g, '&quot;');
   return `
     <div class="card-thumb">
-      <img class="card-face" src="${card.img}" alt="${safeName}" title="${safeName}" style="max-width: 90px;"/>
+      <img class="card-face" src="${card.img}" alt="${safeName}" title="${safeName}" style="max-width: 60px;"/>
       <span class="card-thumb-name">${safeName}</span>
     </div>
   `;
