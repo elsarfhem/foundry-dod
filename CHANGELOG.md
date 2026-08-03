@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/elsarfhem/foundry-dod/compare/v2.1.0...v2.1.1) (2026-08-03)
+
+
+### Bug Fixes
+
+* replace white filler cards when adding to the pile instead of just appending ([#31](https://github.com/elsarfhem/foundry-dod/issues/31)) ([815e513](https://github.com/elsarfhem/foundry-dod/commit/815e513a8daff2c96738134b79ba6eb12524e927))
+
 # [2.1.0](https://github.com/elsarfhem/foundry-dod/compare/v2.0.1...v2.1.0) (2026-07-07)
 
 
