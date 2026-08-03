@@ -33,12 +33,30 @@ export class MockCard {
   }
 }
 
+/**
+ * Mock of Foundry's embedded `Cards#cards` collection. Real Foundry
+ * `EmbeddedCollection`s are Map-like (keyed by id, with `.get`/`.has`/`.set`/
+ * `.delete`/`.size`) but also iterate and filter like an array of the
+ * contained documents rather than [key, value] pairs - card-utils.mjs (e.g.
+ * `passCardsBySuit`'s `source.cards.filter(...)`) and cards.mjs's
+ * `for (const card of pile.cards)` both rely on that array-like shape.
+ */
+export class MockCardsCollection extends Map {
+  [Symbol.iterator]() {
+    return this.values();
+  }
+
+  filter(predicate) {
+    return Array.from(this.values()).filter(predicate);
+  }
+}
+
 // Mock cards pile
 export class MockCardsPile {
   constructor(cards = []) {
     this.id = 'pile1';
     this.name = 'Mazzo';
-    this.cards = new Map(cards.map((c) => [c.id, c]));
+    this.cards = new MockCardsCollection(cards.map((c) => [c.id, c]));
     this._flags = {};
   }
 
@@ -60,15 +78,37 @@ export class MockCardsPile {
     return this;
   }
 
-  async pass(targetCards, targetId, options = {}) {
-    // Simulate card transfer
+  /**
+   * Simulate Cards#pass(to, ids, options): moves the cards with the given
+   * ids from this stack into `to`, returning the moved Card documents.
+   *
+   * The real Cards#pass() is a network round-trip (it awaits a server
+   * response before the source/target collections settle), so this yields
+   * to the event loop once before mutating anything. Without that, two
+   * "concurrent" calls in a test would never actually interleave - the
+   * first would run to completion synchronously before the second even
+   * started, hiding any race between the read of current state and the
+   * mutation.
+   *
+   * @param {MockCardsPile} to - Destination stack
+   * @param {string[]} ids - Card ids to move
+   * @param {object} [options={}]
+   */
+  async pass(to, ids, options = {}) {
+    await new Promise((resolve) => setTimeout(resolve, 0));
     const transferredCards = [];
-    for (const card of targetCards) {
-      const foundCard = this.cards.get(card.id);
-      if (foundCard) {
-        this.cards.delete(card.id);
-        transferredCards.push(foundCard);
-      }
+    for (const id of ids) {
+      const card = this.cards.get(id);
+      if (!card) continue;
+      this.cards.delete(id);
+      to.cards.set(id, card);
+      // Real Foundry sets `drawn: true` once a card leaves its origin deck.
+      // This mock doesn't track per-card origin, so it simplifies to "true
+      // after any pass()", which is what every current call site needs:
+      // cards sitting in a pile/hand are always drawn=true, regardless of
+      // which stack passed them along.
+      card.drawn = true;
+      transferredCards.push(card);
     }
     return transferredCards;
   }
@@ -82,6 +122,7 @@ export class MockCardsPile {
       const card = available[i];
       source.cards.delete(card.id);
       this.cards.set(card.id, card);
+      card.drawn = true;
       drawnCards.push(card);
     }
 

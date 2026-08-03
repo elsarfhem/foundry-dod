@@ -1,12 +1,8 @@
-import { createDrawChat, showChatRequest, suitToName } from '../../helpers/chat.mjs';
-import {
-  drawCards,
-  passCardsAndSync,
-  passCardsBySuitAndSync,
-  getCardsToDraw
-} from '../../helpers/card-utils.mjs';
+import { showChatRequest, suitToName } from '../../helpers/chat.mjs';
+import { addCardsReplacingWhite } from '../../helpers/card-utils.mjs';
 import { recordPlayerAdded, executePlayerDraw } from '../../helpers/draw-round.mjs';
 import { isSpecialSuit } from '../../helpers/special-cards.mjs';
+import { withCardLock } from '../../globals.mjs';
 
 // Card management helpers
 /**
@@ -174,7 +170,7 @@ export async function addCardsToPile(sheet) {
   }
 
   // Merge checked special cards into the same suitCounts object, so the
-  // whole pile-add happens in one passCardsBySuitAndSync call.
+  // whole pile-add happens in one addCardsReplacingWhite call.
   const addedSpecials = checkedSpecials.map((input) => {
     const suit = input.name.replace('specialCard.', '');
     const name = input
@@ -186,13 +182,20 @@ export async function addCardsToPile(sheet) {
 
   if (!Object.keys(suitCounts).length)
     return ui.notifications.warn('No available cards to add to pile.');
-  await passCardsBySuitAndSync(deck, pile, suitCounts, { chatNotification: false });
-  notifyAddedCardsToChat(pile, data, addedSpecials);
-  await resetActorCards(sheet);
-  uncheckSpecialCards(sheet);
 
-  // Record that this player has added cards for the draw round
-  await recordPlayerAdded(game.user.id);
+  // Serialize against other card-mutating operations from this client (see
+  // withCardLock in globals.mjs). addCardsReplacingWhite reads the pile's
+  // current white-card count and then performs two sequential pass() calls,
+  // so an overlapping call from the same client could race on that read.
+  await withCardLock(async () => {
+    await addCardsReplacingWhite(deck, pile, suitCounts, { chatNotification: false });
+    notifyAddedCardsToChat(pile, data, addedSpecials);
+    await resetActorCards(sheet);
+    uncheckSpecialCards(sheet);
+
+    // Record that this player has added cards for the draw round
+    await recordPlayerAdded(game.user.id);
+  });
 }
 
 /**
@@ -228,53 +231,6 @@ export async function drawCardsForPlayer() {
 }
 
 /**
- *
- * @param {Object} sheet
- * @return {Promise<void>}
- */
-export async function drawCardsFromPile() {
-  const deck = game.cards.getName('DoD - lista carte');
-  if (!deck)
-    return ui.notifications.error(
-      'The deck of cards is not available. Please make sure the deck is loaded.'
-    );
-  const pile = game.cards.getName('Mazzo');
-  if (!pile)
-    return ui.notifications.error(
-      'The pile of cards is not available. Please make sure the pile is loaded.'
-    );
-  if (!pile.cards.size)
-    return ui.notifications.warn(
-      'The pile of cards is empty. Please add cards to the pile.'
-    );
-  const hand = game.cards.getName('Mano');
-  if (!hand)
-    return ui.notifications.error(
-      'The hand of cards is not available. Please make sure the hand is loaded.'
-    );
-  const confirmed = await Dialog.prompt({
-    title: 'Draw Cards',
-    content: `<form><div class="form-group"><label>Test Players Number:</label><input id="num-players" name="num-players" value="1" autofocus onFocus="select()" tabindex="1" type="number" min="1"></div></form>`,
-    label: 'Draw',
-    rejectClose: false
-  });
-  if (confirmed) {
-    const players = parseInt(document.querySelector('[name=num-players]').value) || 1;
-    await passWhiteCardsToPile(deck, pile);
-    const drawnCards = await drawCards(
-      hand,
-      pile,
-      getCardsToDraw(pile.cards.size, players),
-      {
-        how: CONST.CARD_DRAW_MODES.RANDOM,
-        chatNotification: false
-      }
-    );
-    if (drawnCards.length) createDrawChat(drawnCards, players);
-  }
-}
-
-/**
  * Toggle the collapsed state of a collapsible section, reading which
  * section from the clicked button's data-target attribute.
  * @param {JQuery} html - The jQuery-wrapped HTML of the sheet
@@ -304,25 +260,6 @@ function isEmptyCardData(data) {
       (sum, card) => sum + Math.max(0, card.value + card.modifier),
       0
     ) === 0
-  );
-}
-
-/**
- *
- * @param {Object} deck
- * @param {Object} pile
- */
-async function passWhiteCardsToPile(deck, pile) {
-  const whiteCardsNum = Math.max(0, 20 - pile.cards.size);
-  const whiteCards = deck.availableCards
-    .filter((c) => c.suit === 'white')
-    .slice(0, whiteCardsNum);
-  if (!whiteCards.length) return;
-  await passCardsAndSync(
-    deck,
-    pile,
-    whiteCards.map((c) => c.id),
-    { chatNotification: false }
   );
 }
 

@@ -1,6 +1,7 @@
 import {
   getCardsToDraw,
-  passCardsBySuitAndSync,
+  addCardsReplacingWhite,
+  refillPileWithWhite,
   drawCards
 } from './helpers/card-utils.mjs';
 import { createDrawChat, suitToName, renderCardThumbnail } from './helpers/chat.mjs';
@@ -176,7 +177,7 @@ export async function aggiungiAlMazzo() {
             totalSpecialQty;
 
           if (totalCards > 0) {
-            await passCardsBySuitAndSync(
+            await addCardsReplacingWhite(
               deck,
               pile,
               {
@@ -242,6 +243,7 @@ export async function componiIlMazzoEPesca() {
   });
   const pile = game.cards.getName('Mazzo');
   const hand = game.cards.getName('Mano');
+  await refillPileWithWhite(deck, pile);
 
   const specialDefinitions = getSpecialCardDefinitions(deck);
   const specialRows = specialDefinitions.length
@@ -361,17 +363,6 @@ export async function componiIlMazzoEPesca() {
           </ul>`
           });
 
-          const whiteCardsNum = Math.max(
-            0,
-            20 -
-              successCardsNum -
-              issueCardsNum -
-              destinyCardsNum -
-              failureCardsNum -
-              fortuneCardsNum -
-              totalSpecialQty
-          );
-
           const totalCards =
             issueCardsNum +
             successCardsNum +
@@ -381,11 +372,10 @@ export async function componiIlMazzoEPesca() {
             totalSpecialQty;
 
           if (totalCards > 0) {
-            await passCardsBySuitAndSync(
+            await addCardsReplacingWhite(
               deck,
               pile,
               {
-                white: whiteCardsNum,
                 success: successCardsNum,
                 failure: failureCardsNum,
                 issue: issueCardsNum,
@@ -450,7 +440,6 @@ export async function pesca() {
     close: async (html) => {
       if (confirmed) {
         await withCardLock(async () => {
-          const deck = game.cards.getName('DoD - lista carte');
           const pile = game.cards.getName('Mazzo');
           const hand = game.cards.getName('Mano');
 
@@ -471,15 +460,6 @@ export async function pesca() {
           ).length;
 
           const playersNum = parseInt(html.find('[name=num-players]')[0].value) || 1;
-          const whiteCardsNum = Math.max(
-            0,
-            20 -
-              successCardsNum -
-              issueCardsNum -
-              destinyCardsNum -
-              failureCardsNum -
-              fortuneCardsNum
-          );
 
           ChatMessage.create({
             user: game.user._id,
@@ -492,22 +472,6 @@ export async function pesca() {
               <li>Carta del Destino: ${destinyCardsNum}</li>
           </ul>`
           });
-
-          const totalCards =
-            issueCardsNum +
-            successCardsNum +
-            destinyCardsNum +
-            failureCardsNum +
-            fortuneCardsNum;
-
-          if (totalCards === 0) return;
-
-          await passCardsBySuitAndSync(
-            deck,
-            pile,
-            { white: whiteCardsNum },
-            { chatNotification: false }
-          );
 
           if (pile.cards.size > 0) {
             const drawnCards = await drawCards(
@@ -811,10 +775,14 @@ export async function divisioneCarteFortuna() {
  */
 export async function richiediProva() {
   const deck = game.cards.getName('DoD - lista carte');
+  const pile = game.cards.getName('Mazzo');
 
   await deck.recall({
     chatNotification: false
   });
+
+  // Refill the emptied pile with white filler cards up to the minimum size
+  await refillPileWithWhite(deck, pile);
 
   // Clear the draw round state when starting a new test
   await clearRoundState();
@@ -901,7 +869,11 @@ export async function svuotaMazzo() {
   }
   return withCardLock(async () => {
     const deck = game.cards.getName('DoD - lista carte');
+    const pile = game.cards.getName('Mazzo');
     await deck.recall({ chatNotification: false });
+
+    // Refill the emptied pile with white filler cards up to the minimum size
+    await refillPileWithWhite(deck, pile);
 
     // Clear the draw round state
     await clearRoundState();

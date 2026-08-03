@@ -18,9 +18,14 @@ export function createCard(options = {}) {
 }
 
 /**
- * Create multiple cards with different suits
+ * Create multiple cards with different suits.
+ * @param {Object<string, number>} counts - Map of suit name to how many to create.
+ * @param {string} [idPrefix=''] - Prefix for generated ids. Pass distinct
+ *   prefixes when building cards for two collections that will exchange
+ *   cards in the same test (e.g. a deck and a pile) so their ids don't
+ *   collide once cards move between them.
  */
-export function createCardsBySuit(counts = { hearts: 2, spades: 2, diamonds: 1 }) {
+export function createCardsBySuit(counts = { hearts: 2, spades: 2, diamonds: 1 }, idPrefix = '') {
   const cards = [];
   let idCounter = 1;
 
@@ -28,7 +33,7 @@ export function createCardsBySuit(counts = { hearts: 2, spades: 2, diamonds: 1 }
     for (let i = 0; i < count; i++) {
       cards.push(
         createCard({
-          id: `card${idCounter++}`,
+          id: `${idPrefix}card${idCounter++}`,
           suit,
           name: `${suit} ${i + 1}`,
         })
