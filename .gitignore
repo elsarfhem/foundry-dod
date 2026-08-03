@@ -30,3 +30,4 @@ CLAUDE.md
 # Local docker-compose overrides / Foundry data (host-specific, may contain license.json)
 .env
 .foundry-data/
+docker-compose.override.yml
