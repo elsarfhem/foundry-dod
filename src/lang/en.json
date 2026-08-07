@@ -298,12 +298,17 @@
         "noSuccessOrFailure": "No success or failure found in the deck! The test had neither success nor failure.",
         "noFortuneCardsInHand": "There are no Fortune cards in hand.",
         "noFortuneCards": "There are no Fortune cards in the current hand.",
-        "specialCardNameRequired": "Please enter a name for the special card."
+        "specialCardNameRequired": "Please enter a name for the special card.",
+        "socketlibUnavailable": "The socketlib module is required for this action and isn't active. Ask the GM to install/enable it.",
+        "noGMOnline": "This action needs the GM online. Please try again once a GM is connected.",
+        "gmRequestFailed": "The GM couldn't complete this action. Please try again.",
+        "relayNotReady": "Card actions aren't ready yet. Please try again in a moment.",
+        "unknownUser": "Could not identify the requesting user.",
+        "unknownActor": "Could not identify the acting character."
       },
       "warnings": {
         "unequalCards": "Warning: the number of successes and failures in hand is not equal.",
         "onlyGMEmpty": "Only the GM can empty the deck.",
-        "operationInProgress": "A card operation is already in progress. Please wait.",
         "onlyGMManageSpecial": "Only the GM can manage special cards.",
         "copiesShortfall": "Could not remove {shortfall} cop(y/ies) of \"{name}\" — some are currently in play.",
         "noSpecialCardsAvailable": "No copies of this special card are available in the deck."

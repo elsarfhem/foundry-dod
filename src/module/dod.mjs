@@ -27,6 +27,19 @@ import {
   svuotaMazzo,
   tiroDifesa
 } from './globals.mjs';
+import { createGMRelay, setGMRelay, pickTargetGM } from './helpers/gm-relay.mjs';
+import {
+  gmAddCardsToPile,
+  gmAddToDeck,
+  gmResetPileForNewRound,
+  gmComposeAndDraw,
+  gmDrawFromPile,
+  gmExecutePlayerDraw,
+  gmRisk,
+  gmCreateSpecialCard,
+  gmUpdateSpecialCard,
+  gmDeleteSpecialCard
+} from './helpers/gm-card-actions.mjs';
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -104,6 +117,50 @@ Hooks.once('init', function () {
 
   // Preload Handlebars templates.
   return preloadHandlebarsTemplates();
+});
+
+/* -------------------------------------------- */
+/*  Socketlib GM Relay                          */
+/* -------------------------------------------- */
+
+// Card mutations shared across clients (deck/pile/hand) are relayed through
+// one deterministically-chosen GM via socketlib, so a single process is the
+// real point of serialization instead of each browser's own in-memory lock.
+// Every client - including any GM who isn't the chosen target - relays
+// through `socket.executeAsUser`, never `executeAsGM`: that call alone
+// would let socketlib route different calls to different GMs when more
+// than one is online, splitting the queue in two (see `pickTargetGM`). If
+// socketlib is missing/inactive, this hook never fires and the relay stays
+// unavailable for every caller (see gm-relay.mjs's `relayNotReady` error) -
+// no silent fallback to unserialized mutation.
+Hooks.once('socketlib.ready', () => {
+  const socket = socketlib.registerSystem('dod');
+  const handlers = {
+    addCardsToPile: gmAddCardsToPile,
+    addToDeck: gmAddToDeck,
+    resetPileForNewRound: gmResetPileForNewRound,
+    composeAndDraw: gmComposeAndDraw,
+    drawFromPile: gmDrawFromPile,
+    executePlayerDraw: gmExecutePlayerDraw,
+    risk: gmRisk,
+    createSpecialCard: gmCreateSpecialCard,
+    updateSpecialCard: gmUpdateSpecialCard,
+    deleteSpecialCard: gmDeleteSpecialCard
+  };
+  for (const [actionKey, handler] of Object.entries(handlers)) {
+    socket.register(actionKey, handler);
+  }
+
+  setGMRelay(
+    createGMRelay({
+      hasTransport: () => true,
+      getTargetGMId: () => pickTargetGM(game.users)?.id ?? null,
+      isSelf: (userId) => game.user.id === userId,
+      executeLocal: (actionKey, payload) => handlers[actionKey](payload),
+      executeRemote: (targetId, actionKey, payload) =>
+        socket.executeAsUser(actionKey, targetId, payload)
+    })
+  );
 });
 
 /* -------------------------------------------- */

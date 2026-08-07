@@ -269,7 +269,7 @@ export class DeckOfDestinyActorSheet extends foundry.appv1.sheets.ActorSheet {
     html.on('click', '[data-action="draw-cards"]', async (event) => {
       event.preventDefault();
       event.target.blur(); // Remove focus from the button.
-      await drawCardsForPlayer();
+      await drawCardsForPlayer(this);
     });
 
     // Defense roll button.
