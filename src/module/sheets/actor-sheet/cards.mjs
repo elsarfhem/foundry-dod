@@ -1,5 +1,5 @@
 import { showChatRequest, suitToName } from '../../helpers/chat.mjs';
-import { getRequesterIdentity, runOnGM } from '../../helpers/gm-relay.mjs';
+import { getRequesterActorIdentity, runOnGM } from '../../helpers/gm-relay.mjs';
 
 // Card management helpers
 /**
@@ -171,10 +171,14 @@ export async function addCardsToPile(sheet) {
     return ui.notifications.warn('No available cards to add to pile.');
 
   // Relayed to the GM as one atomic operation (mutate the pile + record
-  // this player for the draw round), serialized there against every other
-  // player's add/draw - not just other actions on this same client.
+  // this actor for the draw round), serialized there against every other
+  // actor's add/draw - not just other actions on this same client. The
+  // actor identity comes from the open sheet (sheet.actor), not from
+  // game.user.character - the person clicking may be looking at a
+  // different actor's sheet than their own (e.g. helping another player,
+  // or the GM acting on someone's behalf).
   const result = await runOnGM('addCardsToPile', {
-    ...getRequesterIdentity(),
+    ...getRequesterActorIdentity(sheet.actor),
     suitCounts
   });
   if (!result.success) {
@@ -183,7 +187,12 @@ export async function addCardsToPile(sheet) {
 
   // pile totals come from the GM's snapshot, not a local re-read of `pile`
   // (which may not have synced this mutation yet on this client).
-  notifyAddedCardsToChat(data, addedSpecials, result.data.pileSnapshot);
+  notifyAddedCardsToChat(
+    data,
+    addedSpecials,
+    result.data.pileSnapshot,
+    sheet.actor.name
+  );
   await resetActorCards(sheet);
   uncheckSpecialCards(sheet);
 }
@@ -204,17 +213,20 @@ function uncheckSpecialCards(sheet) {
 }
 
 /**
- * Draw cards for the current player using the individual draw round system.
- * Relayed to the GM (see gm-relay.mjs) so it's serialized against every
- * other player's draw/add, not just other actions on this same client. The
- * GM handler itself posts both the individual draw message and (once
- * complete) the round summary, in that order - see draw-round.mjs's
- * executePlayerDraw - so two players' messages can never arrive out of
- * order from a caller-side network round-trip race.
+ * Draw cards for the given actor sheet using the individual draw round
+ * system. Relayed to the GM (see gm-relay.mjs) so it's serialized against
+ * every other actor's draw/add, not just other actions on this same
+ * client. The GM handler itself posts both the individual draw message and
+ * (once complete) the round summary, in that order - see draw-round.mjs's
+ * executeActorDraw - so two actors' messages can never arrive out of order
+ * from a caller-side network round-trip race.
+ * @param {Object} sheet - The actor sheet instance the "Draw Cards" button
+ *   was clicked from - identifies which actor is drawing (may differ from
+ *   game.user.character).
  * @return {Promise<void>}
  */
-export async function drawCardsForPlayer() {
-  const identity = getRequesterIdentity();
+export async function drawCardsForPlayer(sheet) {
+  const identity = getRequesterActorIdentity(sheet.actor);
   const result = await runOnGM('executePlayerDraw', identity);
 
   if (!result.success) {
@@ -264,14 +276,15 @@ function isEmptyCardData(data) {
  *   pile totals computed by the GM right after the mutation (see
  *   gm-card-actions.mjs#buildPileSnapshot) - not re-derived from a local
  *   `pile` read, which may not have synced yet on this client.
+ * @param {string} actorName - The acting actor's name (sheet.actor.name),
+ *   displayed as the message's author label.
  */
-function notifyAddedCardsToChat(data, addedSpecials = [], pileSnapshot) {
+function notifyAddedCardsToChat(data, addedSpecials = [], pileSnapshot, actorName) {
   const { pileSuits, pileSpecials } = pileSnapshot;
 
-  // HTML-escape actor name (character name), fallback to user name
-  const actor = game.user.character;
-  const displayName = actor ? actor.name : game.user.name;
-  const safeName = $('<div>').text(displayName).html();
+  // HTML-escape the acting actor's name - always the sheet that was
+  // actually open, not game.user.character (see addCardsToPile).
+  const safeName = $('<div>').text(actorName).html();
 
   // Build cards added with flex layout
   const lines = [];
