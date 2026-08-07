@@ -298,7 +298,12 @@
         "noSuccessOrFailure": "Nessun successo o fallimento trovato nel mazzo! La prova non ha avuto successo né fallimento.",
         "noFortuneCardsInHand": "Non ci sono Carte Fortuna nella mano.",
         "noFortuneCards": "Non ci sono carte fortuna nella mano attuale.",
-        "specialCardNameRequired": "Inserisci un nome per la carta speciale."
+        "specialCardNameRequired": "Inserisci un nome per la carta speciale.",
+        "socketlibUnavailable": "Il modulo socketlib è necessario per questa azione e non è attivo. Chiedi al GM di installarlo/attivarlo.",
+        "noGMOnline": "Questa azione richiede un GM connesso. Riprova quando un GM è online.",
+        "gmRequestFailed": "Il GM non è riuscito a completare l'azione. Riprova.",
+        "relayNotReady": "Le azioni sulle carte non sono ancora pronte. Riprova a breve.",
+        "unknownUser": "Impossibile identificare l'utente richiedente."
       },
       "warnings": {
         "unequalCards": "Attenzione: il numero di successi e di fallimenti nella mano non sono uguali.",

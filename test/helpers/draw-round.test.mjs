@@ -36,6 +36,7 @@ import {
   createCardsMap,
   createHandPile
 } from '../mocks/foundry.mjs';
+import { withCardLock } from '../../src/module/globals.mjs';
 
 describe('draw-round: Pure Query Functions', () => {
   describe('canPlayerDraw', () => {
@@ -328,15 +329,14 @@ describe('draw-round: State Management', () => {
 
 describe('draw-round: State Mutations', () => {
   describe('recordPlayerAdded', () => {
-    it('should reject recording for other users (NFR #6)', async () => {
-      const pile = new MockCardsPile();
-      game.cards = createCardsMap([['pile1', pile]]);
-      game.user.id = 'user1';
-
-      const result = await recordPlayerAdded('user2');
-      expect(result.success).toBe(false);
-      expect(result.error).toContain('Cannot record for other users');
-    });
+    // NFR #6 relocated: recordPlayerAdded used to reject when the userId
+    // argument didn't match game.user.id, which only made sense when this
+    // ran on the caller's own client. It now always runs on the GM's
+    // client via the relay (see gm-card-actions.mjs), where that
+    // comparison would reject every legitimate call - see
+    // gm-relay.test.mjs for the replacement plausibility check
+    // (assertKnownUser) and the concurrency tests below for why this
+    // moved to the GM in the first place.
 
     it('should initialize state if none exists', async () => {
       const pile = new MockCardsPile();
@@ -378,6 +378,48 @@ describe('draw-round: State Mutations', () => {
     });
   });
 
+  describe('recordPlayerAdded (concurrent calls)', () => {
+    // MockCardsPile#setFlag now yields to the event loop once before
+    // writing (mirrors the real network round-trip - see test/mocks/
+    // foundry.mjs), so two calls racing on the SAME flag can genuinely
+    // interleave here instead of running to completion one after another.
+    it('loses a player when two adds race unserialized (reproduces the bug)', async () => {
+      const pile = new MockCardsPile();
+      game.cards = createCardsMap([['pile1', pile]]);
+
+      const [resultA, resultB] = await Promise.all([
+        recordPlayerAdded('userA'),
+        recordPlayerAdded('userB')
+      ]);
+
+      expect(resultA.success).toBe(true);
+      expect(resultB.success).toBe(true);
+      const state = loadRoundState();
+      // Both calls "succeeded" individually, but they raced on the same
+      // read-modify-write of the currentRound flag - last write wins, so
+      // one of the two additions is silently gone.
+      expect(state.playersAdded.length).toBeLessThan(2);
+    });
+
+    it('never loses a player when both calls are serialized (post-fix, via withCardLock)', async () => {
+      const pile = new MockCardsPile();
+      game.cards = createCardsMap([['pile1', pile]]);
+
+      // Simulates both requests landing on the GM's shared queue (see
+      // gm-card-actions.mjs#gmRecordPlayerAdded), instead of racing
+      // unserialized on two different clients.
+      const [resultA, resultB] = await Promise.all([
+        withCardLock(() => recordPlayerAdded('userA')),
+        withCardLock(() => recordPlayerAdded('userB'))
+      ]);
+
+      expect(resultA.success).toBe(true);
+      expect(resultB.success).toBe(true);
+      const state = loadRoundState();
+      expect(state.playersAdded.sort()).toEqual(['userA', 'userB']);
+    });
+  });
+
   describe('executePlayerDraw', () => {
     beforeEach(() => {
       // Set up a complete game environment for draw tests
@@ -395,17 +437,15 @@ describe('draw-round: State Mutations', () => {
       game.user.character = actor;
     });
 
-    it('should reject drawing for other users (NFR #6)', async () => {
-      const result = await executePlayerDraw('user2');
-      expect(result.success).toBe(false);
-      expect(result.error).toContain('Cannot draw for other users');
-    });
+    // NFR #6 relocated - see the comment above recordPlayerAdded's
+    // describe block: the old self-check compared the caller to itself,
+    // which broke once this always runs on the GM's client.
 
     it('should error if player has not added cards', async () => {
       const pile = Array.from(game.cards.values())[0];
       await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user2']));
 
-      const result = await executePlayerDraw('user1');
+      const result = await executePlayerDraw('user1', 'Player1');
       expect(result.success).toBe(false);
       expect(result.error).toBe('DECK_OF_DESTINY.messages.DrawRound.Error.NotAdded');
     });
@@ -418,7 +458,7 @@ describe('draw-round: State Mutations', () => {
         createRoundWithSomeDrawn(['user1'], ['user1'])
       );
 
-      const result = await executePlayerDraw('user1');
+      const result = await executePlayerDraw('user1', 'Player1');
       expect(result.success).toBe(false);
       expect(result.error).toBe(
         'DECK_OF_DESTINY.messages.DrawRound.Error.AlreadyDrawn'
@@ -433,7 +473,7 @@ describe('draw-round: State Mutations', () => {
         createRoundWithPlayersAdded(['user1', 'user2', 'user3'])
       );
 
-      const result = await executePlayerDraw('user1');
+      const result = await executePlayerDraw('user1', 'Player1');
       expect(result.success).toBe(true);
       expect(result.data.drawnCount).toBeGreaterThan(0);
 
@@ -450,7 +490,7 @@ describe('draw-round: State Mutations', () => {
         createRoundWithPlayersAdded(['user1', 'user2', 'user3'])
       );
 
-      const result = await executePlayerDraw('user1');
+      const result = await executePlayerDraw('user1', 'Player1');
       expect(result.success).toBe(true);
       // total = max(3, floor(21/7)) = 3; base = 1, extra = 0; first drawer gets 1
       expect(result.data.drawnCount).toBe(1);
@@ -460,15 +500,16 @@ describe('draw-round: State Mutations', () => {
       const pile = Array.from(game.cards.values())[0];
       await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user1']));
 
-      await executePlayerDraw('user1');
+      await executePlayerDraw('user1', 'TestActor');
 
       const state = loadRoundState();
       const drawResult = state.drawResults[0];
 
       expect(drawResult.userId).toBe('user1');
-      // executePlayerDraw prefers the actor's name over the Foundry user's
-      // display name when a character is assigned (see beforeEach: the
-      // mock actor is named 'TestActor').
+      // displayName is now resolved by the caller (see
+      // gm-relay.mjs#resolveDisplayName, tested on its own in
+      // gm-relay.test.mjs) and passed through as-is - executePlayerDraw
+      // just attributes the draw to whatever name it's given.
       expect(drawResult.userName).toBe('TestActor');
       expect(drawResult.cards).toBeDefined();
       expect(drawResult.cards.length).toBeGreaterThan(0);
@@ -483,7 +524,7 @@ describe('draw-round: State Mutations', () => {
         createRoundWithSomeDrawn(['user1', 'user2'], ['user2'])
       );
 
-      const result = await executePlayerDraw('user1');
+      const result = await executePlayerDraw('user1', 'Player1');
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(true);
     });
@@ -496,7 +537,7 @@ describe('draw-round: State Mutations', () => {
         createRoundWithPlayersAdded(['user1', 'user2', 'user3'])
       );
 
-      const result = await executePlayerDraw('user1');
+      const result = await executePlayerDraw('user1', 'Player1');
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(false);
     });
@@ -541,21 +582,21 @@ describe('draw-round: Integration Tests', () => {
       // Player 1 draws
       game.user.id = 'user1';
       game.user.name = 'Player1';
-      let result = await executePlayerDraw('user1');
+      let result = await executePlayerDraw('user1', 'Player1');
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(false);
 
       // Player 2 draws
       game.user.id = 'user2';
       game.user.name = 'Player2';
-      result = await executePlayerDraw('user2');
+      result = await executePlayerDraw('user2', 'Player2');
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(false);
 
       // Player 3 draws (completes round)
       game.user.id = 'user3';
       game.user.name = 'Player3';
-      result = await executePlayerDraw('user3');
+      result = await executePlayerDraw('user3', 'Player3');
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(true);
 
@@ -577,7 +618,7 @@ describe('draw-round: Integration Tests', () => {
       // Only user1 draws
       game.user.id = 'user1';
       game.user.name = 'Player1';
-      const result = await executePlayerDraw('user1');
+      const result = await executePlayerDraw('user1', 'Player1');
 
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(false);
@@ -592,7 +633,7 @@ describe('draw-round: Integration Tests', () => {
       game.user.name = 'Player1';
 
       await recordPlayerAdded('user1');
-      await executePlayerDraw('user1');
+      await executePlayerDraw('user1', 'Player1');
 
       await clearRoundState();
 
@@ -618,7 +659,7 @@ describe('draw-round: Integration Tests', () => {
 
       await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user1']));
 
-      const result = await executePlayerDraw('user1');
+      const result = await executePlayerDraw('user1', 'Player1');
       expect(result.success).toBe(false);
     });
 
@@ -637,7 +678,7 @@ describe('draw-round: Integration Tests', () => {
       game.user.character = actor;
 
       await recordPlayerAdded('user1');
-      const result = await executePlayerDraw('user1');
+      const result = await executePlayerDraw('user1', 'Player1');
 
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(true);

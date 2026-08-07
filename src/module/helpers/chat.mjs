@@ -80,8 +80,13 @@ export function initChatListeners() {
  * @param {string} opts.img - Optional icon image.
  * @param {string} opts.title - Title of the message.
  * @param {Array<{label:string,actionKey:string,icon?:string,color?:string}>} opts.buttonData - Buttons array.
+ * @param {string} [opts.userId] - Author to attribute the message to. Defaults
+ *   to the calling client's own `game.user.id`. Pass this explicitly when
+ *   posting on another user's behalf (e.g. the GM posting a player's draw
+ *   result) - Foundry permits a GM client to author a ChatMessage as any
+ *   user, same as rolling on a player's behalf.
  */
-export function showChatRequest({ description, img, title, buttonData }) {
+export function showChatRequest({ description, img, title, buttonData, userId }) {
   const htmlContent = `
     <h2>${title ?? ''}</h2>
     ${
@@ -108,7 +113,7 @@ export function showChatRequest({ description, img, title, buttonData }) {
         .join('')}
     </div>
   `;
-  ChatMessage.create({ user: game.user.id, content: htmlContent });
+  ChatMessage.create({ user: userId ?? game.user.id, content: htmlContent });
 }
 
 /**

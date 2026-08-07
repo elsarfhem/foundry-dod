@@ -69,12 +69,32 @@ export class MockCardsPile {
   }
 
   async setFlag(scope, key, value) {
+    // Real Foundry's setFlag is a network round-trip (Document#update()
+    // under the hood), so this yields to the event loop once before
+    // writing - without it, two "concurrent" setFlag calls in a test would
+    // never actually interleave, hiding read-modify-write races on the
+    // same flag (see the recordPlayerAdded concurrency tests).
+    await new Promise((resolve) => setTimeout(resolve, 0));
     this._flags[`${scope}.${key}`] = structuredClone(value);
     return this;
   }
 
   async unsetFlag(scope, key) {
     delete this._flags[`${scope}.${key}`];
+    return this;
+  }
+
+  /**
+   * Simplified stand-in for Cards#recall(): real Foundry tracks each card's
+   * origin deck and pulls every one of "its" cards back from wherever they
+   * currently sit (other piles/hands). This mock has no origin tracking, so
+   * it's a no-op here - tests that exercise recall-calling code (e.g.
+   * gmResetPileForNewRound) set up the pile's state directly to represent
+   * "already recalled" and assert on what happens *after* recall
+   * (refillPileWithWhite, clearRoundState), not on recall's own
+   * document-shuffling, which is Foundry's own already-tested primitive.
+   */
+  async recall() {
     return this;
   }
 
@@ -179,6 +199,10 @@ export class MockGame {
   constructor(options = {}) {
     this.user = options.user || new MockUser();
     this.users = options.users || [this.user];
+    // Real Foundry's game.users is a Map-like Collection (has .get(id)) as
+    // well as array-like (.filter/.some/.map) - attach .get to the plain
+    // array so both styles work, matching game.cards.getName below.
+    this.users.get = (id) => this.users.find((u) => u.id === id);
     this.cards = options.cards || new Map();
     this.actors = options.actors || new Map();
     this.i18n = {

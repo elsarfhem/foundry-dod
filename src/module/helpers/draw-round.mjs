@@ -241,17 +241,18 @@ export function countBySuit(cards) {
 
 /**
  * Record that a player has added cards to the pile
- * NFR #6: User ID validation
+ * NFR #6 (relocated): this used to self-check `userId !== game.user.id`,
+ * which only made sense when this ran on the caller's own client. It now
+ * always runs on the GM's client (see gm-card-actions.mjs), where
+ * `game.user` is always the GM - that check would reject every legitimate
+ * call. The plausibility check moved to the GM handler
+ * (gm-relay.mjs#assertKnownUser); real authorization rests on Foundry's
+ * document permissions for the shared Cards stacks.
  * NFR #7: Error boundary
  * @param {string} userId - User ID to record
  * @returns {Promise<{success: boolean, error?: string}>}
  */
 export async function recordPlayerAdded(userId) {
-  // NFR #6: User ID validation - can only record for self
-  if (userId !== game.user.id) {
-    return { success: false, error: 'Cannot record for other users' };
-  }
-
   try {
     let state = loadRoundState();
 
@@ -280,17 +281,22 @@ export async function recordPlayerAdded(userId) {
 /**
  * Execute a player draw operation
  * NFR #4: Duplicate summary prevention - only this client generates summary
- * NFR #6: User ID validation
+ *   (now actually true multi-client: this always runs on the GM's client,
+ *   serialized via withCardLock, so "the last player to draw" is decided
+ *   by a single process instead of racing per-client checks)
+ * NFR #6 (relocated): see recordPlayerAdded's comment above - the old
+ *   self-check compared the caller to itself, which broke once this always
+ *   runs on the GM's client. `displayName` is now an explicit parameter
+ *   instead of being read from `game.user.character`/`game.user.name`,
+ *   which on the GM's client would always resolve to the GM.
  * NFR #7: Error boundary
  * @param {string} userId - User ID performing the draw
+ * @param {string} displayName - Display name to attribute the draw to,
+ *   resolved by the calling client before any relay (see
+ *   gm-relay.mjs#getRequesterIdentity)
  * @returns {Promise<{success: boolean, error?: string, data?: Object}>}
  */
-export async function executePlayerDraw(userId) {
-  // NFR #6: User ID validation
-  if (userId !== game.user.id) {
-    return { success: false, error: 'Cannot draw for other users' };
-  }
-
+export async function executePlayerDraw(userId, displayName) {
   try {
     const pile = getPile();
     if (!pile) {
@@ -355,10 +361,7 @@ export async function executePlayerDraw(userId) {
       };
     }
 
-    // Record draw result with actor name (character name)
-    const actor = game.user.character;
-    const displayName = actor ? actor.name : game.user.name;
-
+    // Record draw result with the caller-resolved display name
     const drawResult = {
       userId,
       userName: displayName,
@@ -381,11 +384,20 @@ export async function executePlayerDraw(userId) {
       return saveResult;
     }
 
-    // Generate individual player draw message
+    // Both chat messages for this draw are posted here, GM-side, in the
+    // order they actually happened - not by the calling client after a
+    // round-trip back. Two players' draws are already serialized by
+    // withCardLock (see gm-card-actions.mjs#gmExecutePlayerDraw); if the
+    // "Player Draw" message were posted by each caller's own client
+    // instead, its extra network round-trip could let a later player's
+    // summary (posted immediately, GM-side) land in chat before an earlier
+    // player's own draw message finished posting.
     generatePlayerDrawMessage(drawResult, state.playersAdded.length);
 
     // Check if round is complete and generate summary
-    // NFR #4: Only this client generates summary (prevents duplicates)
+    // NFR #4: Only this client generates summary (prevents duplicates) -
+    // this stays here (GM-side) because only the GM's serialized queue can
+    // determine "round complete" exactly-once across every player.
     const roundComplete = isRoundComplete(state);
     if (roundComplete) {
       await generateSummary(state);
@@ -395,7 +407,9 @@ export async function executePlayerDraw(userId) {
       success: true,
       data: {
         drawnCount: drawnCards.length,
-        roundComplete
+        roundComplete,
+        drawResult,
+        playersAddedCount: state.playersAdded.length
       }
     };
   } catch (error) {
@@ -405,7 +419,9 @@ export async function executePlayerDraw(userId) {
 }
 
 /**
- * Generate and post individual player draw chat message
+ * Generate and post individual player draw chat message, attributed to the
+ * drawing player even though this always runs on the GM's client (see the
+ * comment in executePlayerDraw's caller above).
  * NFR #5: XSS prevention via HTML escaping
  * NFR #9: i18n strings
  * @param {Object} drawResult - Player draw result {userId, userName, cards, suits}
@@ -503,7 +519,8 @@ function generatePlayerDrawMessage(drawResult, playersNum) {
     showChatRequest({
       title: game.i18n.localize('DECK_OF_DESTINY.messages.DrawRound.PlayerDraw'),
       description: lines.join(''),
-      buttonData: buttons
+      buttonData: buttons,
+      userId: drawResult.userId
     });
   } catch (error) {
     console.error('[draw-round] generatePlayerDrawMessage failed:', error);
