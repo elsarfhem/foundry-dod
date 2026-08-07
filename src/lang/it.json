@@ -303,7 +303,8 @@
         "noGMOnline": "Questa azione richiede un GM connesso. Riprova quando un GM è online.",
         "gmRequestFailed": "Il GM non è riuscito a completare l'azione. Riprova.",
         "relayNotReady": "Le azioni sulle carte non sono ancora pronte. Riprova a breve.",
-        "unknownUser": "Impossibile identificare l'utente richiedente."
+        "unknownUser": "Impossibile identificare l'utente richiedente.",
+        "unknownActor": "Impossibile identificare il personaggio agente."
       },
       "warnings": {
         "unequalCards": "Attenzione: il numero di successi e di fallimenti nella mano non sono uguali.",

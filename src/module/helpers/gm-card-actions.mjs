@@ -37,12 +37,12 @@ import {
   getCardsToDraw
 } from './card-utils.mjs';
 import {
-  recordPlayerAdded as recordPlayerAddedCore,
-  unrecordPlayerAdded as unrecordPlayerAddedCore,
-  executePlayerDraw as executePlayerDrawCore,
+  recordActorAdded as recordActorAddedCore,
+  unrecordActorAdded as unrecordActorAddedCore,
+  executeActorDraw as executeActorDrawCore,
   clearRoundState
 } from './draw-round.mjs';
-import { assertKnownUser } from './gm-relay.mjs';
+import { assertKnownUser, assertKnownActor } from './gm-relay.mjs';
 import {
   isSpecialSuit,
   createSpecialCardDefinition,
@@ -62,21 +62,24 @@ function getHand() {
 }
 
 /**
- * Records the player as having added cards before touching the pile, not
+ * Records the actor as having added cards before touching the pile, not
  * after: if the pile mutation then fails, rolling back a flag update
- * (unrecordPlayerAddedCore) is a single local array edit, whereas rolling
+ * (unrecordActorAddedCore) is a single local array edit, whereas rolling
  * back a partial addCardsReplacingWhite (which can have already passed some
  * cards) would mean reversing a real card transfer. Recording first and
  * rolling back on failure is the cheaper direction to fail in.
- * @param {{userId: string, suitCounts: Object<string, number>}} payload
+ * @param {{userId: string, actorId: string, suitCounts: Object<string, number>}} payload
  * @returns {Promise<{success: boolean, error?: string, data?: {pileSnapshot: object}}>}
  */
-export async function gmAddCardsToPile({ userId, suitCounts }) {
+export async function gmAddCardsToPile({ userId, actorId, suitCounts }) {
   if (!assertKnownUser(userId)) {
     return { success: false, error: 'DECK_OF_DESTINY.messages.errors.unknownUser' };
   }
+  if (!assertKnownActor(actorId)) {
+    return { success: false, error: 'DECK_OF_DESTINY.messages.errors.unknownActor' };
+  }
   return withCardLock(async () => {
-    const recordResult = await recordPlayerAddedCore(userId);
+    const recordResult = await recordActorAddedCore(actorId);
     if (!recordResult.success) return recordResult;
 
     const deck = getDeck();
@@ -84,7 +87,7 @@ export async function gmAddCardsToPile({ userId, suitCounts }) {
     try {
       await addCardsReplacingWhite(deck, pile, suitCounts, { chatNotification: false });
     } catch (error) {
-      await unrecordPlayerAddedCore(userId);
+      await unrecordActorAddedCore(actorId);
       throw error;
     }
     return { success: true, data: { pileSnapshot: buildPileSnapshot(pile) } };
@@ -281,14 +284,17 @@ export async function gmDrawFromPile({ playersNum }) {
 }
 
 /**
- * @param {{userId: string, displayName: string}} payload
+ * @param {{userId: string, actorId: string, actorName: string}} payload
  * @returns {Promise<{success: boolean, error?: string, data?: object}>}
  */
-export async function gmExecutePlayerDraw({ userId, displayName }) {
+export async function gmExecutePlayerDraw({ userId, actorId, actorName }) {
   if (!assertKnownUser(userId)) {
     return { success: false, error: 'DECK_OF_DESTINY.messages.errors.unknownUser' };
   }
-  return withCardLock(() => executePlayerDrawCore(userId, displayName));
+  if (!assertKnownActor(actorId)) {
+    return { success: false, error: 'DECK_OF_DESTINY.messages.errors.unknownActor' };
+  }
+  return withCardLock(() => executeActorDrawCore(actorId, actorName, userId));
 }
 
 /**

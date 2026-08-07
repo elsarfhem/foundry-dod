@@ -303,7 +303,8 @@
         "noGMOnline": "This action needs the GM online. Please try again once a GM is connected.",
         "gmRequestFailed": "The GM couldn't complete this action. Please try again.",
         "relayNotReady": "Card actions aren't ready yet. Please try again in a moment.",
-        "unknownUser": "Could not identify the requesting user."
+        "unknownUser": "Could not identify the requesting user.",
+        "unknownActor": "Could not identify the acting character."
       },
       "warnings": {
         "unequalCards": "Warning: the number of successes and failures in hand is not equal.",

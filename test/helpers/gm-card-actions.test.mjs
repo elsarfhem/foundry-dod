@@ -19,7 +19,7 @@ import {
   gmDeleteSpecialCard
 } from '../../src/module/helpers/gm-card-actions.mjs';
 import { loadRoundState } from '../../src/module/helpers/draw-round.mjs';
-import { createRoundWithPlayersAdded } from '../fixtures/round-states.mjs';
+import { createRoundWithActorsAdded } from '../fixtures/round-states.mjs';
 import { createLargePile, createCardsBySuit } from '../fixtures/card-data.mjs';
 import {
   MockCard,
@@ -45,6 +45,7 @@ describe('gm-card-actions: gmAddCardsToPile', () => {
 
     const result = await gmAddCardsToPile({
       userId: 'ghost',
+      actorId: 'actor1',
       suitCounts: { success: 3 }
     });
 
@@ -56,32 +57,64 @@ describe('gm-card-actions: gmAddCardsToPile', () => {
     expect(loadRoundState()).toBeNull();
   });
 
-  it('replaces white filler, records the player, and returns a fresh pile snapshot', async () => {
-    setUpDeckAndPile({ success: 5 }, { white: 20 });
+  it('rejects an unknown actorId without touching the pile or round state', async () => {
+    const { pile } = setUpDeckAndPile({ success: 5 }, { white: 20 });
 
     const result = await gmAddCardsToPile({
       userId: 'user1',
+      actorId: 'ghost-actor',
+      suitCounts: { success: 3 }
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: 'DECK_OF_DESTINY.messages.errors.unknownActor'
+    });
+    expect(pile.cards.filter((c) => c.suit === 'white').length).toBe(20);
+    expect(loadRoundState()).toBeNull();
+  });
+
+  it('replaces white filler, records the actor, and returns a fresh pile snapshot', async () => {
+    setUpDeckAndPile({ success: 5 }, { white: 20 });
+    game.actors.set('actor1', { id: 'actor1', name: 'Hero' });
+
+    const result = await gmAddCardsToPile({
+      userId: 'user1',
+      actorId: 'actor1',
       suitCounts: { success: 3 }
     });
 
     expect(result.success).toBe(true);
     expect(result.data.pileSnapshot.pileSuits.success).toBe(3);
     expect(result.data.pileSnapshot.pileSuits.white).toBe(17);
-    expect(loadRoundState().playersAdded).toContain('user1');
+    expect(loadRoundState().actorsAdded).toContain('actor1');
   });
 
-  it('rolls back the playersAdded record if the pile mutation fails', async () => {
+  it('rolls back the actorsAdded record if the pile mutation fails', async () => {
     const { pile } = setUpDeckAndPile({ success: 5 }, { white: 20 });
+    game.actors.set('actor1', { id: 'actor1', name: 'Hero' });
     pile.pass = async () => {
       throw new Error('simulated network failure');
     };
 
     await expect(
-      gmAddCardsToPile({ userId: 'user1', suitCounts: { success: 3 } })
+      gmAddCardsToPile({ userId: 'user1', actorId: 'actor1', suitCounts: { success: 3 } })
     ).rejects.toThrow('simulated network failure');
 
     expect(pile.cards.filter((c) => c.suit === 'white').length).toBe(20);
-    expect(loadRoundState().playersAdded).not.toContain('user1');
+    expect(loadRoundState().actorsAdded).not.toContain('actor1');
+  });
+
+  it('counts two actors added by the same userId as two separate participants', async () => {
+    setUpDeckAndPile({ success: 5, failure: 5 }, { white: 20 });
+    game.actors.set('actorA', { id: 'actorA', name: 'Hero A' });
+    game.actors.set('actorB', { id: 'actorB', name: 'Hero B' });
+
+    await gmAddCardsToPile({ userId: 'user1', actorId: 'actorA', suitCounts: { success: 2 } });
+    await gmAddCardsToPile({ userId: 'user1', actorId: 'actorB', suitCounts: { failure: 2 } });
+
+    const state = loadRoundState();
+    expect(state.actorsAdded).toEqual(['actorA', 'actorB']);
   });
 });
 
@@ -109,7 +142,7 @@ describe('gm-card-actions: gmResetPileForNewRound', () => {
 
   it('leaves the round state untouched by default (matches componiIlMazzoEPesca)', async () => {
     const { pile } = setUpDeckAndPile({ white: 20 }, {});
-    await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user1']));
+    await pile.setFlag('dod', 'currentRound', createRoundWithActorsAdded(['user1']));
 
     await gmResetPileForNewRound({});
 
@@ -118,7 +151,7 @@ describe('gm-card-actions: gmResetPileForNewRound', () => {
 
   it('clears the round state when clearRound is true (richiediProva)', async () => {
     const { pile } = setUpDeckAndPile({ white: 20 }, {});
-    await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user1']));
+    await pile.setFlag('dod', 'currentRound', createRoundWithActorsAdded(['user1']));
 
     await gmResetPileForNewRound({ clearRound: true });
 
@@ -202,23 +235,45 @@ describe('gm-card-actions: gmExecutePlayerDraw', () => {
 
   it('rejects an unknown userId', async () => {
     setUpDrawEnvironment();
-    const result = await gmExecutePlayerDraw({ userId: 'ghost', displayName: 'Ghost' });
+    const result = await gmExecutePlayerDraw({
+      userId: 'ghost',
+      actorId: 'actor1',
+      actorName: 'Hero'
+    });
     expect(result).toEqual({
       success: false,
       error: 'DECK_OF_DESTINY.messages.errors.unknownUser'
     });
   });
 
-  it('draws for a known user and attributes the result to the given displayName', async () => {
-    const { pile } = setUpDrawEnvironment();
-    await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user1']));
+  it('rejects an unknown actorId', async () => {
+    setUpDrawEnvironment();
+    const result = await gmExecutePlayerDraw({
+      userId: 'user1',
+      actorId: 'ghost-actor',
+      actorName: 'Hero'
+    });
+    expect(result).toEqual({
+      success: false,
+      error: 'DECK_OF_DESTINY.messages.errors.unknownActor'
+    });
+  });
 
-    const result = await gmExecutePlayerDraw({ userId: 'user1', displayName: 'Hero' });
+  it('draws for a known actor and attributes the result to the given actorName', async () => {
+    const { pile } = setUpDrawEnvironment();
+    game.actors.set('actor1', { id: 'actor1', name: 'Hero' });
+    await pile.setFlag('dod', 'currentRound', createRoundWithActorsAdded(['actor1']));
+
+    const result = await gmExecutePlayerDraw({
+      userId: 'user1',
+      actorId: 'actor1',
+      actorName: 'Hero'
+    });
 
     expect(result.success).toBe(true);
-    expect(result.data.drawResult.userId).toBe('user1');
-    expect(result.data.drawResult.userName).toBe('Hero');
-    expect(result.data.playersAddedCount).toBe(1);
+    expect(result.data.drawResult.actorId).toBe('actor1');
+    expect(result.data.drawResult.actorName).toBe('Hero');
+    expect(result.data.actorsAddedCount).toBe(1);
   });
 });
 
