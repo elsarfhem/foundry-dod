@@ -149,16 +149,6 @@ export async function addCardsToPile(sheet) {
   );
   if (isEmptyCardData(data) && checkedSpecials.length === 0)
     return ui.notifications.warn('There are no cards to add to pile.');
-  const deck = game.cards.getName('DoD - lista carte');
-  if (!deck)
-    return ui.notifications.error(
-      'The deck of cards is not available. Please make sure the deck is loaded.'
-    );
-  const pile = game.cards.getName('Mazzo');
-  if (!pile)
-    return ui.notifications.error(
-      'The pile of cards is not available. Please make sure the pile is loaded.'
-    );
   // Build suit counts from actor card data for suit-based re-selection on retry
   const suitCounts = {};
   for (const [cardType, cardObj] of Object.entries(data)) {

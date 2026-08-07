@@ -20,11 +20,13 @@
  * could be stale right after a relay (pile totals, drawn cards), the data
  * needed is returned explicitly instead of expecting the caller to re-read
  * the document locally. The exception is executePlayerDrawCore, which posts
- * both the individual draw message and the round-completion summary itself,
- * GM-side, in that order - attributed via an explicit `user` id rather than
- * `game.user` (see chat.mjs#showChatRequest) - so two players' draws can
- * never post out of order the way a caller-side network round-trip could
- * cause.
+ * both the individual draw message and (once the round completes) the
+ * summary itself, GM-side, in that order - so two players' draws can never
+ * post out of order the way a caller-side network round-trip could cause.
+ * Only the individual draw message is attributed to the drawing player via
+ * an explicit `user` id (see chat.mjs#showChatRequest); the round summary
+ * stays GM-attributed, as it always has, since it's a narrated recap of
+ * everyone's draws rather than one player's own message.
  */
 
 import { withCardLock } from '../globals.mjs';
@@ -48,6 +50,16 @@ import {
   deleteSpecialCardDefinition
 } from './special-cards.mjs';
 
+function getDeck() {
+  return game.cards.getName('DoD - lista carte');
+}
+function getPile() {
+  return game.cards.getName('Mazzo');
+}
+function getHand() {
+  return game.cards.getName('Mano');
+}
+
 /**
  * @param {{userId: string, suitCounts: Object<string, number>}} payload
  * @returns {Promise<{success: boolean, error?: string, data?: {pileSnapshot: object}}>}
@@ -57,8 +69,8 @@ export async function gmAddCardsToPile({ userId, suitCounts }) {
     return { success: false, error: 'DECK_OF_DESTINY.messages.errors.unknownUser' };
   }
   return withCardLock(async () => {
-    const deck = game.cards.getName('DoD - lista carte');
-    const pile = game.cards.getName('Mazzo');
+    const deck = getDeck();
+    const pile = getPile();
     await addCardsReplacingWhite(deck, pile, suitCounts, { chatNotification: false });
     const recordResult = await recordPlayerAddedCore(userId);
     if (!recordResult.success) return recordResult;
@@ -74,8 +86,8 @@ export async function gmAddCardsToPile({ userId, suitCounts }) {
  */
 export async function gmAddToDeck({ counts, specialCounts }) {
   return withCardLock(async () => {
-    const deck = game.cards.getName('DoD - lista carte');
-    const pile = game.cards.getName('Mazzo');
+    const deck = getDeck();
+    const pile = getPile();
     await addCardsReplacingWhite(
       deck,
       pile,
@@ -96,8 +108,8 @@ export async function gmAddToDeck({ counts, specialCounts }) {
  */
 export async function gmResetPileForNewRound({ clearRound = false } = {}) {
   return withCardLock(async () => {
-    const deck = game.cards.getName('DoD - lista carte');
-    const pile = game.cards.getName('Mazzo');
+    const deck = getDeck();
+    const pile = getPile();
     await deck.recall({ chatNotification: false });
     await refillPileWithWhite(deck, pile);
     if (clearRound) await clearRoundState();
@@ -111,12 +123,24 @@ export async function gmResetPileForNewRound({ clearRound = false } = {}) {
  * the same GM queue - a second GM editing special cards locally would race
  * against a relayed addCardsToPile/composeAndDraw exactly like svuotaMazzo
  * did before it moved behind runOnGM (see globals.mjs).
- * @param {{name: string, description: string, img: string|null, copies: number}} payload
- * @returns {Promise<{success: boolean, data: {suit: string}}>}
+ *
+ * Unlike the other handlers in this file, these three DO check the caller's
+ * identity: they're only ever reached through gestisciCarteSpeciali, which
+ * is GM-only in its own UI - but that UI check runs on the calling client
+ * and doesn't stop a client from invoking the underlying socketlib action
+ * directly (socketlib is globally accessible, not gated by this system's
+ * UI at all). Without this check, any connected client could create/edit/
+ * delete special card definitions by calling the action directly, executing
+ * with the target GM's own permissions regardless of who's actually asking.
+ * @param {{userId: string, name: string, description: string, img: string|null, copies: number}} payload
+ * @returns {Promise<{success: boolean, error?: string, data?: {suit: string}}>}
  */
-export async function gmCreateSpecialCard({ name, description, img, copies }) {
+export async function gmCreateSpecialCard({ userId, name, description, img, copies }) {
+  if (!game.users.get(userId)?.isGM) {
+    return { success: false, error: 'DECK_OF_DESTINY.messages.errors.unknownUser' };
+  }
   return withCardLock(async () => {
-    const deck = game.cards.getName('DoD - lista carte');
+    const deck = getDeck();
     const suit = await createSpecialCardDefinition(deck, {
       name,
       description,
@@ -128,14 +152,24 @@ export async function gmCreateSpecialCard({ name, description, img, copies }) {
 }
 
 /**
- * @param {{suit: string, name: string, description: string, img: string|null, copies: number}} payload
- * @returns {Promise<{success: boolean, data: {shortfall: number}}>}
+ * @param {{userId: string, suit: string, name: string, description: string, img: string|null, copies: number}} payload
+ * @returns {Promise<{success: boolean, error?: string, data?: {shortfall: number}}>}
  */
-export async function gmUpdateSpecialCard({ suit, name, description, img, copies }) {
+export async function gmUpdateSpecialCard({
+  userId,
+  suit,
+  name,
+  description,
+  img,
+  copies
+}) {
+  if (!game.users.get(userId)?.isGM) {
+    return { success: false, error: 'DECK_OF_DESTINY.messages.errors.unknownUser' };
+  }
   return withCardLock(async () => {
-    const deck = game.cards.getName('DoD - lista carte');
-    const pile = game.cards.getName('Mazzo');
-    const hand = game.cards.getName('Mano');
+    const deck = getDeck();
+    const pile = getPile();
+    const hand = getHand();
     await updateSpecialCardDefinition([deck, pile, hand], suit, {
       name,
       description,
@@ -151,14 +185,17 @@ export async function gmUpdateSpecialCard({ suit, name, description, img, copies
 }
 
 /**
- * @param {{suit: string}} payload
- * @returns {Promise<{success: boolean}>}
+ * @param {{userId: string, suit: string}} payload
+ * @returns {Promise<{success: boolean, error?: string}>}
  */
-export async function gmDeleteSpecialCard({ suit }) {
+export async function gmDeleteSpecialCard({ userId, suit }) {
+  if (!game.users.get(userId)?.isGM) {
+    return { success: false, error: 'DECK_OF_DESTINY.messages.errors.unknownUser' };
+  }
   return withCardLock(async () => {
-    const deck = game.cards.getName('DoD - lista carte');
-    const pile = game.cards.getName('Mazzo');
-    const hand = game.cards.getName('Mano');
+    const deck = getDeck();
+    const pile = getPile();
+    const hand = getHand();
     await deleteSpecialCardDefinition([deck, pile, hand], suit);
     return { success: true };
   });
@@ -174,9 +211,9 @@ export async function gmDeleteSpecialCard({ suit }) {
  */
 export async function gmComposeAndDraw({ playersNum, counts, specialCounts }) {
   return withCardLock(async () => {
-    const deck = game.cards.getName('DoD - lista carte');
-    const pile = game.cards.getName('Mazzo');
-    const hand = game.cards.getName('Mano');
+    const deck = getDeck();
+    const pile = getPile();
+    const hand = getHand();
 
     const totalCards =
       Object.values(counts).reduce((a, b) => a + Math.max(0, b), 0) +
@@ -214,8 +251,8 @@ export async function gmComposeAndDraw({ playersNum, counts, specialCounts }) {
  */
 export async function gmDrawFromPile({ playersNum }) {
   return withCardLock(async () => {
-    const pile = game.cards.getName('Mazzo');
-    const hand = game.cards.getName('Mano');
+    const pile = getPile();
+    const hand = getHand();
     if (pile.cards.size === 0) return { success: true, data: { drawnCards: [] } };
     const drawn = await drawCards(
       hand,
@@ -263,8 +300,8 @@ export async function gmRisk() {
  * @returns {Promise<{success: true, data: object}>}
  */
 async function riskCore() {
-  const pile = game.cards.getName('Mazzo');
-  const hand = game.cards.getName('Mano');
+  const pile = getPile();
+  const hand = getHand();
 
   const numFailure = hand.cards.filter((card) => card.suit === 'failure').length;
   const numSuccess = hand.cards.filter((card) => card.suit === 'success').length;

@@ -308,7 +308,6 @@
       "warnings": {
         "unequalCards": "Warning: the number of successes and failures in hand is not equal.",
         "onlyGMEmpty": "Only the GM can empty the deck.",
-        "operationInProgress": "A card operation is already in progress. Please wait.",
         "onlyGMManageSpecial": "Only the GM can manage special cards.",
         "copiesShortfall": "Could not remove {shortfall} cop(y/ies) of \"{name}\" — some are currently in play.",
         "noSpecialCardsAvailable": "No copies of this special card are available in the deck."

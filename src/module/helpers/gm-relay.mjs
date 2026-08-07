@@ -88,7 +88,17 @@ export function createGMRelay(transport) {
     if (!targetId) {
       return { success: false, error: 'DECK_OF_DESTINY.messages.errors.noGMOnline' };
     }
-    if (transport.isSelf(targetId)) return transport.executeLocal(actionKey, payload);
+    if (transport.isSelf(targetId)) {
+      try {
+        return await transport.executeLocal(actionKey, payload);
+      } catch (error) {
+        console.error(`DoD | gm-relay: "${actionKey}" failed locally`, error);
+        return {
+          success: false,
+          error: 'DECK_OF_DESTINY.messages.errors.gmRequestFailed'
+        };
+      }
+    }
     try {
       return await transport.executeRemote(targetId, actionKey, payload);
     } catch (error) {

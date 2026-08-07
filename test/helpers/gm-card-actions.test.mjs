@@ -280,6 +280,7 @@ describe('gm-card-actions: gmCreateSpecialCard', () => {
     const { deck } = setUpDeckAndPile({}, {});
 
     const result = await gmCreateSpecialCard({
+      userId: 'gm',
       name: 'Carta del Vento',
       description: 'Il vento cambia direzione.',
       img: null,
@@ -291,6 +292,24 @@ describe('gm-card-actions: gmCreateSpecialCard', () => {
     expect(suit.startsWith('special:')).toBe(true);
     expect(deck.cards.filter((c) => c.suit === suit).length).toBe(2);
   });
+
+  it('rejects a non-GM caller without touching the deck', async () => {
+    const { deck } = setUpDeckAndPile({}, {});
+
+    const result = await gmCreateSpecialCard({
+      userId: 'user1',
+      name: 'Carta del Vento',
+      description: '',
+      img: null,
+      copies: 2
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: 'DECK_OF_DESTINY.messages.errors.unknownUser'
+    });
+    expect(deck.cards.size).toBe(0);
+  });
 });
 
 describe('gm-card-actions: gmUpdateSpecialCard', () => {
@@ -298,6 +317,7 @@ describe('gm-card-actions: gmUpdateSpecialCard', () => {
     const { deck } = setUpDeckAndPile({}, {});
     game.cards.set('hand1', createHandPile());
     const { data } = await gmCreateSpecialCard({
+      userId: 'gm',
       name: 'Old Name',
       description: 'd',
       img: null,
@@ -305,6 +325,7 @@ describe('gm-card-actions: gmUpdateSpecialCard', () => {
     });
 
     const result = await gmUpdateSpecialCard({
+      userId: 'gm',
       suit: data.suit,
       name: 'New Name',
       description: 'd2',
@@ -320,6 +341,7 @@ describe('gm-card-actions: gmUpdateSpecialCard', () => {
     const { deck } = setUpDeckAndPile({}, {});
     game.cards.set('hand1', createHandPile());
     const { data } = await gmCreateSpecialCard({
+      userId: 'gm',
       name: 'Carta',
       description: '',
       img: null,
@@ -334,6 +356,7 @@ describe('gm-card-actions: gmUpdateSpecialCard', () => {
     );
 
     const result = await gmUpdateSpecialCard({
+      userId: 'gm',
       suit: data.suit,
       name: 'Carta',
       description: '',
@@ -343,6 +366,25 @@ describe('gm-card-actions: gmUpdateSpecialCard', () => {
 
     expect(result).toEqual({ success: true, data: { shortfall: 1 } });
   });
+
+  it('rejects a non-GM caller', async () => {
+    setUpDeckAndPile({}, {});
+    game.cards.set('hand1', createHandPile());
+
+    const result = await gmUpdateSpecialCard({
+      userId: 'user1',
+      suit: 'special:whatever',
+      name: 'Carta',
+      description: '',
+      img: null,
+      copies: 1
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: 'DECK_OF_DESTINY.messages.errors.unknownUser'
+    });
+  });
 });
 
 describe('gm-card-actions: gmDeleteSpecialCard', () => {
@@ -350,15 +392,36 @@ describe('gm-card-actions: gmDeleteSpecialCard', () => {
     const { deck } = setUpDeckAndPile({}, {});
     game.cards.set('hand1', createHandPile());
     const { data } = await gmCreateSpecialCard({
+      userId: 'gm',
       name: 'Carta',
       description: '',
       img: null,
       copies: 3
     });
 
-    const result = await gmDeleteSpecialCard({ suit: data.suit });
+    const result = await gmDeleteSpecialCard({ userId: 'gm', suit: data.suit });
 
     expect(result).toEqual({ success: true });
     expect(deck.cards.filter((c) => c.suit === data.suit).length).toBe(0);
+  });
+
+  it('rejects a non-GM caller without touching the deck', async () => {
+    const { deck } = setUpDeckAndPile({}, {});
+    game.cards.set('hand1', createHandPile());
+    const { data } = await gmCreateSpecialCard({
+      userId: 'gm',
+      name: 'Carta',
+      description: '',
+      img: null,
+      copies: 3
+    });
+
+    const result = await gmDeleteSpecialCard({ userId: 'user1', suit: data.suit });
+
+    expect(result).toEqual({
+      success: false,
+      error: 'DECK_OF_DESTINY.messages.errors.unknownUser'
+    });
+    expect(deck.cards.filter((c) => c.suit === data.suit).length).toBe(3);
   });
 });

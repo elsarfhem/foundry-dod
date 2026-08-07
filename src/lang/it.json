@@ -308,7 +308,6 @@
       "warnings": {
         "unequalCards": "Attenzione: il numero di successi e di fallimenti nella mano non sono uguali.",
         "onlyGMEmpty": "Solo il GM può svuotare il mazzo.",
-        "operationInProgress": "Un'operazione con le carte è già in corso. Attendere.",
         "onlyGMManageSpecial": "Solo il GM può gestire le carte speciali.",
         "copiesShortfall": "Impossibile rimuovere {shortfall} copie di \"{name}\" — alcune sono già in gioco.",
         "noSpecialCardsAvailable": "Nessuna copia di questa carta speciale è disponibile nel mazzo."

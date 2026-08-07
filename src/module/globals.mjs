@@ -1065,13 +1065,20 @@ function openSpecialCardForm({ definition = null } = {}) {
 
             const result = isEdit
               ? await runOnGM('updateSpecialCard', {
+                  ...getRequesterIdentity(),
                   suit: definition.suit,
                   name,
                   description,
                   img,
                   copies
                 })
-              : await runOnGM('createSpecialCard', { name, description, img, copies });
+              : await runOnGM('createSpecialCard', {
+                  ...getRequesterIdentity(),
+                  name,
+                  description,
+                  img,
+                  copies
+                });
 
             if (!result.success) {
               ui.notifications.error(game.i18n.localize(result.error) || result.error);
@@ -1214,7 +1221,10 @@ async function _openManageSpecialCardsDialog() {
       });
       html.find('[data-action=delete]').on('click', async (event) => {
         const suit = event.currentTarget.dataset.suit;
-        const result = await runOnGM('deleteSpecialCard', { suit });
+        const result = await runOnGM('deleteSpecialCard', {
+          ...getRequesterIdentity(),
+          suit
+        });
         if (!result.success) {
           ui.notifications.error(game.i18n.localize(result.error) || result.error);
         }
