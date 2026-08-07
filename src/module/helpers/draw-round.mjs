@@ -279,6 +279,31 @@ export async function recordPlayerAdded(userId) {
 }
 
 /**
+ * Undo a `recordPlayerAdded(userId)` call - used to roll back the flag
+ * update when the pile mutation that's supposed to follow it fails, so a
+ * retry doesn't see the player as already added without any cards to show
+ * for it.
+ * NFR #7: Error boundary
+ * @param {string} userId - User ID to remove from playersAdded
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+export async function unrecordPlayerAdded(userId) {
+  try {
+    const state = loadRoundState();
+    if (!state) return { success: true };
+
+    const index = state.playersAdded.indexOf(userId);
+    if (index === -1) return { success: true };
+
+    state.playersAdded.splice(index, 1);
+    return await saveRoundState(state);
+  } catch (error) {
+    console.error('[draw-round] unrecordPlayerAdded failed:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
  * Execute a player draw operation
  * NFR #4: Duplicate summary prevention - only this client generates summary
  *   (now actually true multi-client: this always runs on the GM's client,

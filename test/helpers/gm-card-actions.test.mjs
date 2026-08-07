@@ -69,6 +69,20 @@ describe('gm-card-actions: gmAddCardsToPile', () => {
     expect(result.data.pileSnapshot.pileSuits.white).toBe(17);
     expect(loadRoundState().playersAdded).toContain('user1');
   });
+
+  it('rolls back the playersAdded record if the pile mutation fails', async () => {
+    const { pile } = setUpDeckAndPile({ success: 5 }, { white: 20 });
+    pile.pass = async () => {
+      throw new Error('simulated network failure');
+    };
+
+    await expect(
+      gmAddCardsToPile({ userId: 'user1', suitCounts: { success: 3 } })
+    ).rejects.toThrow('simulated network failure');
+
+    expect(pile.cards.filter((c) => c.suit === 'white').length).toBe(20);
+    expect(loadRoundState().playersAdded).not.toContain('user1');
+  });
 });
 
 describe('gm-card-actions: gmAddToDeck', () => {

@@ -38,6 +38,7 @@ import {
 } from './card-utils.mjs';
 import {
   recordPlayerAdded as recordPlayerAddedCore,
+  unrecordPlayerAdded as unrecordPlayerAddedCore,
   executePlayerDraw as executePlayerDrawCore,
   clearRoundState
 } from './draw-round.mjs';
@@ -61,6 +62,12 @@ function getHand() {
 }
 
 /**
+ * Records the player as having added cards before touching the pile, not
+ * after: if the pile mutation then fails, rolling back a flag update
+ * (unrecordPlayerAddedCore) is a single local array edit, whereas rolling
+ * back a partial addCardsReplacingWhite (which can have already passed some
+ * cards) would mean reversing a real card transfer. Recording first and
+ * rolling back on failure is the cheaper direction to fail in.
  * @param {{userId: string, suitCounts: Object<string, number>}} payload
  * @returns {Promise<{success: boolean, error?: string, data?: {pileSnapshot: object}}>}
  */
@@ -69,11 +76,17 @@ export async function gmAddCardsToPile({ userId, suitCounts }) {
     return { success: false, error: 'DECK_OF_DESTINY.messages.errors.unknownUser' };
   }
   return withCardLock(async () => {
-    const deck = getDeck();
-    const pile = getPile();
-    await addCardsReplacingWhite(deck, pile, suitCounts, { chatNotification: false });
     const recordResult = await recordPlayerAddedCore(userId);
     if (!recordResult.success) return recordResult;
+
+    const deck = getDeck();
+    const pile = getPile();
+    try {
+      await addCardsReplacingWhite(deck, pile, suitCounts, { chatNotification: false });
+    } catch (error) {
+      await unrecordPlayerAddedCore(userId);
+      throw error;
+    }
     return { success: true, data: { pileSnapshot: buildPileSnapshot(pile) } };
   });
 }

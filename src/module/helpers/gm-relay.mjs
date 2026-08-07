@@ -34,10 +34,12 @@ export function getRequesterIdentity() {
 }
 
 /**
- * Lightweight plausibility check for a relayed userId. Not a security
- * boundary by itself (the payload isn't cryptographically signed by
- * socketlib) - it just rejects obviously-bogus ids. Real authorization
- * rests on Foundry's own document permissions for the shared Cards stacks.
+ * Lightweight plausibility check for a relayed userId - rejects obviously
+ * bogus ids, nothing more. NOT a security boundary: the payload isn't
+ * signed, so a modified client could claim any known userId and this
+ * check would pass. Every relayed handler executes with the target GM's
+ * own permissions, not the claimed user's - Foundry's document permissions
+ * no longer gate these actions once relayed.
  * @param {string} userId
  * @returns {boolean}
  */
