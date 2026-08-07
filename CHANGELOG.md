@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/elsarfhem/foundry-dod/compare/v2.1.1...v2.2.0) (2026-08-07)
+
+
+### Features
+
+* relay card mutations through a single GM for cross-client thread safety ([#32](https://github.com/elsarfhem/foundry-dod/issues/32)) ([3e22bb3](https://github.com/elsarfhem/foundry-dod/commit/3e22bb3a03b0f7a804a9759601936a116efd4e92))
+
 ## [2.1.1](https://github.com/elsarfhem/foundry-dod/compare/v2.1.0...v2.1.1) (2026-08-03)
 
 

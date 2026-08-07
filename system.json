@@ -1,6 +1,6 @@
 {
   "id": "dod",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "title": "Deck of Destiny",
   "description": "The Deck of Destiny system for FoundryVTT!",
   "authors": [
@@ -118,7 +118,7 @@
   },
   "socket": true,
   "manifest": "https://raw.githubusercontent.com/elsarfhem/foundry-dod/main/system.json",
-  "download": "https://github.com/elsarfhem/foundry-dod/releases/download/v2.1.1/dod.zip",
+  "download": "https://github.com/elsarfhem/foundry-dod/releases/download/v2.2.0/dod.zip",
   "background": "systems/dod/assets/anvil-impact.png",
   "grid": {
     "distance": 5,
