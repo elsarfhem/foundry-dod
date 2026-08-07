@@ -10,7 +10,9 @@ import { describe, it, expect, vi } from 'vitest';
 import {
   resolveDisplayName,
   getRequesterIdentity,
+  getRequesterActorIdentity,
   assertKnownUser,
+  assertKnownActor,
   pickTargetGM,
   createGMRelay,
   setGMRelay,
@@ -51,6 +53,21 @@ describe('gm-relay: getRequesterIdentity', () => {
   });
 });
 
+describe('gm-relay: getRequesterActorIdentity', () => {
+  it('snapshots the caller userId plus the given actor id/name', () => {
+    global.game.user.id = 'user1';
+    global.game.user.name = 'Player1';
+    global.game.user.character = { name: 'Ignored' }; // must NOT be used
+
+    const actor = { id: 'actor1', name: 'Hero' };
+    expect(getRequesterActorIdentity(actor)).toEqual({
+      userId: 'user1',
+      actorId: 'actor1',
+      actorName: 'Hero'
+    });
+  });
+});
+
 describe('gm-relay: assertKnownUser', () => {
   it('returns true for a user that exists in game.users', () => {
     // createMockGame()'s default fixture (test/setup.mjs) already seeds
@@ -60,6 +77,17 @@ describe('gm-relay: assertKnownUser', () => {
 
   it('returns false for an unknown id', () => {
     expect(assertKnownUser('ghost')).toBe(false);
+  });
+});
+
+describe('gm-relay: assertKnownActor', () => {
+  it('returns true for an actor that exists in game.actors', () => {
+    global.game.actors.set('actor1', { id: 'actor1', name: 'Hero' });
+    expect(assertKnownActor('actor1')).toBe(true);
+  });
+
+  it('returns false for an unknown id', () => {
+    expect(assertKnownActor('ghost')).toBe(false);
   });
 });
 

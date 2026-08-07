@@ -34,6 +34,21 @@ export function getRequesterIdentity() {
 }
 
 /**
+ * Snapshot the invoking client's identity for an actor-specific action.
+ * `userId` is still the caller's own Foundry User id (used for the
+ * lightweight plausibility check and as the resulting chat message's
+ * author) - `actorId`/`actorName` identify the specific Actor whose sheet
+ * initiated the action, which may differ from `game.user.character` (e.g.
+ * the GM acting through another player's actor sheet, or a player who
+ * opened a second actor's sheet).
+ * @param {{id: string, name: string}} actor
+ * @returns {{userId: string, actorId: string, actorName: string}}
+ */
+export function getRequesterActorIdentity(actor) {
+  return { userId: game.user.id, actorId: actor.id, actorName: actor.name };
+}
+
+/**
  * Lightweight plausibility check for a relayed userId - rejects obviously
  * bogus ids, nothing more. NOT a security boundary: the payload isn't
  * signed, so a modified client could claim any known userId and this
@@ -45,6 +60,16 @@ export function getRequesterIdentity() {
  */
 export function assertKnownUser(userId) {
   return !!game.users.get(userId);
+}
+
+/**
+ * Lightweight plausibility check for a relayed actorId - same posture as
+ * assertKnownUser: rejects obviously bogus ids, not a security boundary.
+ * @param {string} actorId
+ * @returns {boolean}
+ */
+export function assertKnownActor(actorId) {
+  return !!game.actors.get(actorId);
 }
 
 /**
