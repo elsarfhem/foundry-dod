@@ -1,27 +1,24 @@
-import {
-  getCardsToDraw,
-  addCardsReplacingWhite,
-  refillPileWithWhite,
-  drawCards
-} from './helpers/card-utils.mjs';
 import { createDrawChat, suitToName, renderCardThumbnail } from './helpers/chat.mjs';
-import { clearRoundState } from './helpers/draw-round.mjs';
-import {
-  getSpecialCardDefinitions,
-  createSpecialCardDefinition,
-  updateSpecialCardDefinition,
-  adjustSpecialCardCopies,
-  deleteSpecialCardDefinition
-} from './helpers/special-cards.mjs';
+import { getSpecialCardDefinitions } from './helpers/special-cards.mjs';
+import { getRequesterIdentity, runOnGM } from './helpers/gm-relay.mjs';
 
 /**
- * Global lock to prevent concurrent card macro execution.
- * Card operations modify shared deck/pile/hand state; running two macros
- * simultaneously (e.g. double-click or rapid button presses) can cause
- * stale-state errors even for a single player.
- * @type {boolean}
+ * FIFO queue tail for card macro execution. Card operations modify shared
+ * deck/pile/hand state; running two concurrently (e.g. double-click, rapid
+ * button presses, or - once GM-relayed - two different players' requests
+ * landing on the same GM process) can cause stale-state errors. Queuing
+ * (rather than rejecting a busy call) matters once callers can be different
+ * people: dropping a second local double-click is fine, dropping another
+ * player's real request is not.
+ * @type {Promise<void>}
  */
-let _cardOperationInProgress = false;
+let _queueTail = Promise.resolve();
+
+/**
+ * Number of withCardLock calls currently queued or running.
+ * @type {number}
+ */
+let _pendingCount = 0;
 
 /**
  * The currently-open "Gestisci carte speciali" dialog instance, if any.
@@ -34,31 +31,30 @@ let _cardOperationInProgress = false;
 let _manageSpecialCardsDialog = null;
 
 /**
- * Check whether a card operation is currently in progress.
+ * Check whether a card operation is currently queued or running.
  * @returns {boolean}
  */
 export function isCardOperationLocked() {
-  return _cardOperationInProgress;
+  return _pendingCount > 0;
 }
 
 /**
- * Execute a card operation with a global lock.
- * If another card operation is already running, shows a notification and returns.
+ * Execute a card operation, queued behind any other call already in
+ * flight. Never rejects/drops a call - it just waits its turn, so it stays
+ * correct once GM-relayed calls from different players share this queue.
+ * A throwing `fn` propagates its rejection to its own caller without
+ * blocking later queued calls.
  * @param {Function} fn - Async function to execute
- * @returns {Promise<*>} Result of fn, or undefined if locked
+ * @returns {Promise<*>} Result of fn
  */
 export async function withCardLock(fn) {
-  if (_cardOperationInProgress) {
-    ui.notifications.warn(
-      game.i18n.localize('DECK_OF_DESTINY.messages.warnings.operationInProgress')
-    );
-    return;
-  }
-  _cardOperationInProgress = true;
+  _pendingCount++;
+  const run = _queueTail.then(() => fn());
+  _queueTail = run.catch(() => {});
   try {
-    return await fn();
+    return await run;
   } finally {
-    _cardOperationInProgress = false;
+    _pendingCount--;
   }
 }
 
@@ -68,7 +64,6 @@ export async function withCardLock(fn) {
  */
 export async function aggiungiAlMazzo() {
   const deck = game.cards.getName('DoD - lista carte');
-  const pile = game.cards.getName('Mazzo');
 
   const specialDefinitions = getSpecialCardDefinitions(deck);
   const specialRows = specialDefinitions.length
@@ -143,59 +138,57 @@ export async function aggiungiAlMazzo() {
     default: 'one',
     close: async (html) => {
       if (confirmed) {
-        await withCardLock(async () => {
-          const {
-            issueCardsNum,
-            successCardsNum,
-            destinyCardsNum,
-            failureCardsNum,
-            fortuneCardsNum
-          } = getCardCountsFromDialog(html);
+        const {
+          issueCardsNum,
+          successCardsNum,
+          destinyCardsNum,
+          failureCardsNum,
+          fortuneCardsNum
+        } = getCardCountsFromDialog(html);
 
-          const specialCounts = {};
-          specialDefinitions.forEach((d, i) => {
-            const qty = parseInt(html.find(`[name=special-${i}]`)[0]?.value) || 0;
-            if (qty > 0) specialCounts[d.suit] = qty;
+        const specialCounts = {};
+        specialDefinitions.forEach((d, i) => {
+          const qty = parseInt(html.find(`[name=special-${i}]`)[0]?.value) || 0;
+          if (qty > 0) specialCounts[d.suit] = qty;
+        });
+        const totalSpecialQty = Object.values(specialCounts).reduce((a, b) => a + b, 0);
+        const specialSummary = Object.entries(specialCounts)
+          .map(([suit, qty]) => {
+            const def = specialDefinitions.find((d) => d.suit === suit);
+            return `<li>${def.name}: ${qty}</li>`;
+          })
+          .join('');
+
+        const totalCards =
+          issueCardsNum +
+          successCardsNum +
+          destinyCardsNum +
+          failureCardsNum +
+          fortuneCardsNum +
+          totalSpecialQty;
+
+        if (totalCards > 0) {
+          const result = await runOnGM('addToDeck', {
+            counts: {
+              success: successCardsNum,
+              failure: failureCardsNum,
+              issue: issueCardsNum,
+              destiny: destinyCardsNum,
+              fortune: fortuneCardsNum
+            },
+            specialCounts
           });
-          const totalSpecialQty = Object.values(specialCounts).reduce(
-            (a, b) => a + b,
-            0
-          );
-          const specialSummary = Object.entries(specialCounts)
-            .map(([suit, qty]) => {
-              const def = specialDefinitions.find((d) => d.suit === suit);
-              return `<li>${def.name}: ${qty}</li>`;
-            })
-            .join('');
-
-          const totalCards =
-            issueCardsNum +
-            successCardsNum +
-            destinyCardsNum +
-            failureCardsNum +
-            fortuneCardsNum +
-            totalSpecialQty;
-
-          if (totalCards > 0) {
-            await addCardsReplacingWhite(
-              deck,
-              pile,
-              {
-                success: successCardsNum,
-                failure: failureCardsNum,
-                issue: issueCardsNum,
-                destiny: destinyCardsNum,
-                fortune: fortuneCardsNum,
-                ...specialCounts
-              },
-              { chatNotification: false }
+          if (!result.success) {
+            return ui.notifications.error(
+              game.i18n.localize(result.error) || result.error
             );
+          }
 
-            ChatMessage.create({
-              user: game.user._id,
-              content: `<p>${game.user.name} ${game.i18n.localize(
-                'DECK_OF_DESTINY.messages.addedToDeck'
-              )}</p>
+          ChatMessage.create({
+            user: game.user._id,
+            content: `<p>${game.user.name} ${game.i18n.localize(
+              'DECK_OF_DESTINY.messages.addedToDeck'
+            )}</p>
           <ul>
             <li>${game.i18n.localize(
               'DECK_OF_DESTINY.cards.success'
@@ -214,9 +207,8 @@ export async function aggiungiAlMazzo() {
             )}: ${destinyCardsNum}</li>
             ${specialSummary}
           </ul>`
-            });
-          }
-        });
+          });
+        }
       }
     }
   }).render(true);
@@ -238,12 +230,12 @@ function getCardCountsFromDialog(html) {
  */
 export async function componiIlMazzoEPesca() {
   const deck = game.cards.getName('DoD - lista carte');
-  await deck.recall({
-    chatNotification: false
-  });
-  const pile = game.cards.getName('Mazzo');
-  const hand = game.cards.getName('Mano');
-  await refillPileWithWhite(deck, pile);
+  const resetResult = await runOnGM('resetPileForNewRound', {});
+  if (!resetResult.success) {
+    return ui.notifications.error(
+      game.i18n.localize(resetResult.error) || resetResult.error
+    );
+  }
 
   const specialDefinitions = getSpecialCardDefinitions(deck);
   const specialRows = specialDefinitions.length
@@ -324,35 +316,30 @@ export async function componiIlMazzoEPesca() {
     default: 'one',
     close: async (html) => {
       if (confirmed) {
-        await withCardLock(async () => {
-          const playersNum = parseInt(html.find('[name=num-players]')[0].value) || 1;
-          const {
-            issueCardsNum,
-            successCardsNum,
-            destinyCardsNum,
-            failureCardsNum,
-            fortuneCardsNum
-          } = getCardCountsFromDialog(html);
+        const playersNum = parseInt(html.find('[name=num-players]')[0].value) || 1;
+        const {
+          issueCardsNum,
+          successCardsNum,
+          destinyCardsNum,
+          failureCardsNum,
+          fortuneCardsNum
+        } = getCardCountsFromDialog(html);
 
-          const specialCounts = {};
-          specialDefinitions.forEach((d, i) => {
-            const qty = parseInt(html.find(`[name=special-${i}]`)[0]?.value) || 0;
-            if (qty > 0) specialCounts[d.suit] = qty;
-          });
-          const totalSpecialQty = Object.values(specialCounts).reduce(
-            (a, b) => a + b,
-            0
-          );
-          const specialSummary = Object.entries(specialCounts)
-            .map(([suit, qty]) => {
-              const def = specialDefinitions.find((d) => d.suit === suit);
-              return `<li>${def.name}: ${qty}</li>`;
-            })
-            .join('');
+        const specialCounts = {};
+        specialDefinitions.forEach((d, i) => {
+          const qty = parseInt(html.find(`[name=special-${i}]`)[0]?.value) || 0;
+          if (qty > 0) specialCounts[d.suit] = qty;
+        });
+        const specialSummary = Object.entries(specialCounts)
+          .map(([suit, qty]) => {
+            const def = specialDefinitions.find((d) => d.suit === suit);
+            return `<li>${def.name}: ${qty}</li>`;
+          })
+          .join('');
 
-          ChatMessage.create({
-            user: game.user._id,
-            content: `<p>Il mazzo é composto da: </p>
+        ChatMessage.create({
+          user: game.user._id,
+          content: `<p>Il mazzo é composto da: </p>
           <ul>
           <li>Carta Successo: ${successCardsNum}</li>
           <li>Carta Fallimento: ${failureCardsNum}</li>
@@ -361,45 +348,26 @@ export async function componiIlMazzoEPesca() {
               <li>Carta del Destino: ${destinyCardsNum}</li>
               ${specialSummary}
           </ul>`
-          });
-
-          const totalCards =
-            issueCardsNum +
-            successCardsNum +
-            destinyCardsNum +
-            failureCardsNum +
-            fortuneCardsNum +
-            totalSpecialQty;
-
-          if (totalCards > 0) {
-            await addCardsReplacingWhite(
-              deck,
-              pile,
-              {
-                success: successCardsNum,
-                failure: failureCardsNum,
-                issue: issueCardsNum,
-                destiny: destinyCardsNum,
-                fortune: fortuneCardsNum,
-                ...specialCounts
-              },
-              { chatNotification: false }
-            );
-          }
-
-          if (pile.cards.size > 0) {
-            const drawnCards = await drawCards(
-              hand,
-              pile,
-              getCardsToDraw(pile.cards.size, playersNum),
-              {
-                how: CONST.CARD_DRAW_MODES.RANDOM,
-                chatNotification: false
-              }
-            );
-            createDrawChat(drawnCards, playersNum);
-          }
         });
+
+        const result = await runOnGM('composeAndDraw', {
+          playersNum,
+          counts: {
+            success: successCardsNum,
+            failure: failureCardsNum,
+            issue: issueCardsNum,
+            destiny: destinyCardsNum,
+            fortune: fortuneCardsNum
+          },
+          specialCounts
+        });
+        if (!result.success) {
+          return ui.notifications.error(
+            game.i18n.localize(result.error) || result.error
+          );
+        }
+        if (result.data.drawnCards.length)
+          createDrawChat(result.data.drawnCards, playersNum);
       }
     }
   }).render(true);
@@ -439,31 +407,27 @@ export async function pesca() {
     default: 'one',
     close: async (html) => {
       if (confirmed) {
-        await withCardLock(async () => {
-          const pile = game.cards.getName('Mazzo');
-          const hand = game.cards.getName('Mano');
+        const pile = game.cards.getName('Mazzo');
 
-          const successCardsNum = pile.cards.filter(
-            (card) => card.suit === 'success'
-          ).length;
-          const issueCardsNum = pile.cards.filter(
-            (card) => card.suit === 'issue'
-          ).length;
-          const destinyCardsNum = pile.cards.filter(
-            (card) => card.suit === 'destiny'
-          ).length;
-          const failureCardsNum = pile.cards.filter(
-            (card) => card.suit === 'failure'
-          ).length;
-          const fortuneCardsNum = pile.cards.filter(
-            (card) => card.suit === 'fortune'
-          ).length;
+        const successCardsNum = pile.cards.filter(
+          (card) => card.suit === 'success'
+        ).length;
+        const issueCardsNum = pile.cards.filter((card) => card.suit === 'issue').length;
+        const destinyCardsNum = pile.cards.filter(
+          (card) => card.suit === 'destiny'
+        ).length;
+        const failureCardsNum = pile.cards.filter(
+          (card) => card.suit === 'failure'
+        ).length;
+        const fortuneCardsNum = pile.cards.filter(
+          (card) => card.suit === 'fortune'
+        ).length;
 
-          const playersNum = parseInt(html.find('[name=num-players]')[0].value) || 1;
+        const playersNum = parseInt(html.find('[name=num-players]')[0].value) || 1;
 
-          ChatMessage.create({
-            user: game.user._id,
-            content: `<p>Il mazzo é composto da: </p>
+        ChatMessage.create({
+          user: game.user._id,
+          content: `<p>Il mazzo é composto da: </p>
           <ul>
           <li>Carta Successo: ${successCardsNum}</li>
           <li>Carta Fallimento: ${failureCardsNum}</li>
@@ -471,21 +435,16 @@ export async function pesca() {
               <li>Carta Fortuna: ${fortuneCardsNum}</li>
               <li>Carta del Destino: ${destinyCardsNum}</li>
           </ul>`
-          });
-
-          if (pile.cards.size > 0) {
-            const drawnCards = await drawCards(
-              hand,
-              pile,
-              getCardsToDraw(pile.cards.size, playersNum),
-              {
-                how: CONST.CARD_DRAW_MODES.RANDOM,
-                chatNotification: false
-              }
-            );
-            createDrawChat(drawnCards, playersNum);
-          }
         });
+
+        const result = await runOnGM('drawFromPile', { playersNum });
+        if (!result.success) {
+          return ui.notifications.error(
+            game.i18n.localize(result.error) || result.error
+          );
+        }
+        if (result.data.drawnCards.length)
+          createDrawChat(result.data.drawnCards, playersNum);
       }
     }
   }).render(true);
@@ -494,97 +453,82 @@ export async function pesca() {
 /**
  * Performs a risk action by drawing cards until success or failure.
  * Validates equal success and failure cards in hand before proceeding.
+ * The actual mutation is relayed to the GM (see gm-relay.mjs,
+ * gm-card-actions.mjs#gmRisk) so two players risking at nearly the same
+ * time run one after another instead of interleaving mid-draw. This client
+ * only renders the outcome, using its own (correct, non-fakeable)
+ * game.user for the resulting chat message.
  */
 export async function rischia() {
-  return withCardLock(async () => {
-    const pile = game.cards.getName('Mazzo');
-    const hand = game.cards.getName('Mano');
+  const identity = getRequesterIdentity();
+  const result = await runOnGM('risk', identity);
+  if (!result.success) {
+    return ui.notifications.error(game.i18n.localize(result.error) || result.error);
+  }
 
-    const numFailure = hand.cards.filter((card) => card.suit === 'failure').length;
-    const numSuccess = hand.cards.filter((card) => card.suit === 'success').length;
+  const { outcome } = result.data;
+  let msg;
 
-    let msg = '';
+  if (outcome === 'noDeckCards') {
+    msg = game.i18n.localize('DECK_OF_DESTINY.messages.errors.noDeckCards');
+    ui.notifications.error(msg);
+    await ChatMessage.create({ user: game.user._id, content: msg });
+    return;
+  }
 
-    if (pile.cards.size === 0) {
-      msg = game.i18n.localize('DECK_OF_DESTINY.messages.errors.noDeckCards');
-      ui.notifications.error(msg);
-      await ChatMessage.create({
-        user: game.user._id,
-        content: msg
-      });
-      return;
-    }
+  if (outcome === 'unequalCards') {
+    const { numSuccess, numFailure } = result.data;
+    msg =
+      game.i18n.localize('DECK_OF_DESTINY.messages.warnings.unequalCards') +
+      ` ${game.i18n.localize('DECK_OF_DESTINY.cards.success')}: ` +
+      numSuccess +
+      ` - ${game.i18n.localize('DECK_OF_DESTINY.cards.failure')}: ` +
+      numFailure;
+    ui.notifications.warn(msg);
+    ChatMessage.create({ user: game.user._id, content: msg });
+    return;
+  }
 
-    if (numSuccess !== numFailure) {
-      msg =
-        game.i18n.localize('DECK_OF_DESTINY.messages.warnings.unequalCards') +
-        ` ${game.i18n.localize('DECK_OF_DESTINY.cards.success')}: ` +
-        numSuccess +
-        ` - ${game.i18n.localize('DECK_OF_DESTINY.cards.failure')}: ` +
-        numFailure;
-      ui.notifications.warn(msg);
-      ChatMessage.create({
-        user: game.user._id,
-        content: msg
-      });
-      return;
-    }
+  if (outcome === 'noCardsForRisk') {
+    ui.notifications.error(
+      game.i18n.localize('DECK_OF_DESTINY.messages.errors.noCardsForRisk')
+    );
+    return;
+  }
 
-    let drawCard;
-    const drawnCards = [];
+  if (outcome === 'resolved') {
+    const { drawnCards, finalSuit, finalName } = result.data;
+    drawnCards.sort((a, b) => a.suit.localeCompare(b.suit));
+    const map = new Map();
     let cardsHtml = '';
-    do {
-      if (pile.cards.size === 0) {
-        ui.notifications.error(
-          game.i18n.localize('DECK_OF_DESTINY.messages.errors.noCardsForRisk')
-        );
-        return;
+    drawnCards.forEach((card) => {
+      const existing = map.get(card.suit);
+      if (existing) {
+        existing.count++;
+      } else {
+        map.set(card.suit, { count: 1, name: card.name });
       }
-      const drawn = await drawCards(hand, pile, 1, {
-        how: CONST.CARD_DRAW_MODES.RANDOM,
-        chatNotification: false
-      });
-      [drawCard] = drawn || [];
-      if (!drawCard) break;
-      drawnCards.push(drawCard);
-      console.log('you draw ' + drawCard);
-    } while (drawCard.suit !== 'success' && drawCard.suit !== 'failure');
-    if (drawCard) {
-      drawnCards.sort((a, b) => a.suit.localeCompare(b.suit));
-      const map = new Map();
-      drawnCards.forEach((card) => {
-        const existing = map.get(card.suit);
-        if (existing) {
-          existing.count++;
-        } else {
-          map.set(card.suit, { count: 1, name: card.name });
-        }
-        cardsHtml += renderCardThumbnail(card);
-      });
-      const summary = Array.from(map)
-        .map(
-          ([suit, { count, name }]) => `<li>${suitToName(suit, name)}: ${count}</li>`
-        )
-        .join('');
-
-      const outcomeText =
-        drawCard.suit === 'success'
-          ? game.i18n.localize('DECK_OF_DESTINY.messages.success.riskSuccess')
-          : game.i18n.localize('DECK_OF_DESTINY.messages.failure.riskFailure');
-
-      msg = `<h1>${game.i18n.localize('DECK_OF_DESTINY.messages.info.drewCard')} ${
-        drawCard.name
-      } ${outcomeText}</h1>
-            <ul>${summary}</ul>
-           <div class="card-draw flexrow">${cardsHtml}</div>`;
-    } else {
-      msg = game.i18n.localize('DECK_OF_DESTINY.messages.errors.noSuccessOrFailure');
-    }
-    await ChatMessage.create({
-      user: game.user._id,
-      content: msg
+      cardsHtml += renderCardThumbnail(card);
     });
-  });
+    const summary = Array.from(map)
+      .map(([suit, { count, name }]) => `<li>${suitToName(suit, name)}: ${count}</li>`)
+      .join('');
+
+    const outcomeText =
+      finalSuit === 'success'
+        ? game.i18n.localize('DECK_OF_DESTINY.messages.success.riskSuccess')
+        : game.i18n.localize('DECK_OF_DESTINY.messages.failure.riskFailure');
+
+    msg = `<h1>${game.i18n.localize(
+      'DECK_OF_DESTINY.messages.info.drewCard'
+    )} ${finalName} ${outcomeText}</h1>
+          <ul>${summary}</ul>
+         <div class="card-draw flexrow">${cardsHtml}</div>`;
+  } else {
+    // outcome === 'noSuccessOrFailure'
+    msg = game.i18n.localize('DECK_OF_DESTINY.messages.errors.noSuccessOrFailure');
+  }
+  await ChatMessage.create({ user: game.user._id, content: msg });
 }
 
 /**
@@ -774,18 +718,12 @@ export async function divisioneCarteFortuna() {
  * Opens a dialog for the narrator to request a test with a reason.
  */
 export async function richiediProva() {
-  const deck = game.cards.getName('DoD - lista carte');
-  const pile = game.cards.getName('Mazzo');
-
-  await deck.recall({
-    chatNotification: false
-  });
-
-  // Refill the emptied pile with white filler cards up to the minimum size
-  await refillPileWithWhite(deck, pile);
-
-  // Clear the draw round state when starting a new test
-  await clearRoundState();
+  const resetResult = await runOnGM('resetPileForNewRound', { clearRound: true });
+  if (!resetResult.success) {
+    return ui.notifications.error(
+      game.i18n.localize(resetResult.error) || resetResult.error
+    );
+  }
 
   let confirmed = false;
 
@@ -859,6 +797,12 @@ export async function richiediProva() {
 /**
  * Empties the deck by recalling all cards.
  * Returns all cards to the main deck.
+ *
+ * Relayed to the GM (same target-GM queue as every other card mutation) so
+ * that a second GM emptying the deck can never race a relayed
+ * addCardsToPile/composeAndDraw that's mid-flight on the target's queue -
+ * two independent local `withCardLock` calls on two different GM processes
+ * would not have protected against that.
  */
 export async function svuotaMazzo() {
   if (!game.user?.isGM) {
@@ -867,29 +811,19 @@ export async function svuotaMazzo() {
     );
     return;
   }
-  return withCardLock(async () => {
-    const deck = game.cards.getName('DoD - lista carte');
-    const pile = game.cards.getName('Mazzo');
-    await deck.recall({ chatNotification: false });
-
-    // Refill the emptied pile with white filler cards up to the minimum size
-    await refillPileWithWhite(deck, pile);
-
-    // Clear the draw round state
-    await clearRoundState();
-
-    ChatMessage.create({
-      user: game.user.id,
-      content: `<p><strong>${game.i18n.localize(
-        'DECK_OF_DESTINY.messages.info.deckEmptiedTitle'
-      )}</strong> ${game.i18n.localize(
-        'DECK_OF_DESTINY.messages.info.deckEmptied'
-      )}</p>`
-    });
-    ui.notifications.info(
-      game.i18n.localize('DECK_OF_DESTINY.messages.info.deckEmptiedToast')
-    );
+  const result = await runOnGM('resetPileForNewRound', { clearRound: true });
+  if (!result.success) {
+    return ui.notifications.error(game.i18n.localize(result.error) || result.error);
+  }
+  ChatMessage.create({
+    user: game.user.id,
+    content: `<p><strong>${game.i18n.localize(
+      'DECK_OF_DESTINY.messages.info.deckEmptiedTitle'
+    )}</strong> ${game.i18n.localize('DECK_OF_DESTINY.messages.info.deckEmptied')}</p>`
   });
+  ui.notifications.info(
+    game.i18n.localize('DECK_OF_DESTINY.messages.info.deckEmptiedToast')
+  );
 }
 
 /**
@@ -1038,11 +972,15 @@ export async function tiroDifesa(actor = null) {
 
 /**
  * Open/close/edit a single special card definition's add-or-edit form.
- * Resolves once the nested dialog is confirmed or cancelled.
- * @param {{deck: Cards, cardsDocuments: Cards[], definition: object|null}} args
+ * Resolves once the nested dialog is confirmed or cancelled. The mutation
+ * itself is relayed to the GM (see gmCreateSpecialCard/gmUpdateSpecialCard
+ * in gm-card-actions.mjs) so it serializes against every other card
+ * mutation on the same target-GM queue, not just other actions on this
+ * client - the deck/pile/hand documents it touches are resolved GM-side.
+ * @param {{definition: object|null}} args
  * @returns {Promise<void>}
  */
-function openSpecialCardForm({ deck, cardsDocuments, definition = null }) {
+function openSpecialCardForm({ definition = null } = {}) {
   return new Promise((resolve) => {
     const isEdit = Boolean(definition);
     // HTML-escape GM-controlled text before interpolating into the form
@@ -1125,39 +1063,36 @@ function openSpecialCardForm({ deck, cardsDocuments, definition = null }) {
               return;
             }
 
-            await withCardLock(async () => {
-              if (isEdit) {
-                await updateSpecialCardDefinition(cardsDocuments, definition.suit, {
+            const result = isEdit
+              ? await runOnGM('updateSpecialCard', {
+                  ...getRequesterIdentity(),
+                  suit: definition.suit,
                   name,
                   description,
-                  img
-                });
-                const { shortfall } = await adjustSpecialCardCopies(
-                  deck,
-                  definition.suit,
-                  copies,
-                  { name, description, img }
-                );
-                if (shortfall > 0) {
-                  ui.notifications.warn(
-                    game.i18n.format(
-                      'DECK_OF_DESTINY.messages.warnings.copiesShortfall',
-                      {
-                        name,
-                        shortfall
-                      }
-                    )
-                  );
-                }
-              } else {
-                await createSpecialCardDefinition(deck, {
+                  img,
+                  copies
+                })
+              : await runOnGM('createSpecialCard', {
+                  ...getRequesterIdentity(),
                   name,
                   description,
                   img,
                   copies
                 });
-              }
-            });
+
+            if (!result.success) {
+              ui.notifications.error(game.i18n.localize(result.error) || result.error);
+              resolve();
+              return;
+            }
+            if (isEdit && result.data.shortfall > 0) {
+              ui.notifications.warn(
+                game.i18n.format('DECK_OF_DESTINY.messages.warnings.copiesShortfall', {
+                  name,
+                  shortfall: result.data.shortfall
+                })
+              );
+            }
             resolve();
           }
         },
@@ -1233,10 +1168,6 @@ async function _openManageSpecialCardsDialog() {
   }
 
   const deck = game.cards.getName('DoD - lista carte');
-  const pile = game.cards.getName('Mazzo');
-  const hand = game.cards.getName('Mano');
-  const cardsDocuments = [deck, pile, hand];
-
   const definitions = getSpecialCardDefinitions(deck);
 
   const rows = definitions.length
@@ -1279,20 +1210,24 @@ async function _openManageSpecialCardsDialog() {
     default: 'close',
     render: (html) => {
       html.find('[data-action=add]').on('click', async () => {
-        await openSpecialCardForm({ deck, cardsDocuments });
+        await openSpecialCardForm({});
         gestisciCarteSpeciali();
       });
       html.find('[data-action=edit]').on('click', async (event) => {
         const suit = event.currentTarget.dataset.suit;
         const definition = definitions.find((d) => d.suit === suit);
-        await openSpecialCardForm({ deck, cardsDocuments, definition });
+        await openSpecialCardForm({ definition });
         gestisciCarteSpeciali();
       });
       html.find('[data-action=delete]').on('click', async (event) => {
         const suit = event.currentTarget.dataset.suit;
-        await withCardLock(async () => {
-          await deleteSpecialCardDefinition(cardsDocuments, suit);
+        const result = await runOnGM('deleteSpecialCard', {
+          ...getRequesterIdentity(),
+          suit
         });
+        if (!result.success) {
+          ui.notifications.error(game.i18n.localize(result.error) || result.error);
+        }
         gestisciCarteSpeciali();
       });
     },

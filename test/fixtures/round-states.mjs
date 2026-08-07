@@ -8,33 +8,33 @@
  */
 export function createEmptyRoundState() {
   return {
-    playersAdded: [],
-    playersDrawn: [],
+    actorsAdded: [],
+    actorsDrawn: [],
     drawResults: [],
   };
 }
 
 /**
- * Create a round state with players who have added cards
+ * Create a round state with actors who have added cards
  */
-export function createRoundWithPlayersAdded(userIds = ['user1', 'user2', 'user3']) {
+export function createRoundWithActorsAdded(actorIds = ['actor1', 'actor2', 'actor3']) {
   return {
-    playersAdded: userIds,
-    playersDrawn: [],
+    actorsAdded: actorIds,
+    actorsDrawn: [],
     drawResults: [],
   };
 }
 
 /**
- * Create a round state with some players who have drawn
+ * Create a round state with some actors who have drawn
  */
-export function createRoundWithSomeDrawn(addedUsers = ['user1', 'user2', 'user3'], drawnUsers = ['user1']) {
+export function createRoundWithSomeDrawn(addedActors = ['actor1', 'actor2', 'actor3'], drawnActors = ['actor1']) {
   return {
-    playersAdded: addedUsers,
-    playersDrawn: drawnUsers,
-    drawResults: drawnUsers.map((userId) => ({
-      userId,
-      userName: `Player${userId.slice(-1)}`,
+    actorsAdded: addedActors,
+    actorsDrawn: drawnActors,
+    drawResults: drawnActors.map((actorId) => ({
+      actorId,
+      actorName: `Actor${actorId.slice(-1)}`,
       cards: [],
       suits: {},
     })),
@@ -42,15 +42,15 @@ export function createRoundWithSomeDrawn(addedUsers = ['user1', 'user2', 'user3'
 }
 
 /**
- * Create a completed round state (all players drawn)
+ * Create a completed round state (all actors drawn)
  */
-export function createCompletedRoundState(userIds = ['user1', 'user2', 'user3']) {
+export function createCompletedRoundState(actorIds = ['actor1', 'actor2', 'actor3']) {
   return {
-    playersAdded: userIds,
-    playersDrawn: userIds,
-    drawResults: userIds.map((userId) => ({
-      userId,
-      userName: `Player${userId.slice(-1)}`,
+    actorsAdded: actorIds,
+    actorsDrawn: actorIds,
+    drawResults: actorIds.map((actorId) => ({
+      actorId,
+      actorName: `Actor${actorId.slice(-1)}`,
       cards: [],
       suits: {},
     })),
@@ -62,8 +62,8 @@ export function createCompletedRoundState(userIds = ['user1', 'user2', 'user3'])
  */
 export function createRoundWithDrawResults(results) {
   return {
-    playersAdded: results.map((r) => r.userId),
-    playersDrawn: results.map((r) => r.userId),
+    actorsAdded: results.map((r) => r.actorId),
+    actorsDrawn: results.map((r) => r.actorId),
     drawResults: results,
   };
 }
@@ -74,16 +74,16 @@ export function createRoundWithDrawResults(results) {
 export function createInvalidRoundState(type = 'missing-arrays') {
   switch (type) {
     case 'missing-arrays':
-      return { playersAdded: null };
+      return { actorsAdded: null };
     case 'wrong-type':
-      return { playersAdded: 'not-an-array', playersDrawn: [], drawResults: [] };
+      return { actorsAdded: 'not-an-array', actorsDrawn: [], drawResults: [] };
     case 'missing-fields':
-      return { playersAdded: [] };
+      return { actorsAdded: [] };
     case 'malformed-results':
       return {
-        playersAdded: ['user1'],
-        playersDrawn: ['user1'],
-        drawResults: [{ userId: 'user1' }], // Missing required fields
+        actorsAdded: ['actor1'],
+        actorsDrawn: ['actor1'],
+        drawResults: [{ actorId: 'actor1' }], // Missing required fields
       };
     default:
       return null;

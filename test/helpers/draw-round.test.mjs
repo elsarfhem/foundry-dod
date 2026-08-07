@@ -1,6 +1,7 @@
 /**
  * Unit tests for draw-round.mjs
- * Tests all 82 test cases from the test strategy
+ * Tests all 82 test cases from the test strategy, plus actor-based
+ * round-tracking regressions.
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -9,18 +10,19 @@ import {
   saveRoundState,
   clearRoundState,
   initializeRoundState,
-  canPlayerDraw,
-  hasPlayerAdded,
+  canActorDraw,
+  hasActorAdded,
   isRoundComplete,
   calculateDrawCount,
   countBySuit,
-  recordPlayerAdded,
-  executePlayerDraw,
+  recordActorAdded,
+  unrecordActorAdded,
+  executeActorDraw,
   generateSummary
 } from '../../src/module/helpers/draw-round.mjs';
 import {
   createEmptyRoundState,
-  createRoundWithPlayersAdded,
+  createRoundWithActorsAdded,
   createRoundWithSomeDrawn,
   createCompletedRoundState,
   createInvalidRoundState
@@ -32,58 +34,58 @@ import {
 } from '../fixtures/card-data.mjs';
 import {
   MockCardsPile,
-  MockActor,
   createCardsMap,
   createHandPile
 } from '../mocks/foundry.mjs';
+import { withCardLock } from '../../src/module/globals.mjs';
 
 describe('draw-round: Pure Query Functions', () => {
-  describe('canPlayerDraw', () => {
+  describe('canActorDraw', () => {
     it('should return false if state is null', () => {
-      expect(canPlayerDraw(null, 'user1')).toBe(false);
+      expect(canActorDraw(null, 'actor1')).toBe(false);
     });
 
-    it('should return false if player has not added cards', () => {
-      const state = createRoundWithPlayersAdded(['user2', 'user3']);
-      expect(canPlayerDraw(state, 'user1')).toBe(false);
+    it('should return false if actor has not added cards', () => {
+      const state = createRoundWithActorsAdded(['actor2', 'actor3']);
+      expect(canActorDraw(state, 'actor1')).toBe(false);
     });
 
-    it('should return false if player has already drawn', () => {
-      const state = createRoundWithSomeDrawn(['user1', 'user2'], ['user1']);
-      expect(canPlayerDraw(state, 'user1')).toBe(false);
+    it('should return false if actor has already drawn', () => {
+      const state = createRoundWithSomeDrawn(['actor1', 'actor2'], ['actor1']);
+      expect(canActorDraw(state, 'actor1')).toBe(false);
     });
 
-    it('should return true if player added but has not drawn', () => {
-      const state = createRoundWithPlayersAdded(['user1', 'user2']);
-      expect(canPlayerDraw(state, 'user1')).toBe(true);
+    it('should return true if actor added but has not drawn', () => {
+      const state = createRoundWithActorsAdded(['actor1', 'actor2']);
+      expect(canActorDraw(state, 'actor1')).toBe(true);
     });
 
-    it('should handle multiple players correctly', () => {
-      const state = createRoundWithSomeDrawn(['user1', 'user2', 'user3'], ['user1']);
-      expect(canPlayerDraw(state, 'user1')).toBe(false);
-      expect(canPlayerDraw(state, 'user2')).toBe(true);
-      expect(canPlayerDraw(state, 'user3')).toBe(true);
+    it('should handle multiple actors correctly', () => {
+      const state = createRoundWithSomeDrawn(['actor1', 'actor2', 'actor3'], ['actor1']);
+      expect(canActorDraw(state, 'actor1')).toBe(false);
+      expect(canActorDraw(state, 'actor2')).toBe(true);
+      expect(canActorDraw(state, 'actor3')).toBe(true);
     });
   });
 
-  describe('hasPlayerAdded', () => {
+  describe('hasActorAdded', () => {
     it('should return false if state is null', () => {
-      expect(hasPlayerAdded(null, 'user1')).toBe(false);
+      expect(hasActorAdded(null, 'actor1')).toBe(false);
     });
 
-    it('should return false if player has not added', () => {
-      const state = createRoundWithPlayersAdded(['user2']);
-      expect(hasPlayerAdded(state, 'user1')).toBe(false);
+    it('should return false if actor has not added', () => {
+      const state = createRoundWithActorsAdded(['actor2']);
+      expect(hasActorAdded(state, 'actor1')).toBe(false);
     });
 
-    it('should return true if player has added', () => {
-      const state = createRoundWithPlayersAdded(['user1', 'user2']);
-      expect(hasPlayerAdded(state, 'user1')).toBe(true);
+    it('should return true if actor has added', () => {
+      const state = createRoundWithActorsAdded(['actor1', 'actor2']);
+      expect(hasActorAdded(state, 'actor1')).toBe(true);
     });
 
     it('should work for empty state', () => {
       const state = createEmptyRoundState();
-      expect(hasPlayerAdded(state, 'user1')).toBe(false);
+      expect(hasActorAdded(state, 'actor1')).toBe(false);
     });
   });
 
@@ -92,61 +94,61 @@ describe('draw-round: Pure Query Functions', () => {
       expect(isRoundComplete(null)).toBe(false);
     });
 
-    it('should return false if no players have added', () => {
+    it('should return false if no actors have added', () => {
       const state = createEmptyRoundState();
       expect(isRoundComplete(state)).toBe(false);
     });
 
-    it('should return false if not all players have drawn', () => {
-      const state = createRoundWithSomeDrawn(['user1', 'user2', 'user3'], ['user1']);
+    it('should return false if not all actors have drawn', () => {
+      const state = createRoundWithSomeDrawn(['actor1', 'actor2', 'actor3'], ['actor1']);
       expect(isRoundComplete(state)).toBe(false);
     });
 
-    it('should return true if all players have drawn', () => {
-      const state = createCompletedRoundState(['user1', 'user2']);
+    it('should return true if all actors have drawn', () => {
+      const state = createCompletedRoundState(['actor1', 'actor2']);
       expect(isRoundComplete(state)).toBe(true);
     });
 
-    it('should handle single player round', () => {
-      const state = createCompletedRoundState(['user1']);
+    it('should handle single actor round', () => {
+      const state = createCompletedRoundState(['actor1']);
       expect(isRoundComplete(state)).toBe(true);
     });
   });
 
   describe('calculateDrawCount', () => {
-    // calculateDrawCount(pileSize, playerCount, playerIndex) returns ONE
-    // player's share of the round's total draw (see draw-round.mjs). Total
-    // for the round = max(playerCount, floor(pileSize / (4 + playerCount))),
-    // split evenly with the first `total % playerCount` players getting one
+    // calculateDrawCount(pileSize, actorCount, actorIndex) returns ONE
+    // actor's share of the round's total draw (see draw-round.mjs). Total
+    // for the round = max(actorCount, floor(pileSize / (4 + actorCount))),
+    // split evenly with the first `total % actorCount` actors getting one
     // extra card.
-    it('should split an evenly-divisible total equally for a 3-player game', () => {
+    it('should split an evenly-divisible total equally for a 3-actor game', () => {
       // total = max(3, floor(21/7)) = 3; base = 1, extra = 0
       expect(calculateDrawCount(21, 3, 0)).toBe(1);
       expect(calculateDrawCount(21, 3, 1)).toBe(1);
       expect(calculateDrawCount(21, 3, 2)).toBe(1);
     });
 
-    it('should split an evenly-divisible total equally for a 4-player game', () => {
+    it('should split an evenly-divisible total equally for a 4-actor game', () => {
       // total = max(4, floor(24/8)) = 4; base = 1, extra = 0
       expect(calculateDrawCount(24, 4, 0)).toBe(1);
       expect(calculateDrawCount(24, 4, 3)).toBe(1);
     });
 
-    it('should return at least 1 card per player for small piles', () => {
+    it('should return at least 1 card per actor for small piles', () => {
       // total = max(3, floor(5/7)) = max(3, 1) = 3; base = 1, extra = 0
       expect(calculateDrawCount(5, 3, 0)).toBe(1);
       // total = max(5, floor(1/9)) = max(5, 1) = 5; base = 1, extra = 0
       expect(calculateDrawCount(1, 5, 4)).toBe(1);
     });
 
-    it('should distribute the remainder to the first players for large piles', () => {
+    it('should distribute the remainder to the first actors for large piles', () => {
       // total = max(3, floor(100/7)) = 14; base = 4, extra = 2
       expect(calculateDrawCount(100, 3, 0)).toBe(5);
       expect(calculateDrawCount(100, 3, 1)).toBe(5);
       expect(calculateDrawCount(100, 3, 2)).toBe(4);
     });
 
-    it('should distribute the remainder to the first player in a 2-player game', () => {
+    it('should distribute the remainder to the first actor in a 2-actor game', () => {
       // total = max(2, floor(18/6)) = 3; base = 1, extra = 1
       expect(calculateDrawCount(18, 2, 0)).toBe(2);
       expect(calculateDrawCount(18, 2, 1)).toBe(1);
@@ -201,8 +203,8 @@ describe('draw-round: State Management', () => {
     it('should create empty state with correct structure', () => {
       const state = initializeRoundState();
       expect(state).toEqual({
-        playersAdded: [],
-        playersDrawn: [],
+        actorsAdded: [],
+        actorsDrawn: [],
         drawResults: []
       });
     });
@@ -210,8 +212,8 @@ describe('draw-round: State Management', () => {
     it('should create independent state objects', () => {
       const state1 = initializeRoundState();
       const state2 = initializeRoundState();
-      state1.playersAdded.push('user1');
-      expect(state2.playersAdded).toEqual([]);
+      state1.actorsAdded.push('actor1');
+      expect(state2.actorsAdded).toEqual([]);
     });
   });
 
@@ -230,7 +232,7 @@ describe('draw-round: State Management', () => {
     it('should load existing valid state', async () => {
       const pile = new MockCardsPile();
       game.cards = createCardsMap([['pile1', pile]]);
-      const state = createRoundWithPlayersAdded(['user1', 'user2']);
+      const state = createRoundWithActorsAdded(['actor1', 'actor2']);
       await pile.setFlag('dod', 'currentRound', state);
 
       const loaded = loadRoundState();
@@ -250,7 +252,19 @@ describe('draw-round: State Management', () => {
       const pile = new MockCardsPile();
       game.cards = createCardsMap([['pile1', pile]]);
       await pile.setFlag('dod', 'currentRound', {
-        playersAdded: 'not-an-array',
+        actorsAdded: 'not-an-array',
+        actorsDrawn: [],
+        drawResults: []
+      });
+
+      expect(loadRoundState()).toBe(null);
+    });
+
+    it('should clear an old (pre-actor-rename) schema instead of loading it', async () => {
+      const pile = new MockCardsPile();
+      game.cards = createCardsMap([['pile1', pile]]);
+      await pile.setFlag('dod', 'currentRound', {
+        playersAdded: ['user1'],
         playersDrawn: [],
         drawResults: []
       });
@@ -291,13 +305,13 @@ describe('draw-round: State Management', () => {
     it('should preserve state data exactly', async () => {
       const pile = new MockCardsPile();
       game.cards = createCardsMap([['pile1', pile]]);
-      const state = createRoundWithSomeDrawn(['user1', 'user2'], ['user1']);
+      const state = createRoundWithSomeDrawn(['actor1', 'actor2'], ['actor1']);
 
       await saveRoundState(state);
       const loaded = loadRoundState();
 
-      expect(loaded.playersAdded).toEqual(state.playersAdded);
-      expect(loaded.playersDrawn).toEqual(state.playersDrawn);
+      expect(loaded.actorsAdded).toEqual(state.actorsAdded);
+      expect(loaded.actorsDrawn).toEqual(state.actorsDrawn);
     });
   });
 
@@ -327,98 +341,169 @@ describe('draw-round: State Management', () => {
 });
 
 describe('draw-round: State Mutations', () => {
-  describe('recordPlayerAdded', () => {
-    it('should reject recording for other users (NFR #6)', async () => {
-      const pile = new MockCardsPile();
-      game.cards = createCardsMap([['pile1', pile]]);
-      game.user.id = 'user1';
-
-      const result = await recordPlayerAdded('user2');
-      expect(result.success).toBe(false);
-      expect(result.error).toContain('Cannot record for other users');
-    });
-
+  describe('recordActorAdded', () => {
     it('should initialize state if none exists', async () => {
       const pile = new MockCardsPile();
       game.cards = createCardsMap([['pile1', pile]]);
-      game.user.id = 'user1';
 
-      const result = await recordPlayerAdded('user1');
+      const result = await recordActorAdded('actor1');
       expect(result.success).toBe(true);
 
       const state = loadRoundState();
-      expect(state.playersAdded).toContain('user1');
+      expect(state.actorsAdded).toContain('actor1');
     });
 
-    it('should add user to existing state', async () => {
+    it('should add actor to existing state', async () => {
       const pile = new MockCardsPile();
       game.cards = createCardsMap([['pile1', pile]]);
-      game.user.id = 'user2';
 
-      const initialState = createRoundWithPlayersAdded(['user1']);
+      const initialState = createRoundWithActorsAdded(['actor1']);
       await pile.setFlag('dod', 'currentRound', initialState);
 
-      const result = await recordPlayerAdded('user2');
+      const result = await recordActorAdded('actor2');
       expect(result.success).toBe(true);
 
       const state = loadRoundState();
-      expect(state.playersAdded).toEqual(['user1', 'user2']);
+      expect(state.actorsAdded).toEqual(['actor1', 'actor2']);
     });
 
     it('should be idempotent (no duplicate entries)', async () => {
       const pile = new MockCardsPile();
       game.cards = createCardsMap([['pile1', pile]]);
-      game.user.id = 'user1';
 
-      await recordPlayerAdded('user1');
-      await recordPlayerAdded('user1');
+      await recordActorAdded('actor1');
+      await recordActorAdded('actor1');
 
       const state = loadRoundState();
-      expect(state.playersAdded.filter((id) => id === 'user1').length).toBe(1);
+      expect(state.actorsAdded.filter((id) => id === 'actor1').length).toBe(1);
+    });
+
+    it('should count two actors controlled by the same user as two participants', async () => {
+      // The motivating scenario: one Foundry User opens two actor sheets
+      // (their own character, plus another player's or an NPC they're
+      // helping) and adds cards from both. Both actors must be recorded,
+      // even though the underlying caller is the same person both times.
+      const pile = new MockCardsPile();
+      game.cards = createCardsMap([['pile1', pile]]);
+
+      await recordActorAdded('actorA');
+      await recordActorAdded('actorB');
+
+      const state = loadRoundState();
+      expect(state.actorsAdded).toEqual(['actorA', 'actorB']);
     });
   });
 
-  describe('executePlayerDraw', () => {
+  describe('unrecordActorAdded', () => {
+    it('removes the actor from actorsAdded and saves', async () => {
+      const pile = new MockCardsPile();
+      game.cards = createCardsMap([['pile1', pile]]);
+      await pile.setFlag(
+        'dod',
+        'currentRound',
+        createRoundWithActorsAdded(['actor1', 'actor2'])
+      );
+
+      const result = await unrecordActorAdded('actor1');
+      expect(result.success).toBe(true);
+
+      const state = loadRoundState();
+      expect(state.actorsAdded).toEqual(['actor2']);
+    });
+
+    it('is a no-op success if no round state exists', async () => {
+      const pile = new MockCardsPile();
+      game.cards = createCardsMap([['pile1', pile]]);
+
+      const result = await unrecordActorAdded('actor1');
+      expect(result).toEqual({ success: true });
+    });
+
+    it('is a no-op success if the actor was never added', async () => {
+      const pile = new MockCardsPile();
+      game.cards = createCardsMap([['pile1', pile]]);
+      await pile.setFlag('dod', 'currentRound', createRoundWithActorsAdded(['actor2']));
+
+      const result = await unrecordActorAdded('actor1');
+      expect(result).toEqual({ success: true });
+
+      const state = loadRoundState();
+      expect(state.actorsAdded).toEqual(['actor2']);
+    });
+  });
+
+  describe('recordActorAdded (concurrent calls)', () => {
+    // MockCardsPile#setFlag now yields to the event loop once before
+    // writing (mirrors the real network round-trip - see test/mocks/
+    // foundry.mjs), so two calls racing on the SAME flag can genuinely
+    // interleave here instead of running to completion one after another.
+    it('loses an actor when two adds race unserialized (reproduces the bug)', async () => {
+      const pile = new MockCardsPile();
+      game.cards = createCardsMap([['pile1', pile]]);
+
+      const [resultA, resultB] = await Promise.all([
+        recordActorAdded('actorA'),
+        recordActorAdded('actorB')
+      ]);
+
+      expect(resultA.success).toBe(true);
+      expect(resultB.success).toBe(true);
+      const state = loadRoundState();
+      // Both calls "succeeded" individually, but they raced on the same
+      // read-modify-write of the currentRound flag - last write wins, so
+      // one of the two additions is silently gone.
+      expect(state.actorsAdded.length).toBeLessThan(2);
+    });
+
+    it('never loses an actor when both calls are serialized (post-fix, via withCardLock)', async () => {
+      const pile = new MockCardsPile();
+      game.cards = createCardsMap([['pile1', pile]]);
+
+      // Simulates both requests landing on the GM's shared queue (see
+      // gm-card-actions.mjs#gmAddCardsToPile), instead of racing
+      // unserialized on two different clients.
+      const [resultA, resultB] = await Promise.all([
+        withCardLock(() => recordActorAdded('actorA')),
+        withCardLock(() => recordActorAdded('actorB'))
+      ]);
+
+      expect(resultA.success).toBe(true);
+      expect(resultB.success).toBe(true);
+      const state = loadRoundState();
+      expect(state.actorsAdded.sort()).toEqual(['actorA', 'actorB']);
+    });
+  });
+
+  describe('executeActorDraw', () => {
     beforeEach(() => {
       // Set up a complete game environment for draw tests
       const pile = new MockCardsPile(createLargePile(21));
       const hand = createHandPile();
-      const actor = new MockActor('actor1', 'TestActor');
-      actor._cards = new MockCardsPile([]);
 
       game.cards = createCardsMap([
         ['pile1', pile],
         ['hand1', hand]
       ]);
-      game.user.id = 'user1';
-      game.user.name = 'Player1';
-      game.user.character = actor;
     });
 
-    it('should reject drawing for other users (NFR #6)', async () => {
-      const result = await executePlayerDraw('user2');
-      expect(result.success).toBe(false);
-      expect(result.error).toContain('Cannot draw for other users');
-    });
-
-    it('should error if player has not added cards', async () => {
+    it('should error if actor has not added cards', async () => {
       const pile = Array.from(game.cards.values())[0];
-      await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user2']));
+      await pile.setFlag('dod', 'currentRound', createRoundWithActorsAdded(['actor2']));
 
-      const result = await executePlayerDraw('user1');
+      const result = await executeActorDraw('actor1', 'Actor1', 'user1');
       expect(result.success).toBe(false);
       expect(result.error).toBe('DECK_OF_DESTINY.messages.DrawRound.Error.NotAdded');
     });
 
-    it('should error if player has already drawn', async () => {
+    it('should error if actor has already drawn', async () => {
       const pile = Array.from(game.cards.values())[0];
       await pile.setFlag(
         'dod',
         'currentRound',
-        createRoundWithSomeDrawn(['user1'], ['user1'])
+        createRoundWithSomeDrawn(['actor1'], ['actor1'])
       );
 
-      const result = await executePlayerDraw('user1');
+      const result = await executeActorDraw('actor1', 'Actor1', 'user1');
       expect(result.success).toBe(false);
       expect(result.error).toBe(
         'DECK_OF_DESTINY.messages.DrawRound.Error.AlreadyDrawn'
@@ -430,75 +515,103 @@ describe('draw-round: State Mutations', () => {
       await pile.setFlag(
         'dod',
         'currentRound',
-        createRoundWithPlayersAdded(['user1', 'user2', 'user3'])
+        createRoundWithActorsAdded(['actor1', 'actor2', 'actor3'])
       );
 
-      const result = await executePlayerDraw('user1');
+      const result = await executeActorDraw('actor1', 'Actor1', 'user1');
       expect(result.success).toBe(true);
       expect(result.data.drawnCount).toBeGreaterThan(0);
 
       const state = loadRoundState();
-      expect(state.playersDrawn).toContain('user1');
+      expect(state.actorsDrawn).toContain('actor1');
       expect(state.drawResults.length).toBe(1);
     });
 
-    it('should calculate correct draw count based on players', async () => {
+    it('should calculate correct draw count based on actors', async () => {
       const pile = Array.from(game.cards.values())[0];
       await pile.setFlag(
         'dod',
         'currentRound',
-        createRoundWithPlayersAdded(['user1', 'user2', 'user3'])
+        createRoundWithActorsAdded(['actor1', 'actor2', 'actor3'])
       );
 
-      const result = await executePlayerDraw('user1');
+      const result = await executeActorDraw('actor1', 'Actor1', 'user1');
       expect(result.success).toBe(true);
       // total = max(3, floor(21/7)) = 3; base = 1, extra = 0; first drawer gets 1
       expect(result.data.drawnCount).toBe(1);
     });
 
-    it('should store draw result with card data', async () => {
+    it('should store draw result with card data, keyed by actor', async () => {
       const pile = Array.from(game.cards.values())[0];
-      await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user1']));
+      await pile.setFlag('dod', 'currentRound', createRoundWithActorsAdded(['actor1']));
 
-      await executePlayerDraw('user1');
+      await executeActorDraw('actor1', 'TestActor', 'user1');
 
       const state = loadRoundState();
       const drawResult = state.drawResults[0];
 
-      expect(drawResult.userId).toBe('user1');
-      // executePlayerDraw prefers the actor's name over the Foundry user's
-      // display name when a character is assigned (see beforeEach: the
-      // mock actor is named 'TestActor').
-      expect(drawResult.userName).toBe('TestActor');
+      expect(drawResult.actorId).toBe('actor1');
+      expect(drawResult.actorName).toBe('TestActor');
       expect(drawResult.cards).toBeDefined();
       expect(drawResult.cards.length).toBeGreaterThan(0);
       expect(drawResult.suits).toBeDefined();
+      // The caller's userId is used only to author the chat message (see
+      // generatePlayerDrawMessage) - it must NOT leak into the persisted
+      // round state's drawResults, which only needs actor identity.
+      expect(drawResult.userId).toBeUndefined();
     });
 
-    it('should indicate round complete when last player draws', async () => {
+    it('should indicate round complete when last actor draws', async () => {
       const pile = Array.from(game.cards.values())[0];
       await pile.setFlag(
         'dod',
         'currentRound',
-        createRoundWithSomeDrawn(['user1', 'user2'], ['user2'])
+        createRoundWithSomeDrawn(['actor1', 'actor2'], ['actor2'])
       );
 
-      const result = await executePlayerDraw('user1');
+      const result = await executeActorDraw('actor1', 'Actor1', 'user1');
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(true);
     });
 
-    it('should indicate round not complete when players remain', async () => {
+    it('should indicate round not complete when actors remain', async () => {
       const pile = Array.from(game.cards.values())[0];
       await pile.setFlag(
         'dod',
         'currentRound',
-        createRoundWithPlayersAdded(['user1', 'user2', 'user3'])
+        createRoundWithActorsAdded(['actor1', 'actor2', 'actor3'])
       );
 
-      const result = await executePlayerDraw('user1');
+      const result = await executeActorDraw('actor1', 'Actor1', 'user1');
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(false);
+    });
+
+    it('counts two actors owned by the same caller as two separate draws', async () => {
+      // Same motivating scenario as recordActorAdded's test, carried
+      // through to the draw step: one user, two actors, two independent
+      // draws and two entries in drawResults.
+      const pile = Array.from(game.cards.values())[0];
+      await pile.setFlag(
+        'dod',
+        'currentRound',
+        createRoundWithActorsAdded(['actorA', 'actorB'])
+      );
+
+      const first = await executeActorDraw('actorA', 'ActorA', 'sameUser');
+      expect(first.success).toBe(true);
+      expect(first.data.roundComplete).toBe(false);
+
+      const second = await executeActorDraw('actorB', 'ActorB', 'sameUser');
+      expect(second.success).toBe(true);
+      expect(second.data.roundComplete).toBe(true);
+
+      const state = loadRoundState();
+      expect(state.actorsDrawn.sort()).toEqual(['actorA', 'actorB']);
+      expect(state.drawResults.map((r) => r.actorId).sort()).toEqual([
+        'actorA',
+        'actorB'
+      ]);
     });
   });
 });
@@ -508,91 +621,64 @@ describe('draw-round: Integration Tests', () => {
     beforeEach(() => {
       const pile = new MockCardsPile(createLargePile(30));
       const hand = createHandPile();
-      const actor = new MockActor('actor1', 'TestActor');
-      actor._cards = new MockCardsPile([]);
 
       game.cards = createCardsMap([
         ['pile1', pile],
         ['hand1', hand]
       ]);
-      game.user.character = actor;
     });
 
-    it('should complete a 3-player round successfully', async () => {
-      const pile = Array.from(game.cards.values())[0];
-
-      // Player 1 adds
-      game.user.id = 'user1';
-      game.user.name = 'Player1';
-      await recordPlayerAdded('user1');
-
-      // Player 2 adds
-      game.user.id = 'user2';
-      await recordPlayerAdded('user2');
-
-      // Player 3 adds
-      game.user.id = 'user3';
-      await recordPlayerAdded('user3');
+    it('should complete a 3-actor round successfully', async () => {
+      // Actor 1 adds
+      await recordActorAdded('actor1');
+      // Actor 2 adds
+      await recordActorAdded('actor2');
+      // Actor 3 adds
+      await recordActorAdded('actor3');
 
       // Verify state
       let state = loadRoundState();
-      expect(state.playersAdded.length).toBe(3);
+      expect(state.actorsAdded.length).toBe(3);
 
-      // Player 1 draws
-      game.user.id = 'user1';
-      game.user.name = 'Player1';
-      let result = await executePlayerDraw('user1');
+      // Actor 1 draws
+      let result = await executeActorDraw('actor1', 'Actor1', 'user1');
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(false);
 
-      // Player 2 draws
-      game.user.id = 'user2';
-      game.user.name = 'Player2';
-      result = await executePlayerDraw('user2');
+      // Actor 2 draws
+      result = await executeActorDraw('actor2', 'Actor2', 'user1');
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(false);
 
-      // Player 3 draws (completes round)
-      game.user.id = 'user3';
-      game.user.name = 'Player3';
-      result = await executePlayerDraw('user3');
+      // Actor 3 draws (completes round)
+      result = await executeActorDraw('actor3', 'Actor3', 'user2');
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(true);
 
       // Verify final state
       state = loadRoundState();
-      expect(state.playersDrawn.length).toBe(3);
+      expect(state.actorsDrawn.length).toBe(3);
       expect(state.drawResults.length).toBe(3);
     });
 
     it('should handle partial round correctly', async () => {
-      game.user.id = 'user1';
-      game.user.name = 'Player1';
+      await recordActorAdded('actor1');
+      await recordActorAdded('actor2');
 
-      await recordPlayerAdded('user1');
-
-      game.user.id = 'user2';
-      await recordPlayerAdded('user2');
-
-      // Only user1 draws
-      game.user.id = 'user1';
-      game.user.name = 'Player1';
-      const result = await executePlayerDraw('user1');
+      // Only actor1 draws
+      const result = await executeActorDraw('actor1', 'Actor1', 'user1');
 
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(false);
 
       const state = loadRoundState();
-      expect(state.playersDrawn).toEqual(['user1']);
+      expect(state.actorsDrawn).toEqual(['actor1']);
       expect(state.drawResults.length).toBe(1);
     });
 
     it('should handle round reset via clearRoundState', async () => {
-      game.user.id = 'user1';
-      game.user.name = 'Player1';
-
-      await recordPlayerAdded('user1');
-      await executePlayerDraw('user1');
+      await recordActorAdded('actor1');
+      await executeActorDraw('actor1', 'Actor1', 'user1');
 
       await clearRoundState();
 
@@ -605,61 +691,50 @@ describe('draw-round: Integration Tests', () => {
     it('should handle empty pile gracefully', async () => {
       const pile = new MockCardsPile([]);
       const hand = createHandPile();
-      const actor = new MockActor('actor1', 'TestActor');
-      actor._cards = new MockCardsPile([]);
 
       game.cards = createCardsMap([
         ['pile1', pile],
         ['hand1', hand]
       ]);
-      game.user.id = 'user1';
-      game.user.name = 'Player1';
-      game.user.character = actor;
 
-      await pile.setFlag('dod', 'currentRound', createRoundWithPlayersAdded(['user1']));
+      await pile.setFlag('dod', 'currentRound', createRoundWithActorsAdded(['actor1']));
 
-      const result = await executePlayerDraw('user1');
+      const result = await executeActorDraw('actor1', 'Actor1', 'user1');
       expect(result.success).toBe(false);
     });
 
-    it('should handle single-player round', async () => {
+    it('should handle single-actor round', async () => {
       const pile = new MockCardsPile(createLargePile(10));
       const hand = createHandPile();
-      const actor = new MockActor('actor1', 'TestActor');
-      actor._cards = new MockCardsPile([]);
 
       game.cards = createCardsMap([
         ['pile1', pile],
         ['hand1', hand]
       ]);
-      game.user.id = 'user1';
-      game.user.name = 'Player1';
-      game.user.character = actor;
 
-      await recordPlayerAdded('user1');
-      const result = await executePlayerDraw('user1');
+      await recordActorAdded('actor1');
+      const result = await executeActorDraw('actor1', 'Actor1', 'user1');
 
       expect(result.success).toBe(true);
       expect(result.data.roundComplete).toBe(true);
     });
 
-    it('should handle maximum players (8 players)', async () => {
+    it('should handle maximum actors (8 actors)', async () => {
       const pile = new MockCardsPile(createLargePile(48));
       game.cards = createCardsMap([['pile1', pile]]);
 
-      const userIds = Array.from({ length: 8 }, (_, i) => `user${i + 1}`);
+      const actorIds = Array.from({ length: 8 }, (_, i) => `actor${i + 1}`);
 
-      for (const userId of userIds) {
-        game.user.id = userId;
-        await recordPlayerAdded(userId);
+      for (const actorId of actorIds) {
+        await recordActorAdded(actorId);
       }
 
       const state = loadRoundState();
-      expect(state.playersAdded.length).toBe(8);
+      expect(state.actorsAdded.length).toBe(8);
 
-      // Verify per-player draw count: 48/(4+8)=4 baseline total, but the
-      // "at least 1 card per player" floor raises the total to 8, so each
-      // of the 8 players gets exactly 1 card.
+      // Verify per-actor draw count: 48/(4+8)=4 baseline total, but the
+      // "at least 1 card per actor" floor raises the total to 8, so each
+      // of the 8 actors gets exactly 1 card.
       const drawCount = calculateDrawCount(48, 8, 0);
       expect(drawCount).toBe(1);
     });
@@ -696,12 +771,12 @@ describe('draw-round: generateSummary special card names', () => {
     global.ChatMessage = { create: (data) => messages.push(data) };
 
     const state = {
-      playersAdded: ['user1'],
-      playersDrawn: ['user1'],
+      actorsAdded: ['actor1'],
+      actorsDrawn: ['actor1'],
       drawResults: [
         {
-          userId: 'user1',
-          userName: 'Player1',
+          actorId: 'actor1',
+          actorName: 'Actor1',
           cards: [
             {
               id: 'card1',
