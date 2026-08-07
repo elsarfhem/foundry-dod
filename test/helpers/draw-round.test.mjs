@@ -34,7 +34,6 @@ import {
 } from '../fixtures/card-data.mjs';
 import {
   MockCardsPile,
-  MockActor,
   createCardsMap,
   createHandPile
 } from '../mocks/foundry.mjs';

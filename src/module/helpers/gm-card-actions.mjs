@@ -9,23 +9,28 @@
  * shared queue per GM process.
  *
  * None of these read `game.user` for identity: the acting player's
- * `{userId, displayName}` always arrives explicitly in the payload,
+ * `{userId, actorId, ...}` always arrives explicitly in the payload,
  * captured on their own client before the relay (see
  * gm-relay.mjs#getRequesterIdentity). On the GM's client, `game.user`
- * would always resolve to the GM, never the original caller.
+ * would always resolve to the GM, never the original caller. The two
+ * card-round handlers (gmAddCardsToPile, gmExecutePlayerDraw) receive
+ * `{userId, actorId, suitCounts}` and `{userId, actorId, actorName}`
+ * respectively.
  *
  * Most of these don't post ChatMessages - the calling client posts its own,
  * using the data returned here, since it has a correct, non-fakeable
  * game.user for itself. Where the caller's own copy of a shared document
  * could be stale right after a relay (pile totals, drawn cards), the data
  * needed is returned explicitly instead of expecting the caller to re-read
- * the document locally. The exception is executePlayerDrawCore, which posts
+ * the document locally. The exception is executeActorDrawCore, which posts
  * both the individual draw message and (once the round completes) the
  * summary itself, GM-side, in that order - so two players' draws can never
  * post out of order the way a caller-side network round-trip could cause.
- * Only the individual draw message is attributed to the drawing player via
- * an explicit `user` id (see chat.mjs#showChatRequest); the round summary
- * stays GM-attributed, as it always has, since it's a narrated recap of
+ * The individual draw message is authored (owned) by the calling player's
+ * userId (see chat.mjs#showChatRequest), but its body displays the acting
+ * actor's name (which may differ from the user - e.g. when a GM acts
+ * through another player's character sheet). The round summary stays
+ * GM-attributed, as it always has, since it's a narrated recap of
  * everyone's draws rather than one player's own message.
  */
 
